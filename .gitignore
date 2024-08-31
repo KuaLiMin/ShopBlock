@@ -1,8 +1,9 @@
 # Node.js dependencies
 node_modules/
 
-# .pyc files
-*.pyc
+# Python bytecode files
+*.py[cod]
+__pycache__/
 
 # Logs
 logs
@@ -39,3 +40,4 @@ coverage/
 
 # MacOS files
 .DS_Store
+
