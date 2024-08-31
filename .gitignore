@@ -1,6 +1,9 @@
 # Node.js dependencies
 node_modules/
 
+# .pyc files
+*.pyc
+
 # Logs
 logs
 *.log
