@@ -6,7 +6,7 @@ function LandingPage() {
       <a href="/user/login">
         <button style={{ margin: '10px', padding: '10px 20px' }}>Login</button>
       </a>
-      <a href="/user/signup">
+      <a href="/user/signup1">
         <button style={{ margin: '10px', padding: '10px 20px' }}>Signup</button>
       </a>
     </div>
