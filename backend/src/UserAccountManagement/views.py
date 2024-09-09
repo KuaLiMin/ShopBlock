@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 def index(request):
@@ -10,6 +10,6 @@ def login(request):
 def logout(request):
     return HttpResponse("you are in the logout page")
 
-def signup(request):
+def signup(request): 
     return HttpResponse("you are in the register page")
 

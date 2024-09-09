@@ -8,7 +8,12 @@ from django.http import JsonResponse
 
 def index(request):
 
-    return HttpResponse("Hello, world. You're at the backend index.")
+    # check sessionstorage for login
+    if request.session.get('login', False):
+        return render(request, 'browse.html')
+    return render(request, 'index.html')
+    
+    
 
 
 # def fetch_json_data(request):
