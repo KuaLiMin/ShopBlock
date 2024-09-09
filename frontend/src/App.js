@@ -22,7 +22,6 @@ function App() {
     //   </header>
     // </div>
     <div className="App"><LandingPage />
-    <JsonDisplay />
 </div>
   );
   
