@@ -1,4 +1,3 @@
-import React from 'react';
 import './App.css';
 import JsonDisplay from './components/JsonDisplay';
 import Navbar from './components/Navbar/Navbar';
