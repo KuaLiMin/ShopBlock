@@ -58,7 +58,7 @@
 .nav-login-cart{
     display: flex;
     align-items: center;
-    gap: 40px;
+    gap: 20px;
 }
 
 .nav-login-cart button{
@@ -70,12 +70,21 @@
     color: #515151;
     font-size: 20px;
     font-weight: 500;
-    background: transparent;
+    background: #009EB6;
     cursor: pointer;
 }
 
+.nav-login-cart button:active{
+    background-color: white;
+}
+
+.nav-login-cart button:hover{
+    background-color: white;
+}
+
+
 .nav-menu li:hover {
-    color: #121c1d;
+    color: #0f1617;
 }
 
 .nav-promo {
@@ -103,17 +112,29 @@
 .nav-actions button:hover {
     color: #121c1d;
 }
-
 .search-icon {
     width: 20px;
     cursor: pointer;
 }
-
 .nav-actions img {
     width: 25px;
     cursor: pointer;
 }
-
 .nav-actions img:hover {
     opacity: 0.7;
+}
+
+.nav-cart-count{
+    width: 22px;
+    height: 22px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -35px;
+    margin-left: -55px;
+    border-radius: 11px;
+    font-size: 14px;
+    background: red;
+    color: white;
+
 }
