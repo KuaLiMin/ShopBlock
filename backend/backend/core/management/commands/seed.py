@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from backend.core.models import User
+from backend.core.models import User, Listing, Category, ListingType
 
 
 class Command(BaseCommand):
@@ -19,5 +19,30 @@ class Command(BaseCommand):
         user3 = User.objects.create(
             email="user3@gmail.com", username="user3", phone_number="90000003"
         )
+        print("Successfully Seeded - Users")
 
-        print("Seeded - Users")
+        # Seed some listing data
+        listing1 = Listing.objects.create(
+            uploaded_by=user1,
+            title="Electronic Drill",
+            description="Looking to rent out an electronic drill as I do not need it anymore",
+            category=Category.ELECTRONICS,
+            listing_type=ListingType.RENTAL,
+        )
+
+        listing2 = Listing.objects.create(
+            uploaded_by=user2,
+            title="Camping Tent",
+            description="Looking to rent out a camping tent as it is unused in the house",
+            category=Category.OTHER,
+            listing_type=ListingType.RENTAL,
+        )
+
+        listing3 = Listing.objects.create(
+            uploaded_by=user3,
+            title="Plumbing services",
+            description="Plumbing services, available from 9am to 5pm anywhere in Singapore.",
+            category=Category.HOUSEHOLD,
+            listing_type=ListingType.SERVICE,
+        )
+        print("Successfully Seeded - Listings")

@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 # The different category types
 class Category(models.TextChoices):
     ELECTRONICS = "EL", _("Electronics")
+    HOUSEHOLD = "HH", _("HouseHold")
     FURNITURE = "FU", _("Furniture")
     CLOTHING = "CL", _("Clothing")
     BOOKS = "BO", _("Books")

@@ -24,6 +24,9 @@ from rest_framework import routers
 urlpatterns = [
     # default django admin portal
     path("admin/", admin.site.urls),
+    # listings
+    path("listing/", views.ListingView.as_view()),
     # debugging purposes
-    path("debug/users/", views.DebugUserList.as_view()),
+    path("debug/user/", views.DebugUserList.as_view()),
+    path("debug/listing/", views.DebugListingList.as_view()),
 ]

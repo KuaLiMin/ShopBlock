@@ -5,7 +5,7 @@ from rest_framework import permissions, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
-from backend.core.models import User
+from backend.core.models import User, Listing
 
 from backend.core.serializers import GroupSerializer, UserSerializer
 
@@ -34,11 +34,20 @@ from backend.core.serializers import GroupSerializer, UserSerializer
 
 class UserView(APIView):
     """
-    User endpoint for GET and POST
+    User endpoint for GET
     """
 
     def get(self, request: Request):
         return JsonResponse(list(User.objects.values()), safe=False)
+
+
+class ListingView(APIView):
+    """
+    Listing endpoint for GET and POST
+    """
+
+    def get(self, request: Request):
+        return JsonResponse(list(Listing.objects.values()), safe=False)
 
 
 class DebugUserList(APIView):
@@ -48,3 +57,12 @@ class DebugUserList(APIView):
 
     def get(self, request: Request):
         return JsonResponse(list(User.objects.values()), safe=False)
+
+
+class DebugListingList(APIView):
+    """
+    Admin endpoint to debug the listings endpoint
+    """
+
+    def get(self, request: Request):
+        return JsonResponse(list(Listing.objects.values()), safe=False)
