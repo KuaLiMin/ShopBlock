@@ -75,3 +75,6 @@ frontend/build/static/js/main.4ca9ede1.js.map
 
 # Add personal env
 swe-env/
+
+# Dont commit any local databases to avoid syncing issues
+*.sqlite3
