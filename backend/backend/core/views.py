@@ -5,9 +5,10 @@ from rest_framework import permissions, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.generics import GenericAPIView
 from backend.core.models import User, Listing
 
-from backend.core.serializers import GroupSerializer, UserSerializer
+from backend.core.serializers import UserSerializer, ListingSerializer
 
 # Create your views here.
 
@@ -32,37 +33,45 @@ from backend.core.serializers import GroupSerializer, UserSerializer
 #     permission_classes = [permissions.IsAuthenticated]
 
 
-class UserView(APIView):
+class UserView(GenericAPIView):
     """
     User endpoint for GET
     """
+
+    serializer_class = UserSerializer
 
     def get(self, request: Request):
         return JsonResponse(list(User.objects.values()), safe=False)
 
 
-class ListingView(APIView):
+class ListingView(GenericAPIView):
     """
     Listing endpoint for GET and POST
     """
+
+    serializer_class = ListingSerializer
 
     def get(self, request: Request):
         return JsonResponse(list(Listing.objects.values()), safe=False)
 
 
-class DebugUserList(APIView):
+class DebugUserList(GenericAPIView):
     """
     Admin endpoint to debug the user endpoint
     """
+
+    serializer_class = UserSerializer
 
     def get(self, request: Request):
         return JsonResponse(list(User.objects.values()), safe=False)
 
 
-class DebugListingList(APIView):
+class DebugListingList(GenericAPIView):
     """
     Admin endpoint to debug the listings endpoint
     """
+
+    serializer_class = ListingSerializer
 
     def get(self, request: Request):
         return JsonResponse(list(Listing.objects.values()), safe=False)
