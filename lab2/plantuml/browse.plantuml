@@ -1,0 +1,93 @@
+@startuml
+actor User as U
+boundary BrowseUI as BUI
+control BrowseManager as BM
+entity ListingEn as L
+
+activate U
+
+'User searching listings
+U -> BUI : Search Listings
+activate BUI
+BUI -> BM : Search Query
+activate BM
+BM -> L : Fetch Listings
+activate L
+L --> BM : Listings Results
+deactivate L
+BM --> BUI : Display Listings
+deactivate BM
+BUI --> U : Show Listings
+deactivate BUI
+
+'User filtering listings
+U -> BUI : Filter Listings
+activate BUI
+BUI -> BM : Apply Filters
+activate BM
+BM -> L : Fetch Filtered Listings
+activate L
+L --> BM : Filtered Listings
+deactivate L
+BM --> BUI : Display Filtered Listings
+deactivate BM
+BUI --> U : Show Filtered Listings
+deactivate BUI
+
+'User viewing a listing
+U -> BUI : View Listing Details
+activate BUI
+BUI -> BM : Request Listing Details
+activate BM
+BM -> L : Fetch Listing Data
+activate L
+L --> BM : Listing Data
+deactivate L
+BM --> BUI : Display Listing Details
+deactivate BM
+BUI --> U : Show Listing Details
+deactivate BUI
+
+'User posting a listing
+U -> BUI : Post New Listing
+activate BUI
+BUI -> BM : Submit Listing Info
+activate BM
+BM -> L : Create New Listing
+activate L
+L --> BM : Listing Created
+deactivate L
+BM --> BUI : Listing Posted
+deactivate BM
+BUI --> U : Listing Confirmation
+deactivate BUI
+
+'User editing a listing
+U -> BUI : Edit Listing
+activate BUI
+BUI -> BM : Submit Listing Edits
+activate BM
+BM -> L : Update Listing
+activate L
+L --> BM : Listing Updated
+deactivate L
+BM --> BUI : Listing Edit Confirmed
+deactivate BM
+BUI --> U : Listing Updated
+deactivate BUI
+
+'User deleting a listing
+U -> BUI : Delete Listing
+activate BUI
+BUI -> BM : Confirm Deletion
+activate BM
+BM -> L : Remove Listing
+activate L
+L --> BM : Listing Deleted
+deactivate L
+BM --> BUI : Deletion Confirmation
+deactivate BM
+BUI --> U : Listing Deleted
+deactivate BUI
+deactivate U
+@enduml

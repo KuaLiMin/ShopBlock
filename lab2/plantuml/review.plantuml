@@ -1,0 +1,37 @@
+@startuml
+actor User as U
+boundary ReviewUI as RUI
+control ReviewManager as RM
+entity ListingEn as L
+entity ReviewEn as R
+
+activate U
+
+' User making an Review
+U -> RUI : Make Review
+activate RUI
+
+RUI -> RM : Create Review
+activate RM
+RM -> L : Initialize Review
+activate L
+
+L -> R : Initialize Review Object
+activate R
+R --> L : Initialised Review Object
+deactivate R
+
+L --> RM : Review Created
+deactivate L
+RM -> L : Populate Review Details
+activate L
+L --> RM : Completed Review
+deactivate L
+RM --> RUI : Completed Review
+deactivate RM
+RUI --> U : Review Submitted
+deactivate RUI
+
+deactivate U
+
+@enduml
