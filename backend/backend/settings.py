@@ -154,4 +154,4 @@ SIMPLE_JWT = {
 }
 
 # For public ip
-ALLOWED_HOSTS = ["0.0.0.0"]
+ALLOWED_HOSTS = ["*"]
