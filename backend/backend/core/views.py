@@ -8,31 +8,15 @@ from rest_framework.request import Request
 from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
-from backend.core.models import User, Listing
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
 
+from backend.core.models import User, Listing
 from backend.core.serializers import UserSerializer, ListingSerializer
 
-# Create your views here.
-
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows users to be viewed or edited.
-#     """
-
-#     queryset = User.objects.all().order_by("-date_joined")
-#     serializer_class = UserSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-
-
-# class GroupViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows groups to be viewed or edited.
-#     """
-
-#     queryset = Group.objects.all().order_by("name")
-#     serializer_class = GroupSerializer
-#     permission_classes = [permissions.IsAuthenticated]
+# The views here will be mapped to a url in urls.py
+# Try to make specific user views, for each functionality
+# Make it small and distinct and easy to work on
 
 
 class UserView(GenericAPIView):
@@ -42,8 +26,12 @@ class UserView(GenericAPIView):
 
     serializer_class = UserSerializer
 
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
     def get(self, request: Request):
-        return JsonResponse(list(User.objects.values()), safe=False)
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 
 class RegisterUserView(APIView):
@@ -83,8 +71,9 @@ class ListingView(GenericAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-    # TODO : Need to add middleware for JWT
     # user posts a listing
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
     def post(self, request: Request):
         serializer = self.get_serializer(data=request.data)
         # If the form details are correct, then save it into the database

@@ -2,13 +2,6 @@ from rest_framework import serializers
 from backend.core.models import User, Category, Listing, ListingPhoto, ListingType
 
 
-# TODO : The fields need to be updated correctly
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ["email", "username", "phone_number"]
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

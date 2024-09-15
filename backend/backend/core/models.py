@@ -25,14 +25,6 @@ class ListingType(models.TextChoices):
 
 
 # Create your models here.
-# class User(models.Model):
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     email = models.EmailField(unique=True)
-#     username = models.CharField(max_length=30, unique=True)
-#     # phone number is local context (8 digits) and is optional
-#     phone_number = models.CharField(max_length=8, blank=True, null=True)
-
-
 class UserManager(BaseUserManager):
     # Do some validation here before creating a new user
     # if validation goes through, then create the new user
@@ -53,11 +45,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
     avatar = models.URLField(blank=True, null=True)
-    # Create an unusable password by default
-    # password = models.CharField(
-    #     max_length=128,
-    #     default=make_password(None),
-    # )
 
     objects = UserManager()
 

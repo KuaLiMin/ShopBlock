@@ -34,13 +34,14 @@ from rest_framework import routers
 urlpatterns = [
     # default django admin portal
     path("admin/", admin.site.urls),
-    # listings
-    path("listing/", views.ListingView.as_view()),
     # debugging purposes
     path("debug/user/", views.DebugUserList.as_view()),
     path("debug/listing/", views.DebugListingList.as_view()),
-    # user routes
+    # listings [GET, POST]
+    path("listing/", views.ListingView.as_view()),
+    # user routes, [GET]
     path("user/", views.UserView.as_view()),
+    # user registration, [POST]
     path("register/", views.RegisterUserView.as_view()),
     # authentication jwt tokens
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
