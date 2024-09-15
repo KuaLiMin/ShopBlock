@@ -1,0 +1,78 @@
+@startuml
+actor User as U
+boundary OfferUI as OUI
+control OfferManager as OM
+entity ListingEn as L
+entity OfferEn as O
+
+activate U
+
+' User making an offer
+U -> OUI : Make Offer
+activate OUI
+
+OUI -> OM : Create Offer
+activate OM
+OM -> L : Initialize Offer
+activate L
+
+L -> O : Initialize Offer Object
+activate O
+O --> L : Initialised Offer Object
+deactivate O
+
+L --> OM : Offer Created
+deactivate L
+OM -> L : Populate Offer Details
+activate L
+L --> OM : Completed Offer
+deactivate L
+OM --> OUI : Completed Offer
+deactivate OM
+OUI --> U : Offer Submitted
+deactivate OUI
+
+' User accepting an offer
+U -> OUI : Accept Offer
+activate OUI
+OUI -> OM : Accept Offer
+activate OM
+OM -> L : Set Offer Status to Accepted
+activate L
+
+L -> O : Set Offer Status to Accepted
+activate O
+O --> L : Offer Accepted
+deactivate O
+
+L --> OM : Offer Accepted
+deactivate L
+OM --> OUI : Acceptance Confirmation
+deactivate OM
+OUI --> U : Offer Accepted
+deactivate OUI
+
+' User rejecting an offer
+U -> OUI : Reject Offer
+activate OUI
+OUI -> OM : Reject Offer
+activate OM
+OM -> L : Set Offer Status to Rejected
+activate L
+
+L -> O : Set Offer Status to Rejected
+activate O
+O --> L : Offer Rejected
+deactivate O
+
+
+L --> OM : Offer Rejected
+deactivate L
+OM --> OUI : Rejection Confirmation
+deactivate OM
+OUI --> U : Offer Rejected
+deactivate OUI
+
+deactivate U
+
+@enduml

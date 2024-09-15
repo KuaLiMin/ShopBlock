@@ -1,0 +1,53 @@
+@startuml
+actor User as U
+boundary AccountManagementUI as AUI
+control AccountManager as AM
+entity UserEn as UA
+
+activate U
+
+'User registering
+U -> AUI : Register
+activate AUI
+AUI -> AM : Register Request
+activate AM
+AM -> UA : Create User Account
+activate UA
+UA --> AM : Account Created
+deactivate UA
+AM --> AUI : Registration Confirmation
+deactivate AM
+AUI --> U : Account Registered
+deactivate AUI
+
+'User login
+U -> AUI : Login
+activate AUI
+AUI -> AM : Validate Login
+activate AM
+AM -> UA : Check Credentials
+activate UA
+UA --> AM : Credentials Valid
+deactivate UA
+AM --> AUI : Login Success
+deactivate AM
+AUI --> U : Login Successful
+deactivate AUI
+
+'User forget password
+U -> AUI : Forget Password
+activate AUI
+AUI -> AM : Password Reset Request
+activate AM
+AM -> UA : Verify User
+activate UA
+UA --> AM : User Verified
+deactivate UA
+AM --> AUI : Send Password Reset Email
+deactivate AM
+AUI --> U : Password Reset Link Sent
+deactivate AUI
+
+deactivate U
+
+@enduml
