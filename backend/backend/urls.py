@@ -22,6 +22,11 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 
 from backend.core import views
 from rest_framework import routers
@@ -34,6 +39,12 @@ urlpatterns = [
     # debugging purposes
     path("debug/user/", views.DebugUserList.as_view()),
     path("debug/listing/", views.DebugListingList.as_view()),
+    # user routes
+    path("user/", views.UserView.as_view()),
+    path("register/", views.RegisterUserView.as_view()),
+    # authentication jwt tokens
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # swagger and redoc
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

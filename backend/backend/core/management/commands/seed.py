@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from backend.core.models import User, Listing, Category, ListingType
+from django.contrib.auth.hashers import make_password
 
 
 class Command(BaseCommand):
@@ -11,13 +12,19 @@ class Command(BaseCommand):
 
         # Seed some example data
         user1 = User.objects.create(
-            email="user1@gmail.com", username="user1", phone_number="90000001"
+            email="user1@gmail.com",
+            username="user1",
+            password=make_password("password"),
         )
         user2 = User.objects.create(
-            email="user2@gmail.com", username="user2", phone_number="90000002"
+            email="user2@gmail.com",
+            username="user2",
+            password=make_password("password"),
         )
         user3 = User.objects.create(
-            email="user3@gmail.com", username="user3", phone_number="90000003"
+            email="user3@gmail.com",
+            username="user3",
+            password=make_password("password"),
         )
         print("Successfully Seeded - Users")
 
