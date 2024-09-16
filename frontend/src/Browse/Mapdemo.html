@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Demo</title>
+</head>
+<body>
+    <h1>Welcome to the Map Demo!</h1>
+    <p>I do not reload automatically, please press the reload butston.</p>
+
+
+    <div style="display: flex; gap: 20px; padding: 0px;">
+        <div id="search" style="flex: 2; min-width: 300px;">
+            <h2>Search</h2>
+
+            <!-- search bar -->
+            <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search for a location, no special characters" 
+            style="width: 100%; padding: 8px; box-sizing: border-box;" 
+            pattern="[A-Za-z0-9]*" 
+            title="Alphanumeric characters only"
+            oninput="validateAlphanumeric(this)"
+            onkeypress="if(event.key === 'Enter') search()"
+            >
+            <button onclick="search()" style="width: 100%; padding: 8px; margin-top: 8px;">Search</button>
+
+            <!-- Display search results here -->
+            <div id="searchResults"></div>
+
+        </div>
+
+        <div id="map" style="flex: 3;">
+            <h2>Map</h2>
+
+            <!-- map, which wiil only appear when src param is filled-->
+            <iframe 
+                width="0%" 
+                height="350" 
+                frameborder="0" 
+                scrolling="no" 
+                marginheight="0" 
+                marginwidth="0" 
+                src="">
+            </iframe>
+
+            <!-- addr that user selected -->
+            <p id="locAddr"></p>
+            <!-- notes that user input -->
+            <input type="text" id="locNotes" placeholder="Additional Notes (e.g., Meet at third floor lift lobby)" style="width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; background-color: lightgrey;" disabled>
+            
+            <!-- submit the location -->
+            <button id="selectLocation" style="width: 100%; padding: 8px;"  onclick="selectLocation()" disabled>Select Location</button>
+        </div>
+    </div>
+
+    <script>
+        // Location class, params are locationAddress and locNotes
+        class Location {
+            constructor(locationAddress, locationQuery, locNotes) {
+                this.locationAddress = locationAddress; // e.g. 1 Jurong West Central 2
+                this.locationQuery = locationQuery; // e.g. Jurong+West+Central+2 (for queries)
+                this.locNotes = locNotes; // e.g. Go to the 3rd floor
+            }
+
+            // for viewing the object in string form, debugging
+            toString() {
+                return this.locationAddress + ' ' + this.locNotes;
+            }
+        }
+
+        // function when user searches for a location
+        function search() {
+            // clear the search results
+            document.getElementById('searchResults').innerHTML = '';
+
+            // EXAMPLE CALL:  https://reqbin.com/pl7vdtho
+
+            var input = document.getElementById('searchInput').value;
+            console.log(input);
+            // replace spaces with + for the API call
+
+            const data = JSON.stringify(false);
+      
+            const xhr = new XMLHttpRequest();
+                
+
+            xhr.open("GET", "https://www.onemap.gov.sg/api/common/elastic/search?searchVal=" + input + "&returnGeom=Y&getAddrDetails=Y&pageNum=1");
+            xhr.setRequestHeader("Authorization", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaW50ZXJuYWwtYWxiLW9tLXByZGV6aXQtaXQtMTIyMzY5ODk5Mi5hcC1zb3V0aGVhc3QtMS5lbGIuYW1hem9uYXdzLmNvbS9hcGkvdjIvdXNlci9wYXNzd29yZCIsImlhdCI6MTcyNjQyOTY3NiwiZXhwIjoxNzI2Njg4ODc2LCJuYmYiOjE3MjY0Mjk2NzYsImp0aSI6InZFTDBuY0xaTklHd3d5c1kiLCJzdWIiOiJiZWQ5NTQyODc1YjI1ZGQ2N2IwZTViNmM1NTkxMjk4MyIsInVzZXJfaWQiOjQ2MzEsImZvcmV2ZXIiOmZhbHNlfQ.7cx9NeC32T0De85FvgrJnJWh-3XHL3pnflZLAGkHKd0");
+            xhr.send(data);
+
+            //  check if there is a response
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        
+                        // loop through the response, display the first 5 results
+                        if (response.results.length === 0) {
+                            // no results
+                            var errorMessage = document.createElement('p');
+                            errorMessage.style.color = 'red';
+                            errorMessage.textContent = 'No results found. Please try a different search term.';
+                            document.getElementById('searchResults').appendChild(errorMessage);
+                        } else {
+                            // display the first few results
+                            for (var i = 0; i < Math.min(response.results.length, 10); i++) {
+                                locationButton = document.createElement('button');
+                                locationButton.textContent = response.results[i].ADDRESS;
+                                locationButton.style.marginTop = '10px';
+                                locationButton.style.width = '100%';
+                                locationButton.onclick = function() {
+                                    setMap(); // the buttons will call the setMap function
+                                }
+                                document.getElementById('searchResults').appendChild(locationButton);
+                            }
+                        }
+
+                    } else {
+                        console.error('Error fetching data');
+                    }
+                }
+            };
+
+            
+        }
+
+
+        // when user selects a location, this function is triggered to show the location on the map
+        function setMap() {
+            // https://reqbin.com/pl7vdtho
+            // https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=1.310009,%20103.786755+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed
+            
+            // get the address from the button
+            var address = event.target.textContent;
+            // remove all punctuation and replace spaces with +
+            var addressFormatted = address.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '+');
+
+            document.getElementById('locAddr').textContent = address;
+
+            // get src of the map iframe
+            var mapIframe = document.getElementById('map').getElementsByTagName('iframe')[0];
+
+            // set the src of the map iframe
+            mapIframe.src = "https://maps.google.com/maps?width=100%25&height=600&hl=en&q=" + addressFormatted + "&t=&z=14&ie=UTF8&iwloc=B&output=embed";
+
+            // enable the notes input and select location button
+            document.getElementById('locNotes').disabled = false;
+            // set background colour
+            document.getElementById('locNotes').style.backgroundColor = 'white';
+            
+            document.getElementById('selectLocation').disabled = false;
+
+            // set width of the map iframe
+            mapIframe.width = '100%';
+
+        
+        }
+
+        // user has submitted the location, please edit this function to send the location to the backend
+        function selectLocation() {
+            // get the address and notes
+            var address = document.getElementById('locAddr').textContent;
+            var notes = document.getElementById('locNotes').value;
+            var locationQuery = address.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '+');
+
+            // create a new Location object
+            var location = new Location(address, locationQuery, notes);
+
+
+            // alert the user of the location
+            alert('Location selected: ' + location.toString());
+
+            // do something with the location
+            // e.g. send it to the backend
+            // .........................
+        }
+
+
+        // function to validate alphanumeric input
+        function validateAlphanumeric(input) {
+            // Allow only alphanumeric characters
+            input.value = input.value.replace(/[^A-Za-z0-9 ]/g, '');
+        }
+    </script>
+</body>
+</html>
