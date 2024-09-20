@@ -1,0 +1,44 @@
+.Trending{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    max-width: 1280px;
+    margin: auto;
+}
+.Trending h1{
+    color: #171717;
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.Trending h2{
+    color: #171717;
+    font-size: 20px;
+    font-weight: 600;
+}
+.Trending hr{
+    width: 1000px;
+    height: 4px;
+    border-radius: 10px;
+    background: #2525254b;
+}
+.Trending-item{
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+}
+/* ---------- media query------------ */
+
+@media(max-width: 800px){
+    .Trending h1{
+        font-size: 30px;
+    }
+    .Trending hr{
+        width: 80px;
+        height: 4px;
+        
+    }
+}

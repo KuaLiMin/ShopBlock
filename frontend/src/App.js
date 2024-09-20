@@ -11,6 +11,10 @@ import user from './Pages/user';
 import search from './Pages/search';
 import LandingPage from './UserAcccountManagent/LandingPage';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Footer from './components/Footer/Footer';
+import electronics_banner from './components/Images/banner_mens.png'
+import services_banner from './components/Images/banner_women.png'
+import supplies_banner from './components/Images/banner_kids.png'
 
 function App() {
   return (
@@ -19,9 +23,9 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path='/'element={<Categories/>}/>
-        <Route path='/Electronics'element={<ShopCat category = "Electronics"/>}/>
-        <Route path='/Services'element={<ShopCat category = "Services"/>}/>
-        <Route path='/Supplies'element={<ShopCat category = "Supplies"/>}/>
+        <Route path='/electronics'element={<ShopCat banner ={electronics_banner} category = "electronics"/>}/>
+        <Route path='/services'element={<ShopCat banner = {services_banner} category = "services"/>}/>
+        <Route path='/supplies'element={<ShopCat banner = {supplies_banner} category = "supplies"/>}/>
         <Route path="/Listing" element={<Listing/>}>
           <Route path=':ListingID' element={<Listing/>}/>
         </Route>
@@ -32,6 +36,7 @@ function App() {
         <Route path='/user' element={<user/>}/>
         <Route path='/search' element={<search/>}/>
       </Routes>
+      <Footer/>
       </BrowserRouter>
     </div>
   );

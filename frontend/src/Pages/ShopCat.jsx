@@ -2,11 +2,17 @@
 This is for the different categories e.g electronics/services/supplies/all cat
 */
 
-import React from 'react'
+import React, { useContext } from 'react'
+import './CSS/shopcat.css'
+import { ListContext } from '../Context/ListContext'
 
-export const ShopCat = () => {
+const ShopCat = (props) => {
+  const {all_product} = useContext(ListContext);
   return (
-    <div>ShopCat</div>
+    <div className='shop-cat'>
+       <img src={props.banner} alt="" />
+     
+    </div>
   )
 }
 export default ShopCat
