@@ -92,11 +92,15 @@ activate BM
 alt Posting Job
     BM -> Job : Create Job Listing
     activate Job
+    Job --> BM : Request for Details
+    BM -> Job : Submit Job Details
     Job --> BM : Job Created
     deactivate Job
 else Posting Item
     BM -> Item : Create Item Listing
     activate Item
+    Item --> BM : Request for Details
+    BM -> Item : Submit Item Details
     Item --> BM : Item Created
     deactivate Item
 end
@@ -117,6 +121,7 @@ BM --> BUI : Listing Posted
 deactivate BM
 BUI --> U : Listing Confirmation
 deactivate BUI
+
 
 'User deleting a listing
 U -> BUI : Delete Listing
