@@ -27,7 +27,7 @@ OM -> L : Initialize Offer
 activate L
 
 ' Set initial offer details
-L -> O : Set Offer Details ()
+L -> O : Set Offer Details
 activate O
 O --> L : Offer Details Set
 deactivate O
@@ -50,7 +50,7 @@ activate OM
 OM -> L : Update Offer Details
 activate L
 
-L -> O : Update Offer Details ()
+L -> O : Update Offer Details
 activate O
 O --> L : Offer Details Updated
 deactivate O
@@ -66,50 +66,72 @@ deactivate OUI
 ' User accepting an offer
 U -> OUI : Accept Offer
 activate OUI
-OUI -> OM : Accept Offer
+OUI -> OM : Confirmation Popup [choice == confirm/cancel]
 activate OM
-OM -> L : Set Offer Status to Accepted
-activate L
 
-L -> O : Set Offer Status to Accepted
-activate O
-O --> L : Offer Accepted
-deactivate O
+alt [choice == confirm]
+    OM -> L : Set Offer Status to Accepted
+    activate L
+    L -> O : Set Offer Status to Accepted
+    activate O
+    O --> L : Offer Accepted
+    deactivate O
+    L --> OM : Offer Accepted
+    deactivate L
+    OM --> OUI : Acceptance Confirmation
+    OUI --> U : Offer Accepted
 
-L --> OM : Offer Accepted
-deactivate L
-OM --> OUI : Acceptance Confirmation
-deactivate OM
-OUI --> U : Offer Accepted
-deactivate OUI
+else [choice == cancel]
+    OM --> OUI : Cancel Action
+    deactivate OM
+    OUI --> U : Offer Acceptance Canceled
+    deactivate OUI
+end
+
 
 ' User rejecting an offer
 U -> OUI : Reject Offer
 activate OUI
-OUI -> OM : Reject Offer
+OUI -> OM : Confirmation Popup [choice == confirm/cancel]
 activate OM
-OM -> L : Set Offer Status to Rejected
-activate L
 
-L -> O : Set Offer Status to Rejected
-activate O
-O --> L : Offer Rejected
-deactivate O
+alt [choice == confirm]
+    OM -> L : Set Offer Status to Rejected
+    activate L
+    L -> O : Set Offer Status to Rejected
+    activate O
+    O --> L : Offer Rejected
+    deactivate O
+    L --> OM : Offer Rejected
+    deactivate L
+    OM --> OUI : Rejection Confirmation
+    OUI --> U : Offer Rejected
 
-L --> OM : Offer Rejected
-deactivate L
-OM --> OUI : Rejection Confirmation
-deactivate OM
-OUI --> U : Offer Rejected
-deactivate OUI
+else [choice == cancel]
+    OM --> OUI : Cancel Action
+    deactivate OM
+    OUI --> U : Offer Rejection Canceled
+    deactivate OUI
+end
+
 
 ' User canceling an offer
 U -> OUI : Cancel Offer
 activate OUI
-OUI -> O : Cancel Offer
+OUI -> OM : Cancel Offer
+activate OM
+OM -> L : Cancel Offer
+activate L
+
+L -> O : Cancel Offer
 activate O
-O --> OUI : Cancellation Confirmation
+O --> L : Offer Canceled
 deactivate O
+
+L --> OM : Offer Canceled
+deactivate L
+OM --> OUI : Cancellation Confirmation
+deactivate OM
 OUI --> U : Offer Canceled
 deactivate OUI
 
