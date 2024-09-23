@@ -18,9 +18,11 @@ activate RM
 RM --> RUI : Rating Validated
 
 ' Optional photo upload by user
-U -> RUI : Upload Photo (Optional)
-RUI -> RM : Validate Photo Upload
-RM --> RUI : Photo Validated
+opt [User wants to upload a photo]
+    U -> RUI : Upload Photo
+    RUI -> RM : Validate Photo Upload
+    RM --> RUI : Photo Validated
+end
 
 ' User enters text review
 U -> RUI : Enter Review Text
