@@ -69,7 +69,7 @@ activate OUI
 OUI -> OM : Confirmation Popup [choice == confirm/cancel]
 activate OM
 
-alt [choice == confirm]
+alt choice == confirm
     OM -> L : Set Offer Status to Accepted
     activate L
     L -> O : Set Offer Status to Accepted
@@ -81,7 +81,7 @@ alt [choice == confirm]
     OM --> OUI : Acceptance Confirmation
     OUI --> U : Offer Accepted
 
-else [choice == cancel]
+else choice == cancel
     OM --> OUI : Cancel Action
     deactivate OM
     OUI --> U : Offer Acceptance Canceled
@@ -95,7 +95,7 @@ activate OUI
 OUI -> OM : Confirmation Popup [choice == confirm/cancel]
 activate OM
 
-alt [choice == confirm]
+alt choice == confirm
     OM -> L : Set Offer Status to Rejected
     activate L
     L -> O : Set Offer Status to Rejected
@@ -107,7 +107,7 @@ alt [choice == confirm]
     OM --> OUI : Rejection Confirmation
     OUI --> U : Offer Rejected
 
-else [choice == cancel]
+else choice == cancel
     OM --> OUI : Cancel Action
     deactivate OM
     OUI --> U : Offer Rejection Canceled
