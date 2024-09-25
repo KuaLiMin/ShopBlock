@@ -1,0 +1,182 @@
+
+.sidenav {
+    width: 250px; /* Adjust width of the side nav */
+    background-color: #f4f4f4; /* Light grey background */
+    padding: 20px;
+    box-sizing: border-box;
+    flex: 0 0 250px;
+    height: 100vh;
+}
+  
+.sidenav h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333; /* Dark grey text */
+    border-bottom: 2px solid #ccc;  
+    padding-bottom: 5px;  
+}
+  
+.sidenav ul {
+    list-style: none; /* Remove bullet points */
+    padding: 0;
+}
+  
+.sidenav li {
+    padding: 8px 0; /* Vertical padding for each item */
+    cursor: pointer;
+    color: #333; /* Dark grey text */
+}
+  
+.sidenav li:hover {
+    color: #000; /* Change text color on hover */
+    background-color: #e0e0e0; /* Light grey background on hover */
+}
+  
+
+/*--------------------------*/
+
+.price-range {
+    display: flex;
+    flex-direction: column;  
+    align-items: flex-start; 
+    margin-top: 10px;
+    width: 100%;   
+}
+  
+.price-range input[type="range"] {
+    flex-grow: 1; /* Let the range input grow to fill available space */
+    margin: 10px, 0px;
+}
+  
+.price-range button {
+    padding: 5px 10px;
+    background-color: #4fa4cf; /* Bootstrap blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    
+}
+  
+.price-range button:hover {
+    background-color: #1a426c; /* Darker blue on hover */
+}
+
+/*--------------------------*/
+
+.checkbox-container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none;
+ }
+  
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+  
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #ffffff;
+    border-radius: 4px;
+}
+  
+.checkbox-container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+  
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #007bff;
+}
+  
+.checkbox-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+  
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+  
+.checkbox-container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 7px;
+    height: 15px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+/*--------------------------*/
+
+.listing-app {
+    display: flex;  
+}
+
+.listing-content {
+    flex-grow: 1;  
+    padding: 20px;
+}
+  
+.listing-content h1 {
+    color: #333;  
+    font-size: 24px;  
+    font-weight: bold;  
+    margin-bottom: 20px; 
+    border-bottom: 2px solid #ccc;  
+    padding-bottom: 10px;  
+}
+
+.listing-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+  }
+  
+  .listing-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .listing-image {
+    width: 100%;
+    height: 150px; /* Adjust height as needed */
+    object-fit: cover; /* Ensures the image covers the div without distorting */
+  }
+  
+  .listing-info {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .listing-info h4 {
+    margin: 5px 0;
+  }
+  
+  .listing-info p {
+    color: #666;
+    font-size: 16px;
+  }
+
+
+  .listings-grid {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Creates a responsive grid */
+    gap: 20px; /* Space between cards */
+    padding: 20px;
+  }
