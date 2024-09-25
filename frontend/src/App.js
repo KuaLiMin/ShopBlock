@@ -5,6 +5,7 @@ import Login from './Pages/Login';
 import Categories from './Pages/Categories';
 import ShopCat from './Pages/ShopCat';
 import Listing from './Pages/Listing';
+import TransactionHistory from './Payment/TransactionHistory';
 import FAQ from './Pages/FAQ';
 import geo from './Pages/geo';
 import user from './Pages/user';
@@ -35,6 +36,7 @@ function App() {
         <Route path='/geo' element={<geo/>}/>
         <Route path='/user' element={<user/>}/>
         <Route path='/search' element={<search/>}/>
+        <Route path='/history' element={<TransactionHistory/>}/>
       </Routes>
       <Footer/>
       </BrowserRouter>
