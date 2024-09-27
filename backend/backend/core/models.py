@@ -75,7 +75,7 @@ class Listing(models.Model):
 
 
 class ListingPhoto(models.Model):
-    image_url = models.ImageField(upload_to="listing_photos/")
+    image_url = models.ImageField(upload_to="listings/")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
 
     def __str__(self):
