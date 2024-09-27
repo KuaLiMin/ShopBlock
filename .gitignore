@@ -80,3 +80,4 @@ swe-env/
 *.sqlite3
 
 mypy.ini
+listing_photos/
