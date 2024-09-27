@@ -81,3 +81,5 @@ swe-env/
 
 mypy.ini
 listing_photos/
+backend/media/
+backend/staticfiles/
