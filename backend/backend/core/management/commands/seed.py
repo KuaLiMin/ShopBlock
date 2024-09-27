@@ -71,7 +71,7 @@ class Command(BaseCommand):
         print("Successfully Seeded - Listings")
 
         # Seed a listing photo - sample cat image
-        image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/A-Cat.jpg/2560px-A-Cat.jpg"
+        image_url = "https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg"
         response = requests.get(image_url)
 
         url_path = urlparse(image_url).path
