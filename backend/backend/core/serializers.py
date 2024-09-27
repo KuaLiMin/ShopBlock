@@ -14,18 +14,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ListingPhotoSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = ListingPhoto
-        fields = ["id", "image"]
+        fields = ["id", "image_url"]
 
     # This will return the a path to the image
-    def get_image(self, obj):
+    def get_image_url(self, obj):
         request = self.context.get("request")
-        if obj.image and hasattr(obj.image, "url"):
+        if obj.image_url and hasattr(obj.image_url, "url"):
             return (
-                request.build_absolute_uri(obj.image.url) if request else obj.image.url
+                request.build_absolute_uri(obj.image_url.url)
+                if request
+                else obj.image_url.url
             )
         return None
 

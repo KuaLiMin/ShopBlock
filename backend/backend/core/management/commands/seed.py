@@ -76,7 +76,7 @@ class Command(BaseCommand):
             content_type=response.headers.get("content-type"),
         )
 
-        listing_photo = ListingPhoto(image=image_file, listing=listing1)
+        listing_photo = ListingPhoto(image_url=image_file, listing=listing1)
         listing_photo.save()
 
         print("Successfully Seeded - Listing Photos")
