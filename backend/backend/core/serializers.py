@@ -14,13 +14,30 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ListingPhotoSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = ListingPhoto
         fields = ["id", "image"]
 
+    # This will return the a path to the image
+    def get_image(self, obj):
+        request = self.context.get("request")
+        if obj.image and hasattr(obj.image, "url"):
+            return (
+                request.build_absolute_uri(obj.image.url) if request else obj.image.url
+            )
+        return None
+
 
 class ListingSerializer(serializers.ModelSerializer):
-    photos = ListingPhotoSerializer(many=True, read_only=True)
+    # the source = listingphoto_set tells django to look for the reverse
+    # relationship from Listing -> ListingPhoto
+    # i.e. for each Listing, get all ListingPhotos, then serialize it through
+    # the ListingPhotoSerializer
+    photos = ListingPhotoSerializer(
+        many=True, read_only=True, source="listingphoto_set"
+    )
     category = serializers.ChoiceField(choices=Category.choices)
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
 

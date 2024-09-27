@@ -1,6 +1,14 @@
+import os
+import requests
+from urllib.parse import urlparse
+
 from django.core.management.base import BaseCommand, CommandError
-from backend.core.models import User, Listing, Category, ListingType
+from django.core.files import File
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.hashers import make_password
+
+from backend.core.models import User, Listing, Category, ListingType, ListingPhoto
 
 
 class Command(BaseCommand):
@@ -53,3 +61,22 @@ class Command(BaseCommand):
             listing_type=ListingType.SERVICE,
         )
         print("Successfully Seeded - Listings")
+
+        # Sample cat image
+        image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/A-Cat.jpg/2560px-A-Cat.jpg"
+        response = requests.get(image_url)
+
+        url_path = urlparse(image_url).path
+        file_name = os.path.basename(url_path)
+
+        image_content = ContentFile(response.content)
+        image_file = SimpleUploadedFile(
+            file_name,
+            image_content.read(),
+            content_type=response.headers.get("content-type"),
+        )
+
+        listing_photo = ListingPhoto(image=image_file, listing=listing1)
+        listing_photo.save()
+
+        print("Successfully Seeded - Listing Photos")
