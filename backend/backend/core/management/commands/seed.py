@@ -101,3 +101,10 @@ class Command(BaseCommand):
         offer2 = Offer.objects.create(offered_by=user3, listing=listing2, price=50.0)
 
         print("Seeded offer 2 - User 3 to Listing 2 - Pending")
+
+        # Since User 1 accepted an offer from User 2, User 2 reviews User 1
+        review1 = Review.objects.create(
+            reviewer=user2, user=user1, rating=5, description="Amazing seller"
+        )
+
+        print("Seeded review 1 - User 2 to User 1")

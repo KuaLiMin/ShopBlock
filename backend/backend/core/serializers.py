@@ -1,12 +1,29 @@
 from rest_framework import serializers
-from backend.core.models import User, Category, Listing, ListingPhoto, ListingType
+from django.db.models import Avg
+from backend.core.models import (
+    User,
+    Category,
+    Listing,
+    ListingPhoto,
+    ListingType,
+    Review,
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
+    average_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ("id", "email", "username", "password", "avatar")
+        fields = ("id", "email", "username", "password", "avatar", "average_rating")
         extra_kwargs = {"password": {"write_only": True}}
+
+    def get_average_rating(self, obj):
+        # Get all reviews for received by this user and aggregate the average
+        avg_rating = Review.objects.filter(user=obj).aggregate(Avg("rating"))[
+            "rating__avg"
+        ]
+        return avg_rating if avg_rating is not None else 0
 
     def create(self, validated_data):
         user = UserProfile.objects.create_user(**validated_data)
