@@ -1,6 +1,22 @@
+import os
+import requests
+from urllib.parse import urlparse
+
 from django.core.management.base import BaseCommand, CommandError
-from backend.core.models import User, Listing, Category, ListingType
+from django.core.files import File
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.hashers import make_password
+
+from backend.core.models import (
+    User,
+    Listing,
+    Category,
+    ListingType,
+    ListingPhoto,
+    Offer,
+    Review,
+)
 
 
 class Command(BaseCommand):
@@ -53,3 +69,42 @@ class Command(BaseCommand):
             listing_type=ListingType.SERVICE,
         )
         print("Successfully Seeded - Listings")
+
+        # Seed a listing photo - sample cat image
+        image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/A-Cat.jpg/2560px-A-Cat.jpg"
+        response = requests.get(image_url)
+
+        url_path = urlparse(image_url).path
+        file_name = os.path.basename(url_path)
+
+        image_content = ContentFile(response.content)
+        image_file = SimpleUploadedFile(
+            file_name,
+            image_content.read(),
+            content_type=response.headers.get("content-type"),
+        )
+
+        listing_photo = ListingPhoto(image_url=image_file, listing=listing1)
+        listing_photo.save()
+
+        print("Successfully Seeded - Listing Photos")
+
+        # Seed offers
+        # User 2 makes an offer to User 1, for listing 1, but accepted
+        offer1 = Offer.objects.create(offered_by=user2, listing=listing1, price=10.0)
+        # Simulate an accept
+        offer1.accept()
+
+        print("Seeded offer 1 - User 2 to Listing 1 - Accepted")
+
+        # User 3 makes an offer to User 2, for listing 2, but pending
+        offer2 = Offer.objects.create(offered_by=user3, listing=listing2, price=50.0)
+
+        print("Seeded offer 2 - User 3 to Listing 2 - Pending")
+
+        # Since User 1 accepted an offer from User 2, User 2 reviews User 1
+        review1 = Review.objects.create(
+            reviewer=user2, user=user1, rating=5, description="Amazing seller"
+        )
+
+        print("Seeded review 1 - User 2 to User 1")

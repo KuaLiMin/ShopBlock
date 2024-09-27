@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import (
@@ -59,3 +61,10 @@ urlpatterns = [
         name="redoc",
     ),
 ]
+
+# This is quite a hack to keep things to be a monolith as much as possible
+# ideally in prod, we would just serve it over nginx but i think this will
+# change quickly so it's fine to dev like this - there's not much
+# media content to be served for now anwyay
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

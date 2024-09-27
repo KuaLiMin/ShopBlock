@@ -91,7 +91,9 @@ class DebugUserList(GenericAPIView):
     serializer_class = UserSerializer
 
     def get(self, request: Request):
-        return JsonResponse(list(User.objects.values()), safe=False)
+        users = User.objects.all()
+        serializer = self.serializer_class(users, many=True)
+        return Response(serializer.data)
 
 
 class DebugListingList(GenericAPIView):
@@ -102,4 +104,6 @@ class DebugListingList(GenericAPIView):
     serializer_class = ListingSerializer
 
     def get(self, request: Request):
-        return JsonResponse(list(Listing.objects.values()), safe=False)
+        listings = Listing.objects.all()
+        serializer = self.serializer_class(listings, many=True)
+        return Response(serializer.data)
