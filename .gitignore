@@ -78,3 +78,5 @@ swe-env/
 
 # Dont commit any local databases to avoid syncing issues
 *.sqlite3
+
+mypy.ini
