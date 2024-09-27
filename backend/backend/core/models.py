@@ -80,3 +80,69 @@ class ListingPhoto(models.Model):
 
     def __str__(self):
         return f"Photo for {self.listing.title}"
+
+
+class Offer(models.Model):
+    # The only available statuses for an offer
+    PENDING = "P"
+    ACCEPTED = "A"
+    REJECTED = "R"
+
+    STATUS_CHOICES = [
+        (PENDING, "Pending"),
+        (ACCEPTED, "Accepted"),
+        (REJECTED, "Rejected"),
+    ]
+
+    # The user making the offer
+    offered_by = models.ForeignKey(
+        User, related_name="offers_made", on_delete=models.CASCADE
+    )
+
+    # Link back to the listing
+    listing = models.ForeignKey(
+        Listing, related_name="offers_received", on_delete=models.CASCADE
+    )
+
+    # The price offered by the user, this isn't fixed by the listing
+    # since the user making offer can offer certain amounts
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # Status of the offer
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=PENDING)
+
+    # Timestamp when the offer is made
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # for the original listing owner to accept
+    def accept(self):
+        if self.status == self.PENDING:
+            self.status = self.ACCEPTED
+            self.save()
+
+    # for the original listing owner to reject
+    def reject(self):
+        if self.status == self.PENDING:
+            self.status = self.REJECTED
+            self.save()
+
+
+class Review(models.Model):
+    reviewer = models.ForeignKey(
+        User, related_name="reviews_given", on_delete=models.CASCADE
+    )
+
+    # Reference to the user being reviewed
+    user = models.ForeignKey(
+        User,
+        related_name="reviews_received",
+        on_delete=models.CASCADE,
+    )
+
+    rating = models.PositiveSmallIntegerField()
+
+    # Optional description for the review
+    description = models.TextField(blank=True, null=True)
+
+    # Automatically set the time when the review was created
+    created_at = models.DateTimeField(auto_now_add=True)
