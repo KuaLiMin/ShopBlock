@@ -64,6 +64,10 @@ class Listing(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
+    # location fields, it's not fully accurate with floats but it's okay, the user
+    # may choose to not provide a location and thus null
+    latitude = models.FloatField(null=True)
+    longitude = models.FloatField(null=True)
     # These categories can be filtered, default is electronics
     category = models.CharField(
         max_length=2, choices=Category.choices, default=Category.ELECTRONICS

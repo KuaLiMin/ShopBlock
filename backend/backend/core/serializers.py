@@ -59,6 +59,7 @@ class ListingSerializer(serializers.ModelSerializer):
     )
     category = serializers.ChoiceField(choices=Category.choices)
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
+    created_by = serializers.SerializerMethodField()
 
     class Meta:
         model = Listing
@@ -66,10 +67,19 @@ class ListingSerializer(serializers.ModelSerializer):
             "id",
             "created_at",
             "updated_at",
+            "created_by",
             "title",
             "description",
             "category",
             "listing_type",
             "photos",
+            "longitude",
+            "latitude",
         ]
         read_only_fields = ["created_at", "updated_at"]
+
+    def get_created_by(self, obj):
+        user = User.objects.get(email=obj.uploaded_by)
+        print(obj.uploaded_by)
+        print(user)
+        return user.username
