@@ -3,8 +3,7 @@
     align-items: flex-start; 
     justify-content: flex-start;
     flex-direction: column;      /* Arrange items in a column */
-    padding: 20px 10% 20px 10%;            /* 100px margin on left and right */
-    width: calc(100% - 200px);  /* Ensures container doesn't overflow the viewport */
+    padding: 20px 10%;          /* 10% padding on left and right */
 }
 
 .container h3 {
@@ -12,35 +11,96 @@
 }
 
 .container img {
-    max-width: 300px; /* Image won't exceed 300px */
-    width: 100%; /* Take the full width of the container */
-    height: auto; /* Maintain aspect ratio */
-    margin: 30px 0; /* Add top and bottom margins for spacing */
+    max-width: 300px;           /* Image won't exceed 300px */
+    width: 100%;                /* Take the full width of the container */
+    height: auto;               /* Maintain aspect ratio */
+    margin: 30px 0;             /* Add top and bottom margins for spacing */
 }
 
 hr {
-    border: none; /* Remove the default border */
+    border: none;               /* Remove the default border */
     border-top: 1px solid #ccc; /* Set a visible line */
-    margin: 20px 0px 10px 0px;
-    height: 1px; /* Ensure it has a height */
-    width: 70%;
+    margin: 20px 50px 10px 0;     /* Margin for spacing */
+    height: 1px;                /* Ensure it has a height */
+    width: calc(100%-50px)
 }
 
 .description {
-    max-width: 70%; /* Set the maximum width to 70% */
-    gap: 10px;
+    max-width: 100%;            /* Set maximum width for description */
+    gap: 10px;                  /* Add gap between child elements */
 }
 
 .description p {
-    margin: 3px 0px 5px 0px;
+    margin: 3px 0 5px 0;       /* Margin for paragraph elements */
 }
 
 .linkcolor {
-    color: blue; /* Change this to your desired color */
-    text-decoration: none; /* Optional: remove underline */
-  }
-  
-/* Set the color for visited links to be the same */
+    color: blue;                /* Change this to your desired color */
+    text-decoration: none;      /* Optional: remove underline */
+}
+
 .linkcolor:visited {
-color: blue; /* Ensure this matches the unvisited color */
+    color: blue;                /* Ensure this matches the unvisited color */
+}
+
+.title-rate-description-container {
+    display: flex; /* Use flexbox to arrange title, rate, description, and user rating */
+    width: 100%; /* Full width of the parent */
+    margin-top: 16px; /* Adds space above */
+}
+
+.title-rate-description {
+    flex: 80%; /* This takes 2 parts of the available space (70%) */
+    padding-right: 10px; /* Optional: space between title and user rating */
+}
+
+.user-detail-container {
+    flex: 25%; /* Takes 1 part of the available space (30%) */
+    display: flex;
+    align-items: flex-start; /* Center aligns user rating items */
+    padding: 20px 0 10px 0; /* Padding inside the box */
+    background-color: #f9f9f9; /* Light background color for the box */
+    border: 1px solid #ddd; /* Light border around the box */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}
+
+.user-rating-container {
+    display: flex; /* Flexbox for user rating items */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start (top) of the column */
+}
+
+.user-name-container {
+    margin-bottom: 4px; /* Add space between username and rating */
+}
+
+.user-stars-container {
+    display: flex; /* Flexbox for stars and rating */
+    align-items: center; /* Align items in the center vertically */
+}
+
+.user-profile {
+    display: flex; /* Flexbox for user profile items */
+    align-items: center; /* Center align profile within the container */
+    margin: 5px 0 0 10px;
+}
+
+.rating{
+    margin-right:10px;
+}
+
+.star-icon {
+    font-size: 16px; /* Size of the star icon */
+    color: gold; /* Color of the highlighted star icon */
+}
+
+.star-icon-empty {
+    font-size: 16px; /* Size of the empty star icon */
+    color: lightgray; /* Color of the non-highlighted star icon */
+}
+
+.avatar {
+    margin-left: 10px; 
+    margin-right: 20px;        
 }

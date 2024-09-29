@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import StarIcon from '@mui/icons-material/Star'; 
+import StarHalfIcon from '@mui/icons-material/StarHalf'; // Import a half star icon
+import Avatar from '@mui/material/Avatar'; 
+import ReportListingButton from '../components/ReportListingButton';
 import './CSS/ListingDetail.css'
 
 const ListingDetail = () => {
   const { slug } = useParams();
+  const totalStars = 5;
 
   // State to hold fetched data
   const [listingData, setListingData] = useState(null);
@@ -79,7 +84,7 @@ const ListingDetail = () => {
         }
 
         const users = await response.json();
-        // Find the user that matches the current listing's user ID
+        // Find the user that matches the current listing's user name
         const currentUser = users.find(user => user.username === listingData.user);
         
         if (currentUser) {
@@ -115,17 +120,49 @@ const ListingDetail = () => {
         {' '}{'>'} {listingData.title}
       </p>
       <img src={listingData.image} alt={listingData.title} />
-      <h3>{listingData.title}</h3>
-      <p>Rate: {listingData.rate}</p>
-      <hr />
-      <div className="description">
-        <h3>Description</h3>
-        <p>{listingData.description}</p>
-      </div>
-      <div>
-        <h3>User Rating</h3>
-        <p>Average Rating: {userData?.rating || 'No rating available'}</p>
-        {userData?.avatar && <img src={userData.avatar} alt="User Avatar" />}
+      {/* New Flex container for title, rate, and description with user rating */}
+      <div className="title-rate-description-container">
+        <div className ="title-rate-description">
+          <h3>{listingData.title} <ReportListingButton /></h3>
+          <p>{listingData.rate}</p>
+          <hr />
+          <div className="description">
+            <h3>Description</h3>
+            <p>{listingData.description}</p>
+          </div>
+        </div>
+
+        {/* User Rating Container */}
+        <div className="user-detail-container">
+          <div className="user-profile">
+            <Avatar 
+              src={userData?.avatar || "/api/placeholder/40/40"} 
+              alt={userData?.username || "User Avatar"} 
+              className="avatar"
+            />
+          </div>
+          <div className= "user-rating-container">
+            <div className="user-name-container">
+              <h4 style={{ fontSize: '18px' }}>{listingData.user}</h4>
+            </div>
+            <div className="user-stars-container">
+              {/* Display the rating with one decimal place */}
+              <span className= "rating">{userData ? userData.rating.toFixed(1) : 'N/A'}</span>
+              {/* Render highlighted stars based on rating */}
+              {userData && userData.rating > 0 && Array.from({ length: Math.floor(userData.rating) }).map((_, i) => (
+                <StarIcon key={`filled-${i}`} className="star-icon" />
+              ))}
+              {/* Render half star if the rating is a half star */}
+              {userData && userData.rating % 1 !== 0 && (
+                <StarHalfIcon key="half-star" className="star-icon" />
+              )}
+              {/* Render non-highlighted stars */}
+              {userData && Array.from({ length: totalStars - Math.ceil(userData.rating) }).map((_, i) => (
+                <StarIcon key={`empty-${i}`} className="star-icon-empty" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
