@@ -9,6 +9,7 @@ const ListingDetail = () => {
   const [listingData, setListingData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   // Parse the slug to extract title and id
   const [titleFromSlug, , id] = slug ? slug.split('-').reduce((acc, part, index) => {
@@ -26,7 +27,7 @@ const ListingDetail = () => {
       BO: 'Books',
     };
 
-    // Fetch the JSON file
+    // Fetch the listing details
     fetch('/listing/') // Update this path to your JSON file
       .then(response => {
         if (!response.ok) {
@@ -46,6 +47,7 @@ const ListingDetail = () => {
             rate: `$${1}/Day`, // Assuming you still want a fixed rate, replace with listing.rate if available
             image: listing.photos[0]?.image_url || 'default-image-url.jpg', // Use the first image or a default
             category: categoryMap[listing.category] || 'Others',
+            user: listing.created_by,
           };
           setListingData(formattedData);
         } else {
@@ -60,6 +62,47 @@ const ListingDetail = () => {
       });
   }, [id, titleFromSlug]); // Remove categoryMap from dependencies
 
+ // Fetch user details
+ useEffect(() => {
+  const fetchUserData = async () => {
+    if (listingData?.user) {
+      try {
+        // Fetch the list of users
+        const response = await fetch('/debug/user/', {
+          method: 'GET',
+          headers: {
+            'accept': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const users = await response.json();
+        // Find the user that matches the current listing's user ID
+        const currentUser = users.find(user => user.username === listingData.user);
+        
+        if (currentUser) {
+          const retrievedUserDetails = {
+            rating: currentUser.average_rating,
+            avatar: currentUser.avatar || 'default-avatar-url.jpg', // Use a default avatar if none is provided
+          };
+          setUserData(retrievedUserDetails);
+        } else {
+          setError('User not found');
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        setError('Failed to fetch user data. Please try again later.');
+      }
+    }
+  };
+
+  fetchUserData();
+}, [listingData]);
+
+
+
   // Render loading state, error message, or listing details
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -68,15 +111,21 @@ const ListingDetail = () => {
   return (
     <div className="container">
       <p>
-        <Link className="linkcolor" to={`/${listingData.category}`}>{listingData.category}</Link> {'>'} {listingData.title}
+        <Link className="linkcolor" to={`/${listingData.category}`}>{listingData.category}</Link>
+        {' '}{'>'} {listingData.title}
       </p>
       <img src={listingData.image} alt={listingData.title} />
       <h3>{listingData.title}</h3>
-      <p>S{listingData.rate}</p>
+      <p>Rate: {listingData.rate}</p>
       <hr />
-      <div className="description"> 
+      <div className="description">
         <h3>Description</h3>
         <p>{listingData.description}</p>
+      </div>
+      <div>
+        <h3>User Rating</h3>
+        <p>Average Rating: {userData?.rating || 'No rating available'}</p>
+        {userData?.avatar && <img src={userData.avatar} alt="User Avatar" />}
       </div>
     </div>
   );
