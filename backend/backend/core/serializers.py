@@ -35,7 +35,7 @@ class ListingPhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ListingPhoto
-        fields = ["id", "image_url"]
+        fields = ["image_url"]
 
     # This will return the a path to the image
     def get_image_url(self, obj):
@@ -80,6 +80,4 @@ class ListingSerializer(serializers.ModelSerializer):
 
     def get_created_by(self, obj):
         user = User.objects.get(email=obj.uploaded_by)
-        print(obj.uploaded_by)
-        print(user)
         return user.username
