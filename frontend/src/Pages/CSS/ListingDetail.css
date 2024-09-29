@@ -1,14 +1,46 @@
-.listing-detail {
-    display: flex; /* Use Flexbox to center content */
-    flex-direction: column; /* Arrange items in a column */
-    align-items: center; /* Center items horizontally */
-    justify-content: center; /* Center items vertically */
-    height: 100vh; /* Full height of the viewport */
-    text-align: center; /* Center text */
-    background-color: #f9f9f9; /* Optional: add a background color */
+.container {
+    display: flex;               /* Use Flexbox to arrange children */
+    align-items: flex-start; 
+    justify-content: flex-start;
+    flex-direction: column;      /* Arrange items in a column */
+    padding: 20px 10% 20px 10%;            /* 100px margin on left and right */
+    width: calc(100% - 200px);  /* Ensures container doesn't overflow the viewport */
+}
+
+.container h3 {
+    margin-bottom: 3px;
+}
+
+.container img {
+    max-width: 300px; /* Image won't exceed 300px */
+    width: 100%; /* Take the full width of the container */
+    height: auto; /* Maintain aspect ratio */
+    margin: 30px 0; /* Add top and bottom margins for spacing */
+}
+
+hr {
+    border: none; /* Remove the default border */
+    border-top: 1px solid #ccc; /* Set a visible line */
+    margin: 20px 0px 10px 0px;
+    height: 1px; /* Ensure it has a height */
+    width: 70%;
+}
+
+.description {
+    max-width: 70%; /* Set the maximum width to 70% */
+    gap: 10px;
+}
+
+.description p {
+    margin: 3px 0px 5px 0px;
+}
+
+.linkcolor {
+    color: blue; /* Change this to your desired color */
+    text-decoration: none; /* Optional: remove underline */
   }
   
-  h1, h2, h3 {
-    margin: 10px 0; /* Optional: add some margin between headings */
-  }
-  
+/* Set the color for visited links to be the same */
+.linkcolor:visited {
+color: blue; /* Ensure this matches the unvisited color */
+}
