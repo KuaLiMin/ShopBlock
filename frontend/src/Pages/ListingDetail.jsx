@@ -4,7 +4,11 @@ import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf'; // Import a half star icon
 import Avatar from '@mui/material/Avatar'; 
 import ReportListingButton from '../components/ReportListingButton';
+import MyMapComponent from '../components/MyMapComponent';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Typography from '@mui/material/Typography';
 import './CSS/ListingDetail.css'
+
 
 const ListingDetail = () => {
   const { slug } = useParams();
@@ -53,6 +57,8 @@ const ListingDetail = () => {
             image: listing.photos[0]?.image_url || 'default-image-url.jpg', // Use the first image or a default
             category: categoryMap[listing.category] || 'Others',
             user: listing.created_by,
+            longitude: parseFloat(listing.longitude) || 0, // Ensure this is a number
+            latitude: parseFloat(listing.latitude) || 0,   // Ensure this is a number
           };
           setListingData(formattedData);
         } else {
@@ -163,6 +169,20 @@ const ListingDetail = () => {
             </div>
           </div>
         </div>
+      </div>
+      {/* Centered Map Section */}
+        <div className="map-section">
+        <Typography variant="h4" className="view-location-title">
+          <LocationOnIcon className="location-icon" />
+          View Location
+        </Typography>
+        {userData && listingData.latitude && listingData.longitude ? (
+          <div className="map-container">
+            <MyMapComponent latitude={listingData.latitude} longitude={listingData.longitude} />
+          </div>
+        ) : (
+          <p className="error-message">Location data is not available.</p>
+        )}
       </div>
     </div>
   );

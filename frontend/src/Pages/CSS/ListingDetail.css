@@ -4,6 +4,7 @@
     justify-content: flex-start;
     flex-direction: column;      /* Arrange items in a column */
     padding: 20px 10%;          /* 10% padding on left and right */
+    height: 100%;
 }
 
 .container h3 {
@@ -103,4 +104,43 @@ hr {
 .avatar {
     margin-left: 10px; 
     margin-right: 20px;        
+}
+
+.map-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the title and map horizontally */
+    margin: 50px 0; /* 50px margin above and below */
+    width: 100%; /* Ensure full width */
+    max-width: 800px; /* Set a max width to match the container's width */
+    margin-left: auto; /* Center the section */
+    margin-right: auto; /* Center the section */
+    margin-top: 100px;
+}
+
+  
+.map-container {
+margin-top: 10px;
+width: 100%; /* Make sure it takes the full width */
+}
+
+.error-message {
+    text-align: center; /* Center the error message */
+    color: #ff0000; /* Red color for errors */
+    margin-top: 20px; /* Space above the error message */
+    font-size: 1.2em; /* Adjust the font size as needed */
+}
+
+
+.map-section .view-location-title {
+    display: flex;               /* Use flexbox for the title */
+    align-items: center;        /* Center align items vertically */
+    font-size: 25px;            /* Set font size */
+    font-weight: bold;          /* Make text bold */
+    width: 100%;                /* Ensure the title takes full width for alignment */
+}
+
+.map-section .location-icon {
+    margin-right: 10px;         /* Space between icon and text */
+    COLOR: #FF0000;
 }
