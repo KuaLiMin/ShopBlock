@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Listing.css'; // Make sure to create this CSS file
 
-const ListingCard = ({ title, rate, image }) => {
+const ListingCard = ({id, time, title, rate, image }) => {
+  const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
+
   return (
-    <div className="listing-card">
+    <Link to={`/listing/${title}-${formattedTime}-${id}`}> {/* CREATED BY HAYES */}
       <img src={image} alt={title} className="listing-image"/>
       <div className="listing-info">
         <h4>{title}</h4>
         <p>{rate}</p>
       </div>
-    </div>
+    </Link>   // {/* CREATED BY HAYES */}
   );
 }
 
@@ -38,6 +41,8 @@ const ListingsGrid = () => {
       .then(data => {
         // Map the backend data to match your card structure
         const formattedData = data.map(listing => ({
+          id: listing.id,                   //CREATED BY HAYES
+          time: listing.created_at,         //CREATED BY HAYES
           title: listing.title,
           description: listing.description,
           rate: `$${1}/Day`, 

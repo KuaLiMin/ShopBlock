@@ -1,0 +1,14 @@
+.listing-detail {
+    display: flex; /* Use Flexbox to center content */
+    flex-direction: column; /* Arrange items in a column */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    height: 100vh; /* Full height of the viewport */
+    text-align: center; /* Center text */
+    background-color: #f9f9f9; /* Optional: add a background color */
+  }
+  
+  h1, h2, h3 {
+    margin: 10px 0; /* Optional: add some margin between headings */
+  }
+  

@@ -6,7 +6,6 @@ import SideNav from '../components/Listing/SideNav';
 import { ListingsGrid } from '../components/Listing/Listing';
 import '../components/Listing/Listing.css';
 
-
 export const Listing = () => {
   return (
     <div className="listing-app">
