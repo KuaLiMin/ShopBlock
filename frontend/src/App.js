@@ -16,6 +16,7 @@ import Footer from './components/Footer/Footer';
 import electronics_banner from './components/Images/banner_mens.png'
 import services_banner from './components/Images/banner_women.png'
 import supplies_banner from './components/Images/banner_kids.png'
+import ListingDetail from './Pages/ListingDetail';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
         <Route path='/services'element={<ShopCat banner = {services_banner} category = "services"/>}/>
         <Route path='/supplies'element={<ShopCat banner = {supplies_banner} category = "supplies"/>}/>
         <Route path="/Listing" element={<Listing/>}>
-          <Route path=':ListingID' element={<Listing/>}/>
+            <Route path=':ListingID' element={<ListingDetail />} />
         </Route>
         <Route path='/cart' element={<cart/>}/>
         <Route path='/login' element={<Login/>}/>

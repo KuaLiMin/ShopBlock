@@ -77,8 +77,8 @@ const TransactionHistory = () => {
               title="Pet Walking Service"
               name="Hazard23"
               hourlyRate={9}
-              timeStart="19/12/2024 1700"
-              timeEnd="19/12/2024 2300"
+              timeStart="20/8/2024 1700"
+              timeEnd="20/8/2024 2300"
               amount={54}
               completed={isTaskCompleted}
             />
