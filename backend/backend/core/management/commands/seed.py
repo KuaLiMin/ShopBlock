@@ -49,7 +49,7 @@ class Command(BaseCommand):
             uploaded_by=user1,
             title="Electronic Drill",
             description="Looking to rent out an electronic drill as I do not need it anymore",
-            latitude=1.31745, # somewhere in farrer road
+            latitude=1.31745,  # somewhere in farrer road
             longitude=103.80704,
             category=Category.ELECTRONICS,
             listing_type=ListingType.RENTAL,
@@ -59,9 +59,9 @@ class Command(BaseCommand):
             uploaded_by=user2,
             title="Camping Tent",
             description="Looking to rent out a camping tent as it is unused in the house",
-            latitude=1.35160, # somewhere in nex
+            latitude=1.35160,  # somewhere in nex
             longitude=103.87119,
-            category=Category.OTHER,
+            category=Category.SUPPLIES,
             listing_type=ListingType.RENTAL,
         )
 
@@ -69,9 +69,9 @@ class Command(BaseCommand):
             uploaded_by=user3,
             title="Plumbing services",
             description="Plumbing services, available from 9am to 5pm anywhere in Singapore.",
-            latitude=1.42953 , # somewhere in yishun
+            latitude=1.42953,  # somewhere in yishun
             longitude=103.83503,
-            category=Category.HOUSEHOLD,
+            category=Category.SERVICES,
             listing_type=ListingType.SERVICE,
         )
         print("Successfully Seeded - Listings")

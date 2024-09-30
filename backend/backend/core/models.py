@@ -11,11 +11,8 @@ from django.contrib.auth.hashers import make_password
 # The different category types
 class Category(models.TextChoices):
     ELECTRONICS = "EL", _("Electronics")
-    HOUSEHOLD = "HH", _("HouseHold")
-    FURNITURE = "FU", _("Furniture")
-    CLOTHING = "CL", _("Clothing")
-    BOOKS = "BO", _("Books")
-    OTHER = "OT", _("Other")
+    SUPPLIES = "SU", _("Supplies")
+    SERVICES = "SE", _("Services")
 
 
 # Type of listings
