@@ -1,6 +1,9 @@
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
 from django.shortcuts import render
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from rest_framework import permissions, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,8 +14,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
-from backend.core.models import User, Listing
-from backend.core.serializers import UserSerializer, ListingSerializer
+from backend.core.models import User, Listing, ListingPhoto
+from backend.core.serializers import (
+    UserSerializer,
+    ListingSerializer,
+    ListingCreateSerializer,
+)
 
 # The views here will be mapped to a url in urls.py
 # Try to make specific user views, for each functionality
@@ -60,11 +67,16 @@ class RegisterUserView(APIView):
 
 class ListingView(GenericAPIView):
     """
-    Listing endpoint for GET and POST
+    Listing endpoint, [GET, POST]
+
+    For the GET request, it returns all listings that are stored in the database.
+
+    For the POST request, this is the same as "creating" a new listing.
     """
 
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request: Request):
         queryset = self.get_queryset()
@@ -72,15 +84,22 @@ class ListingView(GenericAPIView):
         return JsonResponse(serializer.data, safe=False)
 
     # user posts a listing
+    @extend_schema(
+        request=ListingCreateSerializer,
+        responses={201: ListingSerializer},
+    )
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def post(self, request: Request):
-        serializer = self.get_serializer(data=request.data)
-        # If the form details are correct, then save it into the database
+        serializer = ListingCreateSerializer(data=request.data)
+        # Use custom serializer for the post request here
         if serializer.is_valid():
-            serializer.save()
+            # Add via the JWT-ed user
+            serializer.save(uploaded_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Otherwise, the input was not correct
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class DebugUserList(GenericAPIView):

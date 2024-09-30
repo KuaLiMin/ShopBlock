@@ -35,7 +35,7 @@ class ListingPhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ListingPhoto
-        fields = ["id", "image_url"]
+        fields = ["image_url"]
 
     # This will return the a path to the image
     def get_image_url(self, obj):
@@ -80,6 +80,31 @@ class ListingSerializer(serializers.ModelSerializer):
 
     def get_created_by(self, obj):
         user = User.objects.get(email=obj.uploaded_by)
-        print(obj.uploaded_by)
-        print(user)
         return user.username
+
+
+# Specific serializer for POSTing a Listing
+# then this will split into the listing and listing_photos table
+class ListingCreateSerializer(ListingSerializer):
+    photos = serializers.ListField(
+        child=serializers.ImageField(
+            max_length=1000000, allow_empty_file=False, use_url=False
+        ),
+        write_only=True,
+    )
+
+    class Meta(ListingSerializer.Meta):
+        fields = ListingSerializer.Meta.fields + ["photos"]
+
+    def create(self, validated_data):
+        # Extract the photos from the validated data
+        photos_data = validated_data.pop("photos", [])
+
+        # Create the base Listing object
+        listing = Listing.objects.create(**validated_data)
+
+        # Create a listing photo for each object, then link the listing FK back to it
+        for photo in photos_data:
+            ListingPhoto.objects.create(listing=listing, image_url=photo)
+
+        return listing
