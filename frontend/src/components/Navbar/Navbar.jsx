@@ -63,7 +63,7 @@ const Navbar = () => {
         <Link to='/geo'><button className="faq-button">FAQ</button></Link> {/*error cannot change /geo to /faq*/} 
         <Link to='/geo'><img src={geo_icon} alt="Geo" className="geo-icon" /></Link>
         <Link to='/search'><img src={search_icon} alt="Search" className="search-icon" /></Link>
-        <Link to='/user'><img src={user_icon} alt="User" /></Link>
+        <Link to='/Listing'><img src={user_icon} alt="User" /></Link>
       </div>
       <div className="nav-login-cart">
         <Link to='/Login'><button>login</button></Link>

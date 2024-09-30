@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import './Listing.css'; // Make sure to create this CSS file
+import { Link } from 'react-router-dom';
 
-const ListingCard = ({ title, rate, image }) => {
+const ListingCard = ({ title, rate, image, id, time }) => {
+  const formattedTitle = title.replace(/ /g, '_');
+  const formattedTime = encodeURIComponent(time.replace(/-/g, '_'));
   return (
-    <div className="listing-card">
-      <img src={image} alt={title} className="listing-image"/>
-      <div className="listing-info">
-        <h4>{title}</h4>
-        <p>{rate}</p>
+    <Link to={`/listing/${formattedTitle}-${formattedTime}-${id}`} style={{ textDecoration: 'none'}} > {/* Dynamic link */}
+      <div className="listing-card">
+        <img src={image} alt={title} className="listing-image"/>
+        <div className="listing-info">
+          <h4>{title}</h4>
+          <p>{rate}</p>
+        </div>
       </div>
-    </div>
+    </Link>
   );
+  // return (
+  //   <div className="listing-card">
+  //     <img src={image} alt={title} className="listing-image"/>
+  //     <div className="listing-info">
+  //       <h4>{title}</h4>
+  //       <p>{rate}</p>
+  //     </div>
+  //   </div>
+  // );
 }
 
 
 
-const ListingsGrid = () => {
+const ListingsGrid = ({updateCount = () => {} }) => {
   const [listingsData, setListingsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,20 +52,24 @@ const ListingsGrid = () => {
       .then(data => {
         // Map the backend data to match your card structure
         const formattedData = data.map(listing => ({
+          id: listing.id,
+          time: listing.created_at,
           title: listing.title,
           description: listing.description,
           rate: `$${1}/Day`, 
-          image: 'url'//listing.image_url 
+          image: listing.photos.length > 0 ? listing.photos[0].image_url : ''
         }));
         setListingsData(formattedData);
         setLoading(false);
+
+        updateCount(formattedData.length);
       })
       .catch(error => {
         console.error('Error fetching listings:', error);
         setError(error);
         setLoading(false);
       });
-  }, []);
+  }, [updateCount]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading data</p>;
@@ -64,24 +82,5 @@ const ListingsGrid = () => {
     </div>
   );
 };
-
-// const ListingsGrid = () => {
-//   const listingsData = [
-//     { title: 'Mahjong Table', rate: '$10/Day', image: 'path_to_mahjong_image.jpg' },
-//     { title: 'Pet Walking Services', rate: '$20/Hr', image: 'path_to_pet_walking_image.jpg' },
-//     { title: 'Housekeeping', rate: '$200/Day', image: 'path_to_housekeeping_image.jpg' },
-//     { title: 'Clothes Rack', rate: '$16/Day', image: 'path_to_clothes_rack_image.jpg' },
-//     { title: 'Baking', rate: '$200/Day', image: 'path_to_housekeeping_image.jpg' },
-//     { title: 'Clothes Rack', rate: '$16/Day', image: 'path_to_clothes_rack_image.jpg' }
-//   ];
-
-//   return (
-//     <div className="listings-grid">
-//       {listingsData.map((listing, index) => (
-//         <ListingCard key={index} {...listing} />
-//       ))}
-//     </div>
-//   );
-// }
 
   export { ListingCard, ListingsGrid };
