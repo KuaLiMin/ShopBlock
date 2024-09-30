@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Listing.css'; // Make sure to create this CSS file
 import { Link } from 'react-router-dom';
 
-const ListingCard = ({ title, rate, image, id, time }) => {
-  const formattedTitle = title.replace(/ /g, '_');
-  const formattedTime = encodeURIComponent(time.replace(/-/g, '_'));
+const ListingCard = ({id, time, title, rate, image }) => {
+  const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
+
   return (
-    <Link to={`/listing/${formattedTitle}-${formattedTime}-${id}`} style={{ textDecoration: 'none'}} > {/* Dynamic link */}
-      <div className="listing-card">
-        <img src={image} alt={title} className="listing-image"/>
-        <div className="listing-info">
-          <h4>{title}</h4>
-          <p>{rate}</p>
-        </div>
+    <Link to={`/listing/${title}-${formattedTime}-${id}`}> {/* CREATED BY HAYES */}
+      <img src={image} alt={title} className="listing-image"/>
+      <div className="listing-info">
+        <h4>{title}</h4>
+        <p>{rate}</p>
       </div>
-    </Link>
+    </Link>   // {/* CREATED BY HAYES */}
   );
   // return (
   //   <div className="listing-card">
