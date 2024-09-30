@@ -51,7 +51,7 @@
   
 .price-range button {
     padding: 5px 10px;
-    background-color: #4fa4cf; /* Bootstrap blue */
+    background-color: #63abbf; /* Bootstrap blue */
     color: white;
     border: none;
     border-radius: 5px;
@@ -134,11 +134,35 @@
   
 .listing-content h1 {
     color: #333;  
-    font-size: 24px;  
+    font-size: 30px;  
     font-weight: bold;  
-    margin-bottom: 20px; 
-    border-bottom: 2px solid #ccc;  
-    padding-bottom: 10px;  
+    margin-bottom: 10px; 
+    padding-top: 10px;  
+}
+
+.listing-card a {
+    text-decoration: none; 
+    color: #333333; /* Set color to match the original style (dark gray) */
+    font-weight: bold; /* Make the title bold like in your image */
+}
+
+/*Hover effect */
+.listing-card a:hover {
+    color: #1a426c; /* Change color slightly on hover */
+    text-decoration: none; 
+}
+
+/* Style for the title in the listing-info */
+.listing-info h4 {
+    margin: 5px 0;
+    color: #333333; /* Dark gray for consistency */
+    font-weight: bold; /* Match the original bold text */
+}
+
+/* Style for the rate in the listing-info */
+.listing-info p {
+    color: #666666; /* Light gray for rate */
+    font-size: 16px;
 }
 
 .listing-card {
@@ -146,37 +170,140 @@
     border-radius: 8px;
     overflow: hidden;
     transition: box-shadow 0.3s;
-  }
-  
-  .listing-card:hover {
+}
+
+.listing-card:hover {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  
-  .listing-image {
+}
+
+.listing-image {
     width: 100%;
     height: 150px; /* Adjust height as needed */
     object-fit: cover; /* Ensures the image covers the div without distorting */
-  }
-  
-  .listing-info {
+}
+
+.listing-info {
     padding: 10px;
     text-align: center;
-  }
-  
-  .listing-info h4 {
-    margin: 5px 0;
-  }
-  
-  .listing-info p {
-    color: #666;
-    font-size: 16px;
-  }
+}
 
 
-  .listings-grid {
+.listings-grid {
     flex-grow: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Creates a responsive grid */
     gap: 20px; /* Space between cards */
     padding: 20px;
-  }
+}
+
+.listings-header {
+    display: flex;
+    justify-content: space-between;  /* Ensures heading and button are on opposite sides */
+    align-items: center;  /* Vertically centers the button with the heading */
+    margin-bottom: 10px;
+}
+  
+  /* Styling for the Add Listing button */
+.add-listing-btn {
+    background-color: #63acc0;  /* Bootstrap blue or your preferred color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+  
+.add-listing-btn:hover {
+    background-color: #3a6470;  /* Darker blue on hover */
+}
+
+
+
+/*-------- ADD LISTING --------- */
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.listing-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+textarea {
+    resize: none;
+    height: 100px;
+}
+
+/* Button Styles */
+.add-photo-btn, .submit-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-photo-btn:hover, .submit-btn:hover {
+    background-color: #0056b3;
+}

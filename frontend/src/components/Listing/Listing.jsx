@@ -14,11 +14,20 @@ const ListingCard = ({id, time, title, rate, image }) => {
       </div>
     </Link>   // {/* CREATED BY HAYES */}
   );
+  // return (
+  //   <div className="listing-card">
+  //     <img src={image} alt={title} className="listing-image"/>
+  //     <div className="listing-info">
+  //       <h4>{title}</h4>
+  //       <p>{rate}</p>
+  //     </div>
+  //   </div>
+  // );
 }
 
 
 
-const ListingsGrid = () => {
+const ListingsGrid = ({updateCount = () => {} }) => {
   const [listingsData, setListingsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,17 +55,19 @@ const ListingsGrid = () => {
           title: listing.title,
           description: listing.description,
           rate: `$${1}/Day`, 
-          image: 'url'//listing.image_url 
+          image: listing.photos.length > 0 ? listing.photos[0].image_url : ''
         }));
         setListingsData(formattedData);
         setLoading(false);
+
+        updateCount(formattedData.length);
       })
       .catch(error => {
         console.error('Error fetching listings:', error);
         setError(error);
         setLoading(false);
       });
-  }, []);
+  }, [updateCount]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading data</p>;
@@ -69,24 +80,5 @@ const ListingsGrid = () => {
     </div>
   );
 };
-
-// const ListingsGrid = () => {
-//   const listingsData = [
-//     { title: 'Mahjong Table', rate: '$10/Day', image: 'path_to_mahjong_image.jpg' },
-//     { title: 'Pet Walking Services', rate: '$20/Hr', image: 'path_to_pet_walking_image.jpg' },
-//     { title: 'Housekeeping', rate: '$200/Day', image: 'path_to_housekeeping_image.jpg' },
-//     { title: 'Clothes Rack', rate: '$16/Day', image: 'path_to_clothes_rack_image.jpg' },
-//     { title: 'Baking', rate: '$200/Day', image: 'path_to_housekeeping_image.jpg' },
-//     { title: 'Clothes Rack', rate: '$16/Day', image: 'path_to_clothes_rack_image.jpg' }
-//   ];
-
-//   return (
-//     <div className="listings-grid">
-//       {listingsData.map((listing, index) => (
-//         <ListingCard key={index} {...listing} />
-//       ))}
-//     </div>
-//   );
-// }
 
   export { ListingCard, ListingsGrid };
