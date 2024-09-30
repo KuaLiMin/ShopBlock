@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 from django.db.models import Avg
 from backend.core.models import (
@@ -70,7 +71,7 @@ class ListingSerializer(serializers.ModelSerializer):
     category = serializers.ChoiceField(choices=Category.choices)
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
     created_by = serializers.SerializerMethodField()
-    rates = ListingRateSerializer(many=True, read_only=True)
+    rates = ListingRateSerializer(many=True, read_only=True, source="listingrate_set")
 
     class Meta:
         model = Listing
@@ -103,11 +104,18 @@ class ListingCreateSerializer(ListingSerializer):
             max_length=1000000, allow_empty_file=False, use_url=False
         ),
         write_only=True,
+        required=True,  # This makes it easy for me for now
     )
-    rates = ListingRateSerializer(many=True, required=False)
+
+    rates = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.CharField(),  # Handle individual rate fields
+        ),
+        write_only=True,
+    )
 
     class Meta(ListingSerializer.Meta):
-        fields = ListingSerializer.Meta.fields + ["photos"]
+        fields = ListingSerializer.Meta.fields + ["photos", "rates"]
 
     def create(self, validated_data):
         # Extract the photos from the validated data
@@ -124,6 +132,10 @@ class ListingCreateSerializer(ListingSerializer):
 
         # Create listing rating for included rating
         for rate_data in rates_data:
-            ListingRate.objects.create(listing=listing, **rates_data)
+            ListingRate.objects.create(
+                listing=listing,
+                time_unit=rate_data["time_unit"],
+                rate=rate_data["rate"],
+            )
 
         return listing

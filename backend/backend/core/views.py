@@ -1,3 +1,4 @@
+import json
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
@@ -91,7 +92,11 @@ class ListingView(GenericAPIView):
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def post(self, request: Request):
-        serializer = ListingCreateSerializer(data=request.data)
+        request_copy = request.data.copy()
+        if "rates" in request_copy and isinstance(request_copy["rates"], str):
+            request_copy["rates"] = json.loads(request_copy["rates"])
+
+        serializer = ListingCreateSerializer(data=request_copy)
         # Use custom serializer for the post request here
         if serializer.is_valid():
             # Add via the JWT-ed user
