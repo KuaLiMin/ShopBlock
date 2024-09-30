@@ -5,23 +5,29 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
 )
+from django.core.validators import MinValueValidator
 from django.contrib.auth.hashers import make_password
 
 
 # The different category types
 class Category(models.TextChoices):
     ELECTRONICS = "EL", _("Electronics")
-    HOUSEHOLD = "HH", _("HouseHold")
-    FURNITURE = "FU", _("Furniture")
-    CLOTHING = "CL", _("Clothing")
-    BOOKS = "BO", _("Books")
-    OTHER = "OT", _("Other")
+    SUPPLIES = "SU", _("Supplies")
+    SERVICES = "SE", _("Services")
 
 
 # Type of listings
 class ListingType(models.TextChoices):
     RENTAL = "RE", _("Rental")
     SERVICE = "SE", _("Service")
+
+
+# Types of time units
+class TimeUnit(models.TextChoices):
+    ONETIME = "OT", _("OneTime")
+    HOURLY = "H", _("Hourly")
+    DAILY = "D", _("Daily")
+    WEEKLY = "W", _("Weekly")
 
 
 # Create your models here.
@@ -84,6 +90,25 @@ class ListingPhoto(models.Model):
 
     def __str__(self):
         return f"Photo for {self.listing.title}"
+
+
+# This is a separate table that stores the rates per listing
+class ListingRate(models.Model):
+    listing = models.ForeignKey(
+        "Listing", on_delete=models.CASCADE, related_name="rates"
+    )
+    time_unit = models.CharField(max_length=2, choices=TimeUnit.choices)
+    rate = models.DecimalField(
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+    )
+
+    class Meta:
+        unique_together = ["listing", "time_unit"]
+
+    def __str__(self):
+        return (
+            f"{self.listing.title} - {self.get_time_unit_display()} Rate: {self.rate}"
+        )
 
 
 class Offer(models.Model):

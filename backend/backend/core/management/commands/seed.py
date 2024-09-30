@@ -10,8 +10,10 @@ from django.contrib.auth.hashers import make_password
 
 from backend.core.models import (
     User,
-    Listing,
     Category,
+    TimeUnit,
+    Listing,
+    ListingRate,
     ListingType,
     ListingPhoto,
     Offer,
@@ -49,31 +51,56 @@ class Command(BaseCommand):
             uploaded_by=user1,
             title="Electronic Drill",
             description="Looking to rent out an electronic drill as I do not need it anymore",
-            latitude=1.31745, # somewhere in farrer road
+            latitude=1.31745,  # somewhere in farrer road
             longitude=103.80704,
             category=Category.ELECTRONICS,
             listing_type=ListingType.RENTAL,
+        )
+
+        listing1_hourly_rate = ListingRate.objects.create(
+            listing=listing1,
+            time_unit=TimeUnit.HOURLY,
+            rate=10.00,
+        )
+
+        listing1_daily_rate = ListingRate.objects.create(
+            listing=listing1,
+            time_unit=TimeUnit.DAILY,
+            rate=50.00,
         )
 
         listing2 = Listing.objects.create(
             uploaded_by=user2,
             title="Camping Tent",
             description="Looking to rent out a camping tent as it is unused in the house",
-            latitude=1.35160, # somewhere in nex
+            latitude=1.35160,  # somewhere in nex
             longitude=103.87119,
-            category=Category.OTHER,
+            category=Category.SUPPLIES,
             listing_type=ListingType.RENTAL,
+        )
+
+        listing2_weekly_rate = ListingRate.objects.create(
+            listing=listing2,
+            time_unit=TimeUnit.WEEKLY,
+            rate=150.00,
         )
 
         listing3 = Listing.objects.create(
             uploaded_by=user3,
             title="Plumbing services",
             description="Plumbing services, available from 9am to 5pm anywhere in Singapore.",
-            latitude=1.42953 , # somewhere in yishun
+            latitude=1.42953,  # somewhere in yishun
             longitude=103.83503,
-            category=Category.HOUSEHOLD,
+            category=Category.SERVICES,
             listing_type=ListingType.SERVICE,
         )
+
+        listing3_one_time_rate = ListingRate.objects.create(
+            listing=listing3,
+            time_unit=TimeUnit.ONETIME,
+            rate=70.00,
+        )
+
         print("Successfully Seeded - Listings")
 
         # Seed a listing photo - sample cat image
