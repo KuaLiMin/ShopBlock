@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Listing.css'; // Make sure to create this CSS file
-import { Link } from 'react-router-dom';
 
 const ListingCard = ({id, time, title, rate, image }) => {
   const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
