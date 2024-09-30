@@ -6,7 +6,12 @@ import Avatar from '@mui/material/Avatar';
 import ReportListingButton from '../components/ReportListingButton';
 import MyMapComponent from '../components/MyMapComponent';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import Typography from '@mui/material/Typography';
+import { Button, Typography } from '@mui/material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Snackbar from '@mui/material/Snackbar'; // Import Snackbar for notifications
+import MuiAlert from '@mui/material/Alert'; // Import Alert for Snackbar
 import './CSS/ListingDetail.css'
 
 
@@ -19,6 +24,28 @@ const ListingDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [inputValue, setInputValue] = useState(''); // State for the input value
+  const [openSnackbar, setOpenSnackbar] = useState(false); // State for Snackbar visibility
+  const [offerMessage, setOfferMessage] = useState(''); // State for the offer message
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // State for Snackbar severity
+
+  const handleMakeOffer = () => {
+    if (inputValue) {
+      setOfferMessage(`Offer of S$${inputValue} given.`);
+      setSnackbarSeverity('success'); // Set severity to success
+      setOpenSnackbar(true); // Show the Snackbar
+      setInputValue(''); // Clear the input
+    } else {
+      setOfferMessage('Please enter an amount.'); // Message for empty input
+      setSnackbarSeverity('error'); // Set severity to error
+      setOpenSnackbar(true); // Show the Snackbar
+    }
+  };
+
+  // Function to close the Snackbar
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   // Parse the slug to extract title and id
   const [titleFromSlug, , id] = slug ? slug.split('-').reduce((acc, part, index) => {
@@ -137,52 +164,109 @@ const ListingDetail = () => {
             <p>{listingData.description}</p>
           </div>
         </div>
+    <div className="user-detail-container">
+      {/* User Profile */}
+      <div className = "profile-rating-stars">
+        <div className="user-profile">
+          <Avatar 
+            src={userData?.avatar || "/api/placeholder/40/40"} 
+            alt={userData?.username || "User Avatar"} 
+            className="avatar"
+          />
+        </div>
 
-        {/* User Rating Container */}
-        <div className="user-detail-container">
-          <div className="user-profile">
-            <Avatar 
-              src={userData?.avatar || "/api/placeholder/40/40"} 
-              alt={userData?.username || "User Avatar"} 
-              className="avatar"
-            />
+        {/* User Rating and Name */}
+        <div className="user-rating-container">
+          <div className="user-name-container">
+            <h4 style={{ fontSize: '18px' }}>{listingData.user}</h4>
           </div>
-          <div className= "user-rating-container">
-            <div className="user-name-container">
-              <h4 style={{ fontSize: '18px' }}>{listingData.user}</h4>
-            </div>
-            <div className="user-stars-container">
-              {/* Display the rating with one decimal place */}
-              <span className= "rating">{userData ? userData.rating.toFixed(1) : 'N/A'}</span>
-              {/* Render highlighted stars based on rating */}
-              {userData && userData.rating > 0 && Array.from({ length: Math.floor(userData.rating) }).map((_, i) => (
-                <StarIcon key={`filled-${i}`} className="star-icon" />
-              ))}
-              {/* Render half star if the rating is a half star */}
-              {userData && userData.rating % 1 !== 0 && (
-                <StarHalfIcon key="half-star" className="star-icon" />
-              )}
-              {/* Render non-highlighted stars */}
-              {userData && Array.from({ length: totalStars - Math.ceil(userData.rating) }).map((_, i) => (
-                <StarIcon key={`empty-${i}`} className="star-icon-empty" />
-              ))}
-            </div>
+          <div className="user-stars-container">
+            {/* Display the rating with one decimal place */}
+            <span className="rating">
+              {userData ? userData.rating.toFixed(1) : 'N/A'}
+            </span>
+            {/* Render highlighted stars based on rating */}
+            {userData && userData.rating > 0 && Array.from({ length: Math.floor(userData.rating) }).map((_, i) => (
+              <StarIcon key={`filled-${i}`} className="star-icon" />
+            ))}
+            {/* Render half star if the rating is a half star */}
+            {userData && userData.rating % 1 !== 0 && (
+              <StarHalfIcon key="half-star" className="star-icon" />
+            )}
+            {/* Render non-highlighted stars */}
+            {userData && Array.from({ length: totalStars - Math.ceil(userData.rating) }).map((_, i) => (
+              <StarIcon key={`empty-${i}`} className="star-icon-empty" />
+            ))}
           </div>
         </div>
       </div>
+      {/* Offer Section (Moved below the user rating container) */}
+      <div className="offer-section">
+        <div className="offer-price">
+          <div className="offer-input-container">
+            {/* Text Input with "S$" prefix */}
+            <TextField
+              variant="outlined"
+              placeholder="Amount"
+              value = {inputValue}
+              onChange={(e) => setInputValue(e.target.value)} // Update state on input change
+              InputProps={{
+                startAdornment: <InputAdornment position="start">S$</InputAdornment>,
+              }}
+              sx={{
+                height: '40px',  // Set the height to 3px
+                fontSize: '10px', // Adjust the font size to make it match
+                '& .MuiInputBase-root': {
+                  height: '100%',  // Make the input fill the entire height
+                }
+               }}
+            />
+           </div>
+            {/* Make Offer Button */}
+            <Button className ="offer-button" variant="contained" onClick={handleMakeOffer} color="primary" sx={{ fontSize: ' 10px' }}>
+              Make Offer
+            </Button>
+            {/* Snackbar for displaying the offer message */}
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+              <MuiAlert elevation={6} variant="filled" onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+                {offerMessage}
+              </MuiAlert>
+            </Snackbar>
+        </div>
+        <div className="availability">
+          <Button
+            variant="outlined"
+            disabled={!listingData.availability}
+            startIcon={<CalendarTodayIcon />}
+          >
+            View Availability
+          </Button>
+        </div>
+        {/* Button Section - displayed as columns */}
+        <div className="button-column">
+          <Button variant="contained" color="success" className="view-button">
+            View User Ratings
+          </Button>
+          <Button variant="contained" color="info" className="view-button">
+            View renter offers
+          </Button>
+        </div>
+      </div>
+    </div>
+      </div>
       {/* Centered Map Section */}
         <div className="map-section">
-        <Typography variant="h4" className="view-location-title">
-          <LocationOnIcon className="location-icon" />
-          View Location
-        </Typography>
-        {userData && listingData.latitude && listingData.longitude ? (
-          <div className="map-container">
-            <MyMapComponent latitude={listingData.latitude} longitude={listingData.longitude} />
-          </div>
-        ) : (
-          <p className="error-message">Location data is not available.</p>
-        )}
+          <Typography variant="h4" className="view-location-title">
+            <LocationOnIcon className="location-icon" />
+            View Location
+          </Typography>
+          {userData && listingData.latitude && listingData.longitude ? (
+            <div className="map-container">
+              <MyMapComponent latitude={listingData.latitude} longitude={listingData.longitude} />
+            </div>
+          ) : (
+            <p className="error-message">Location data is not available.</p>
+          )}
       </div>
     </div>
   );

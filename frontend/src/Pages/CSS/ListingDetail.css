@@ -58,12 +58,25 @@ hr {
 .user-detail-container {
     flex: 25%; /* Takes 1 part of the available space (30%) */
     display: flex;
+    flex-direction: column; /* Ensure elements are stacked vertically */
     align-items: flex-start; /* Center aligns user rating items */
     padding: 20px 0 10px 0; /* Padding inside the box */
     background-color: #f9f9f9; /* Light background color for the box */
     border: 1px solid #ddd; /* Light border around the box */
     border-radius: 8px; /* Rounded corners */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}
+
+.profile-rating-stars{
+    display: flex; /* Flexbox for user rating items */
+    flex-direction: row; /* Stack items vertically */
+    align-items: center; /* Align items to the start (top) of the column */
+}
+
+.name-rating-container{
+    display: flex; /* Flexbox for user rating items */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start (top) of the column */
 }
 
 .user-rating-container {
@@ -83,8 +96,61 @@ hr {
 
 .user-profile {
     display: flex; /* Flexbox for user profile items */
-    align-items: center; /* Center align profile within the container */
     margin: 5px 0 0 10px;
+}
+
+.availability{
+    display: flex;
+    flex-direction: column; /* Stack the buttons vertically */
+    width: 90%; /* Full width for the buttons */
+    gap: 10px; /* Add space between the buttons */
+    margin-top: 10px; /* Add space at the top */
+    margin-bottom: 10px;
+}
+
+.offer-section {
+    display: flex;
+    flex-direction: column; /* Stack the buttons vertically */
+    justify-content: flex-end;
+    align-items: flex-end; /* Push buttons to the right */
+    width: 90%; /* Ensure it fills the entire width of the container */
+    box-sizing: border-box; /* Include padding in the width calculation */
+  }
+
+.offer-price {
+    display: flex;
+    flex-direction: row; /* Stack the buttons vertically */
+    width:90%;
+    margin-top: 20px;
+    margin-bottom:10px;
+}
+
+.offer-input-container {
+    display: flex;
+    align-items: flex-start; /* Align the input box and button vertically */
+    justify-content: flex-start;
+    margin-right:5px;
+    height: 30px;
+}
+
+.offer-button{
+    display: flex;
+    align-items: flex-end; /* Align the input box and button vertically */
+    justify-content: flex-end;
+    height: 40px;
+}
+
+.button-column {
+    display: flex;
+    flex-direction: column; /* Stack the buttons vertically */
+    width: 90%; /* Full width for the buttons */
+    gap: 10px; /* Add space between the buttons */
+    margin-top: 10px; /* Add space at the top */
+    margin-bottom: 20px;
+}
+
+.view-button {
+    width: 100%; /* Make buttons take full width */
 }
 
 .rating{
