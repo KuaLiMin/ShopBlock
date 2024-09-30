@@ -10,8 +10,10 @@ from django.contrib.auth.hashers import make_password
 
 from backend.core.models import (
     User,
-    Listing,
     Category,
+    TimeUnit,
+    Listing,
+    ListingRate,
     ListingType,
     ListingPhoto,
     Offer,
@@ -55,6 +57,18 @@ class Command(BaseCommand):
             listing_type=ListingType.RENTAL,
         )
 
+        listing1_hourly_rate = ListingRate.objects.create(
+            listing=listing1,
+            time_unit=TimeUnit.HOURLY,
+            rate=10.00,
+        )
+
+        listing1_daily_rate = ListingRate.objects.create(
+            listing=listing1,
+            time_unit=TimeUnit.DAILY,
+            rate=50.00,
+        )
+
         listing2 = Listing.objects.create(
             uploaded_by=user2,
             title="Camping Tent",
@@ -63,6 +77,12 @@ class Command(BaseCommand):
             longitude=103.87119,
             category=Category.SUPPLIES,
             listing_type=ListingType.RENTAL,
+        )
+
+        listing2_weekly_rate = ListingRate.objects.create(
+            listing=listing2,
+            time_unit=TimeUnit.WEEKLY,
+            rate=150.00,
         )
 
         listing3 = Listing.objects.create(
@@ -74,6 +94,13 @@ class Command(BaseCommand):
             category=Category.SERVICES,
             listing_type=ListingType.SERVICE,
         )
+
+        listing3_one_time_rate = ListingRate.objects.create(
+            listing=listing3,
+            time_unit=TimeUnit.ONETIME,
+            rate=70.00,
+        )
+
         print("Successfully Seeded - Listings")
 
         # Seed a listing photo - sample cat image

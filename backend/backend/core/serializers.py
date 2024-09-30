@@ -3,7 +3,9 @@ from django.db.models import Avg
 from backend.core.models import (
     User,
     Category,
+    TimeUnit,
     Listing,
+    ListingRate,
     ListingPhoto,
     ListingType,
     Review,
@@ -26,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
         return avg_rating if avg_rating is not None else 0
 
     def create(self, validated_data):
-        user = UserProfile.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
         return user
 
 
@@ -49,6 +51,14 @@ class ListingPhotoSerializer(serializers.ModelSerializer):
         return None
 
 
+class ListingRateSerializer(serializers.ModelSerializer):
+    time_unit = serializers.ChoiceField(choices=TimeUnit.choices)
+
+    class Meta:
+        model = ListingRate
+        fields = ["time_unit", "rate"]
+
+
 class ListingSerializer(serializers.ModelSerializer):
     # the source = listingphoto_set tells django to look for the reverse
     # relationship from Listing -> ListingPhoto
@@ -60,6 +70,7 @@ class ListingSerializer(serializers.ModelSerializer):
     category = serializers.ChoiceField(choices=Category.choices)
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
     created_by = serializers.SerializerMethodField()
+    rates = ListingRateSerializer(many=True, read_only=True)
 
     class Meta:
         model = Listing
@@ -75,6 +86,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "photos",
             "longitude",
             "latitude",
+            "rates",
         ]
         read_only_fields = ["created_at", "updated_at"]
 
@@ -92,6 +104,7 @@ class ListingCreateSerializer(ListingSerializer):
         ),
         write_only=True,
     )
+    rates = ListingRateSerializer(many=True, required=False)
 
     class Meta(ListingSerializer.Meta):
         fields = ListingSerializer.Meta.fields + ["photos"]
@@ -99,6 +112,8 @@ class ListingCreateSerializer(ListingSerializer):
     def create(self, validated_data):
         # Extract the photos from the validated data
         photos_data = validated_data.pop("photos", [])
+        # Extract the rates from the validated data
+        rates_data = validated_data.pop("rates", [])
 
         # Create the base Listing object
         listing = Listing.objects.create(**validated_data)
@@ -106,5 +121,9 @@ class ListingCreateSerializer(ListingSerializer):
         # Create a listing photo for each object, then link the listing FK back to it
         for photo in photos_data:
             ListingPhoto.objects.create(listing=listing, image_url=photo)
+
+        # Create listing rating for included rating
+        for rate_data in rates_data:
+            ListingRate.objects.create(listing=listing, **rates_data)
 
         return listing
