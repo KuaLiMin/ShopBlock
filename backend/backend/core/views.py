@@ -3,7 +3,7 @@ from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
 from django.shortcuts import render
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 from rest_framework import permissions, viewsets, status
 from rest_framework.views import APIView
@@ -112,12 +112,14 @@ class ListingView(GenericAPIView):
 
 class OfferView(GenericAPIView):
     """
-    Offers endpoint, [GET, POST]
+    Offers endpoint, [GET, POST, PUT]
 
     For the GET request, it returns all offers for the given user
 
     For the POST request, the use case is for a authenticated user, browsing the listing page,
     then making an offer to the listing
+
+    For the PUT request, the use case is to accept or reject an offer
     """
 
     serializer_class = OfferSerializer
@@ -142,8 +144,6 @@ class OfferView(GenericAPIView):
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def post(self, request: Request):
-        print(request.user)
-
         # Need to pass in context manually as the default serializer is the get serializer
         serializer = OfferCreateSerializer(
             data={
@@ -158,6 +158,60 @@ class OfferView(GenericAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        examples=[
+            OpenApiExample(
+                "Example1",
+                summary="Example offer PUT",
+                description="Accept or Reject offer",
+                value={
+                    "offer_id": 1,
+                    "action": "accept",
+                },
+            ),
+        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "offer_id": {"type": "integer"},
+                    "action": {"type": "string", "enum": ["accept", "reject"]},
+                },
+                "required": ["offer_id", "action"],
+            }
+        },
+        responses={200: OfferSerializer},
+    )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def put(self, request: Request):
+        offer_id = request.data.get("offer_id")
+        action = request.data.get("action")
+
+        # Look for the offer, if it exists
+        try:
+            offer = Offer.objects.get(
+                id=offer_id, listing__uploaded_by=request.user, status=Offer.PENDING
+            )
+        except Offer.DoesNotExist:
+            return Response(
+                {"error": "Offer not found or not pending"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if action == "accept":
+            offer.accept()
+        elif action == "reject":
+            offer.reject()
+        else:
+            return Response(
+                {"error": "Invalid action. Use 'accept' or 'reject'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = self.get_serializer(offer)
+        return Response(serializer.data)
 
 
 class DebugUserList(GenericAPIView):
