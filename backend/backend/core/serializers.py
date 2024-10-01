@@ -72,7 +72,7 @@ class ListingSerializer(serializers.ModelSerializer):
     category = serializers.ChoiceField(choices=Category.choices)
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
     created_by = serializers.SerializerMethodField()
-    rates = ListingRateSerializer(many=True, read_only=True, source="listingrate_set")
+    rates = ListingRateSerializer(many=True, read_only=True)
 
     class Meta:
         model = Listing
