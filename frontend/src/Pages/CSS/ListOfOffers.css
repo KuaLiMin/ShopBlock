@@ -89,6 +89,7 @@
     align-items: flex-start;
     max-width: 50%;
     width: 500px;
+    position: relative;
 }
 
 .filtered-listing-card{
@@ -123,4 +124,14 @@
     margin-right: 10px;
     display: flex;
     flex-direction: column;
+}
+
+.accept-button-position{
+    position: absolute; /* Allows positioning outside the parent */
+    right: -110px;
+}
+
+.reject-button-position{
+    position: absolute; /* Allows positioning outside the parent */
+    right: -185px;
 }
