@@ -16,17 +16,6 @@
     flex-shrink: 1; /* Allow the item to shrink if necessary */
 }
 
-.unique-listing-card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 10px 0 5px 0;
-    border-radius: 5px;
-    width: 100%; /* Ensure it uses full width */
-    transition: background-color 0.3s, box-shadow 0.3s; /* Include box-shadow in transition */
-    box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
-    position: relative;
-}
-
 .unique-listing-card.clicked {
     box-shadow: inset 0 0 10px #60eefb; /* Inner shadow when clicked */
 }
@@ -35,12 +24,54 @@
     background-color: #60eefb;
 }
 
-.listing-image{
-    object-fit: cover; 
-    width: 5px;                /* Set width */
-    height: 5px;               /* Set height */
-    margin-right: 10px;         /* Space between image and title */
+.unique-listing-card {
+    border: 1px solid #ccc;
+    margin: 10px 0; /* Vertical margin only */
+    padding:10px;
+    border-radius: 5px;
+    width: 100%;
+    height: 80px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 3px 3px 5px #ccc;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch; /* Stretch children to fill the container */
+    overflow: hidden; /* Hide overflow */
 }
+
+.unique-listing-card .listing-image {
+    width: 30%;
+    height: 100%; /* Full height of the card */
+    object-fit: cover;
+    object-position: center;
+    display: block; /* Ensure it's a block-level element */
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+}
+
+.unique-listing-card .listing-details {
+    width: 70%;
+    display: flex;
+    flex-direction: row; /* Ensure title and price stack vertically */
+    margin: 0 5px 0 10px;
+    justify-content: space-between;
+}
+
+.unique-listing-card .listing-title{
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+    display:flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+} 
+.unique-listing-card .listing-price {
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+    display:flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
 
 .vertical-line {
     width: 2px; /* Width of the vertical line */
@@ -54,19 +85,26 @@
     flex-direction: column;
     flex:1;
     align-items: flex-start;
-    margin-right: 10em;
-    max-width: 70%;
+    max-width: 50%;
     width: 500px;
 }
 
 .filtered-listing-card{
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 10px 10px 10px 20px;
     width: 100%;
+    height: 60px;
     margin: 10px 0 5px 0;
     border-radius: 5px;
+    align-items: center;
+    display:flex;
+    gap: 10px;
     transition: background-color 0.3s, box-shadow 0.3s; /* Include box-shadow in transition */
     box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
+}
+
+.filtered-listing-container h3{
+    margin-top: 100px;
 }
 
 .no-listings-container {
@@ -77,4 +115,10 @@
     margin-top: 100px; /* Margin on top */
     margin-bottom: 100px; /* Margin on bottom */
     width: 100%; /* Full width */
+}
+
+.user-rating{
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
 }

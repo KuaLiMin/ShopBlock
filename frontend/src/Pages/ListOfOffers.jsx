@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './CSS/ListOfOffers.css';
+import Avatar from '@mui/material/Avatar';
+import { Typography } from '@mui/material';
+import Rating from '@mui/material/Rating';
 
 export const ListOfOffers = () => {
-    const [offers, setOffers] = useState([]); // Start with an empty array
     const [uniqueListings, setUniqueListings] = useState([]);
     const [allListings, setAllListings] = useState([]);
     const [listingDetails, setListingDetails] = useState([]);
+    const [userData, setUserData] = useState([]); // State for user data
     const [loading, setLoading] = useState(true); // Loading state
     const [clickedCardId, setClickedCardId] = useState(null); // State to track which card is clicked
     const [selectedTitle, setSelectedTitle] = useState(null); // State for the selected listing title
@@ -61,6 +64,7 @@ export const ListOfOffers = () => {
 
                     setUniqueListings(uniqueTitles);
                     setAllListings(allListingsData);
+                    await fetchAllUserData();
                     await fetchListingsDetails(uniqueTitles); // Ensure unique listings are passed to this function
                 } else {
                     console.error("Expected an array but got:", offersData);
@@ -74,6 +78,30 @@ export const ListOfOffers = () => {
 
         fetchData();
     }, [accessCode]);
+
+    //Get all user information
+    const fetchAllUserData = async () => {
+        try {
+            const response = await fetch(`debug/user/`); // Fetch all users
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const usersData = await response.json();
+            console.log("Fetched all users data:", usersData); // Log all users data
+    
+            const filteredUserData = usersData.map(user => ({
+                id: user.id,
+                avatar: user.avatar,
+                username: user.username,
+                averageRating: user.average_rating,
+            }));
+            // Update the user data state
+            setUserData(filteredUserData);
+        } catch (error) {
+            console.error('Error fetching all user data:', error);
+        }
+    };
 
     // This is to get the indivdiual listing details.
     const fetchListingsDetails = async (uniqueListings) => {
@@ -95,7 +123,7 @@ export const ListOfOffers = () => {
                     return {
                         id: matchedListing.id,
                         title: matchedListing.title,
-                        price: matchedListing.price, // Ensure this key matches your fetched data structure
+                        price: `$${1}/Day`,//matchedListing.price, // Ensure this key matches your fetched data structure
                         imageUrl: matchedListing.photos[0]?.image_url // Assuming there's at least one photo
                     };
                 }
@@ -112,6 +140,8 @@ export const ListOfOffers = () => {
     if (loading) {
         return <div>Loading...</div>; // Show loading indicator
     }
+
+    
 
 return (
     <div className='container'>
@@ -132,8 +162,10 @@ return (
                   }}
                 >
                   <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
-                  <strong className="listing-title">{unique.title}</strong>
-                  <p>Price: {matchedListing?.price}</p> {/* Show price if matched listing is found */}
+                  <div className="listing-details">
+                    <strong className="listing-title">{unique.title}</strong>
+                    <p className="listing-price">{matchedListing?.price}</p> {/* Show price if matched listing is found */}
+                  </div>
                 </div>
               );
             })}
@@ -142,17 +174,63 @@ return (
           <div className="filtered-listing-container">
             <h2>{selectedTitle}</h2>
             {filteredListings.length > 0 ? ( // Only render if there are filtered listings
-              filteredListings.map((listing, index) => (
-                <div key={index} className="filtered-listing-card">
-                    <p>Offered By: {listing.offeredBy}</p>
-                    <p>Offered By ID: {listing.offeredByID}</p>
-                    <p>Price: {listing.price}</p>
-                    <p>Status: {listing.status}</p>
-                </div>
-              ))
+                <>
+                    {/* Section for listings with status 'P' */}
+                    {filteredListings
+                        .filter(listing => listing.status === 'P')
+                        .map((listing, index) => {
+                            // Find the user data that matches the offeredByID
+                            const user = userData.find(user => user.id === listing.offeredByID);
+                            console.log("Listing:", listing); // Log the current listing for debugging
+                            console.log("Matching User:", user); // Log the found user for debugging
+                            
+                            return (
+                                <div key={index} className="filtered-listing-card">
+                                    {/* Display the user's avatar and average rating if user exists */}
+                                    {user ? (
+                                        <>
+                                            <Avatar
+                                                src={user.avatar || "/api/placeholder/40/40"} 
+                                                alt={user.username || "User Avatar"} 
+                                                sx={{ width: 45, height: 45 }}
+                                                onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} // Optional: handle image error
+                                            />
+                                            <div className ="user-rating">
+                                                <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                                    {user.username}
+                                                </Typography>
+                                                <Rating 
+                                                    name="user-rating" 
+                                                    value={parseFloat(user.average_rating)} 
+                                                    precision={0.5} 
+                                                    readOnly 
+                                                />
+                                            </div>
+                                        </>
+                                    ) 
+                                    : (
+                                        <p>User data not found.</p> // Fallback message if no user is found
+                                    )}
+                                    <p>Price: <br /> {listing.price}</p>
+                                    <p>Status: <br /> {listing.status}</p>
+                                </div>
+                            );
+                        })}
+                    {/* Section for listings with status 'A' */}
+                    <h3>For Testing Purposes: Accepted Offers</h3>
+                    {filteredListings
+                        .filter(listing => listing.status === 'A')
+                        .map((listing, index) => (
+                        <div key={index} className="filtered-listing-card">
+                            <p>Offered By: {listing.offeredBy}</p>
+                            <p>Offered By ID: {listing.offeredByID}</p>
+                            <p>Price: {listing.price}</p>
+                            <p>Status: {listing.status}</p>
+                        </div>
+                        ))}
+              </>
             ) : (
             <div>
-                <hr />
                 <h2 style={{ color: 'red' }}>Select a Listing!</h2>
             </div> 
             )}
