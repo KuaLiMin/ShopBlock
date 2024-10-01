@@ -57,10 +57,8 @@ const ListingDetail = () => {
   useEffect(() => {
     const categoryMap = {
       EL: 'Electronics',
-      HH: 'Household',
-      FU: 'Furniture',
-      CL: 'Clothing',
-      BO: 'Books',
+      SU: 'Supplies',
+      SE: 'Services',
     };
 
     // Fetch the listing details
