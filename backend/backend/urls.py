@@ -48,8 +48,8 @@ urlpatterns = [
     # offer routes, [GET, POST]
     path("offers/", views.OfferView.as_view()),
     # authentication jwt tokens
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # swagger and redoc
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

@@ -45,6 +45,7 @@ class UserView(GenericAPIView):
 
 
 class RegisterUserView(APIView):
+    serializer_class = UserSerializer
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def post(self, request):
@@ -150,9 +151,7 @@ class OfferView(GenericAPIView):
                 "listing_id": request.data.get("listing_id"),
                 "price": request.data.get("price"),
             },
-            context={
-                'request': request
-            }
+            context={"request": request},
         )
 
         if serializer.is_valid():
