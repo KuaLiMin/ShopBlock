@@ -142,9 +142,12 @@ class ListingCreateSerializer(ListingSerializer):
         return listing
 
 
+# Serializer for get request
 class OfferSerializer(serializers.ModelSerializer):
     offered_by = serializers.SerializerMethodField()
     listing = serializers.SerializerMethodField()
+    status = serializers.ChoiceField(choices=Offer.STATUS_CHOICES, read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Offer
@@ -165,3 +168,27 @@ class OfferSerializer(serializers.ModelSerializer):
             "title": obj.listing.title,
             "category": obj.listing.get_category_display(),
         }
+
+
+# Serializer for post request
+class OfferCreateSerializer(serializers.Serializer):
+    offered_by = serializers.StringRelatedField()
+    listing_id = serializers.IntegerField()
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    # Check that they are not submitting junk listings
+    def validate_listing_id(self, value):
+        try:
+            Listing.objects.get(id=value)
+        except Listing.DoesNotExist:
+            raise serializers.ValidationError("Listing does not exist")
+        return value
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        listing = Listing.objects.get(id=validated_data["listing_id"])
+        return Offer.objects.create(
+            offered_by=user,
+            listing=listing,
+            price=validated_data["price"],
+        )

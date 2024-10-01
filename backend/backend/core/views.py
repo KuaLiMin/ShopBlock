@@ -21,6 +21,7 @@ from backend.core.serializers import (
     ListingSerializer,
     ListingCreateSerializer,
     OfferSerializer,
+    OfferCreateSerializer,
 )
 
 # The views here will be mapped to a url in urls.py
@@ -105,7 +106,7 @@ class ListingView(GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # Otherwise, the input was not correct
-        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OfferView(GenericAPIView):
@@ -114,7 +115,8 @@ class OfferView(GenericAPIView):
 
     For the GET request, it returns all offers for the given user
 
-    For the POST request, this lets the user make an offer to a listing
+    For the POST request, the use case is for a authenticated user, browsing the listing page,
+    then making an offer to the listing
     """
 
     serializer_class = OfferSerializer
@@ -132,16 +134,31 @@ class OfferView(GenericAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-    # user posts a listing
-    # @extend_schema(
-    #     request=ListingCreateSerializer,
-    #     responses={201: ListingSerializer},
-    # )
+    @extend_schema(
+        request=OfferCreateSerializer,
+        responses={201: OfferCreateSerializer},
+    )
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def post(self, request: Request):
-        # Otherwise, the input was not correct
-        return Response("TODO", status=status.HTTP_401_UNAUTHORIZED)
+        print(request.user)
+
+        # Need to pass in context manually as the default serializer is the get serializer
+        serializer = OfferCreateSerializer(
+            data={
+                "offered_by": request.user,
+                "listing_id": request.data.get("listing_id"),
+                "price": request.data.get("price"),
+            },
+            context={
+                'request': request
+            }
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DebugUserList(GenericAPIView):
