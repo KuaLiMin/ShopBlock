@@ -2,6 +2,8 @@ import './App.css';
 import JsonDisplay from './components/JsonDisplay';
 import Navbar from './components/Navbar/Navbar';
 import Login from './Pages/Login';
+import SignUp from './Pages/SignUp';
+import ResetPassword from './Pages/ResetPassword';
 import Categories from './Pages/Categories';
 import ShopCat from './Pages/ShopCat';
 import Listing from './Pages/Listing';
@@ -33,6 +35,8 @@ function App() {
         </Route>
         <Route path='/cart' element={<cart/>}/>
         <Route path='/login' element={<Login/>}/>
+        <Route path='/signup' element={<SignUp/>}/>
+        <Route path='/resetpassword' element={<ResetPassword/>}/>
         <Route path='/FAQ' element={<FAQ/>}/>
         <Route path='/geo' element={<geo/>}/>
         <Route path='/user' element={<user/>}/>
