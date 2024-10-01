@@ -41,7 +41,7 @@ const Listing = () => {
         }
     };
 
-    const handleMakeOfferSubmit = async () => {
+    const handleMakeOfferSubmit = (e)=> {
         // Implement the offer submission logic here
         alert(`Offer of $${offerAmount} inputted, need to add scheduling etc`);
     }
@@ -105,7 +105,7 @@ const Listing = () => {
                                 variant="outlined"
                                 sx={{ marginRight: 2, width: 'auto' }} // Adjust width as needed
                             />
-                            <Button variant="contained" color="primary" size="large" onclick= {handleMakeOfferSubmit()}>
+                            <Button variant="contained" color="primary" size="large" onClick= {handleMakeOfferSubmit}>
                                 Make an Offer
                             </Button>
                         </Box>
