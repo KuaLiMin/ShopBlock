@@ -144,7 +144,7 @@ export const ListOfOffers = () => {
     
 
 return (
-    <div className='container'>
+    <div className='list-of-offers-container'>
       {hasListings ? (
         <>
           <div className="unique-listing-container">
