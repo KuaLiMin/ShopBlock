@@ -17,6 +17,7 @@ import electronics_banner from './components/Images/banner_mens.png'
 import services_banner from './components/Images/banner_women.png'
 import supplies_banner from './components/Images/banner_kids.png'
 import ListingDetail from './Pages/ListingDetail';
+import ListOfOffers from './Pages/ListOfOffers';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path='/user' element={<user/>}/>
         <Route path='/search' element={<search/>}/>
         <Route path='/history' element={<TransactionHistory/>}/>
+        <Route path='/offers' element={<ListOfOffers/>}/>
       </Routes>
       <Footer/>
       </BrowserRouter>
