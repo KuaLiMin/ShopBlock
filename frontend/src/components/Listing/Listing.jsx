@@ -50,8 +50,8 @@ const ListingsGrid = ({updateCount = () => {} }) => {
       .then(data => {
         // Map the backend data to match your card structure
         const formattedData = data.map(listing => ({
-          id: listing.id,                   //CREATED BY HAYES
-          time: listing.created_at,         //CREATED BY HAYES
+          id: listing.id,
+          time: listing.created_at,
           title: listing.title,
           description: listing.description,
           rate: `$${1}/Day`, 
