@@ -83,3 +83,11 @@ mypy.ini
 listing_photos/
 backend/media/
 backend/staticfiles/
+frontend/build/static/js/main.3bbf5c82.js.LICENSE.txt
+frontend/build/static/js/main.3bbf5c82.js.map
+frontend/build/static/css/main.16708b9e.css
+frontend/build/static/css/main.16708b9e.css.map
+frontend/build/static/js/main.3bbf5c82.js
+package-lock.json
+backend/backend/core/migrations/0014_alter_listingrate_time_unit.py
+frontend/package.json
