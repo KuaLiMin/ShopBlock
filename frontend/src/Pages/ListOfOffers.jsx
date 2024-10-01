@@ -2,100 +2,152 @@ import React, { useEffect, useState } from 'react';
 import './CSS/ListOfOffers.css';
 
 export const ListOfOffers = () => {
-  const [offers, setOffers] = useState([]); // Start with an empty array
-  const [uniqueListings, setUniqueListings] = useState([]);
-  const [allListings, setAllListings] = useState([]);
-  const [clickedCardId, setClickedCardId] = useState(null); // State to track which card is clicked
-  const [selectedTitle, setSelectedTitle] = useState(null); // State for the selected listing title
-  const accessCode = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI4MjA3OTkyLCJpYXQiOjE3Mjc3NzU5OTIsImp0aSI6IjA0ZDliN2I5Y2Q2ODQ3MThiMDQwYWI3NWQ5M2JmNzEzIiwidXNlcl9pZCI6MX0.t0g4lt1M1TRg_2f-2-zq2HHIqgmfwj_LZ1X95koZvwM"; // Replace with your actual access code
+    const [offers, setOffers] = useState([]); // Start with an empty array
+    const [uniqueListings, setUniqueListings] = useState([]);
+    const [allListings, setAllListings] = useState([]);
+    const [listingDetails, setListingDetails] = useState([]);
+    const [loading, setLoading] = useState(true); // Loading state
+    const [clickedCardId, setClickedCardId] = useState(null); // State to track which card is clicked
+    const [selectedTitle, setSelectedTitle] = useState(null); // State for the selected listing title
+    const accessCode = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI4MjA3OTkyLCJpYXQiOjE3Mjc3NzU5OTIsImp0aSI6IjA0ZDliN2I5Y2Q2ODQ3MThiMDQwYWI3NWQ5M2JmNzEzIiwidXNlcl9pZCI6MX0.t0g4lt1M1TRg_2f-2-zq2HHIqgmfwj_LZ1X95koZvwM"; // Replace with your actual access code
 
-  useEffect(() => {
-    fetch('/offers/', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${accessCode}`,
-      }
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("Fetched data:", data); // Check the data structure
-        
-        if (Array.isArray(data)) { // Ensure data is an array
-          setOffers(data);
+    // Handler for clicking a unique listing card
+    const handleUniqueListingClick = (title) => {
+        setSelectedTitle(title); // Set the selected title
+        };
 
-          const allListingsData = data.map(offer => ({
-            title: offer.listing.title,
-            id: offer.listing.id,
-            price: offer.price,
-            status: offer.status,
-            offeredBy: offer.offered_by.username,
-          }));
-
-          const uniqueTitles = Array.from(new Set(allListingsData.map(item => item.title))).map(title => {
-            const listing = allListingsData.find(item => item.title === title);
-            return { title, id: listing.id };
-          });
-
-          setUniqueListings(uniqueTitles);
-          setAllListings(allListingsData);
-          
-        } else {
-          console.error("Expected an array but got:", data); // Error if data is not an array
-        }
-      })
-      .catch(error => console.error('Error:', error));
-  }, [accessCode]);
-
-  // Handler for clicking a unique listing card
-  const handleUniqueListingClick = (title) => {
-    setSelectedTitle(title); // Set the selected title
-  };
-
-  // Filter all listings based on the selected title
-  const filteredListings = selectedTitle
+    // Filter all listings based on the selected title
+    const filteredListings = selectedTitle
     ? allListings.filter(listing => listing.title === selectedTitle)
     : []; // Show nothing if no title is selected
 
-  // Check if there are no listings available
-  const hasListings = allListings.length > 0;
+    // Check if there are no listings available
+    const hasListings = allListings.length > 0;
+    
+    // To get all listings relating to logged in user
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true); // Set loading to true before fetching
+            try {
+                const offersResponse = await fetch('/offers/', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${accessCode}`,
+                    }
+                });
 
-  return (
+                if (!offersResponse.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const offersData = await offersResponse.json();
+                console.log("Fetched offers data:", offersData); // Log offers data
+
+                if (Array.isArray(offersData)) {
+                    const allListingsData = offersData.map(offer => ({
+                        title: offer.listing.title,
+                        id: offer.listing.id,
+                        price: offer.price,
+                        status: offer.status,
+                        offeredBy: offer.offered_by.username,
+                        offeredByID: offer.offered_by.id,
+                    }));
+
+                    const uniqueTitles = Array.from(new Set(allListingsData.map(item => item.title))).map(title => {
+                        const listing = allListingsData.find(item => item.title === title);
+                        return { title, id: listing.id };
+                    });
+
+                    setUniqueListings(uniqueTitles);
+                    setAllListings(allListingsData);
+                    await fetchListingsDetails(uniqueTitles); // Ensure unique listings are passed to this function
+                } else {
+                    console.error("Expected an array but got:", offersData);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                setLoading(false); // Set loading to false after fetching
+            }
+        };
+
+        fetchData();
+    }, [accessCode]);
+
+    // This is to get the indivdiual listing details.
+    const fetchListingsDetails = async (uniqueListings) => {
+        try {
+            const response = await fetch('/listing/');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const allListings = await response.json();
+            console.log("Fetched all listings:", allListings); // Log all listings fetched
+
+            const listingDetailsArray = uniqueListings.map(unique => {
+                const matchedListing = allListings.find(listing =>
+                    listing.id === unique.id && listing.title === unique.title
+                );
+
+                if (matchedListing) {
+                    return {
+                        id: matchedListing.id,
+                        title: matchedListing.title,
+                        price: matchedListing.price, // Ensure this key matches your fetched data structure
+                        imageUrl: matchedListing.photos[0]?.image_url // Assuming there's at least one photo
+                    };
+                }
+                return null;
+            }).filter(listing => listing !== null);
+
+            console.log("Fetched listing details:", listingDetailsArray); // Log the details fetched
+            setListingDetails(listingDetailsArray);
+        } catch (error) {
+            console.error('Error fetching listings:', error);
+        }
+    };
+
+    if (loading) {
+        return <div>Loading...</div>; // Show loading indicator
+    }
+
+return (
     <div className='container'>
       {hasListings ? (
         <>
           <div className="unique-listing-container">
-            <h2>Unique Listings</h2>
-            {uniqueListings.map((listing, index) => (
-              <div 
-                key={index} 
-                className={`unique-listing-card ${clickedCardId === listing.id ? 'clicked' : ''}`}
-                onClick={() => {
-                    handleUniqueListingClick(listing.title);
-                    setClickedCardId(listing.id); // Update clicked card ID
-                }}
-              >
-                <strong>{listing.title} </strong>
-                
-              </div>
-            ))}
+          <h2>Listings</h2>
+            {uniqueListings.map((unique, index) => {
+              // Find the corresponding listing details using the unique title
+              const matchedListing = listingDetails.find(listing => listing.id === unique.id);
+              return (
+                <div 
+                  key={index} 
+                  className={`unique-listing-card ${clickedCardId === unique.id ? 'clicked' : ''}`}
+                  onClick={() => {
+                      handleUniqueListingClick(unique.title);
+                      setClickedCardId(unique.id); // Update clicked card ID
+                  }}
+                >
+                  <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
+                  <strong className="listing-title">{unique.title}</strong>
+                  <p>Price: {matchedListing?.price}</p> {/* Show price if matched listing is found */}
+                </div>
+              );
+            })}
           </div>
           <div className="vertical-line"></div>
           <div className="filtered-listing-container">
-            <h2>All Offers</h2>
+            <h2>{selectedTitle}</h2>
             {filteredListings.length > 0 ? ( // Only render if there are filtered listings
               filteredListings.map((listing, index) => (
                 <div key={index} className="filtered-listing-card">
-                  <p>Title: {listing.title}</p>
-                  <p>ID: {listing.id}</p>
-                  <p>Price: {listing.price}</p>
-                  <p>Status: {listing.status}</p>
-                  <p>Offered By: {listing.offeredBy}</p>
+                    <p>Offered By: {listing.offeredBy}</p>
+                    <p>Offered By ID: {listing.offeredByID}</p>
+                    <p>Price: {listing.price}</p>
+                    <p>Status: {listing.status}</p>
                 </div>
               ))
             ) : (

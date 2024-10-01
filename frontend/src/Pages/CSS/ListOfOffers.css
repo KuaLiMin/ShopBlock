@@ -19,11 +19,12 @@
 .unique-listing-card {
     border: 1px solid #ccc;
     padding: 10px;
-    margin: 10px 0;
+    margin: 10px 0 5px 0;
     border-radius: 5px;
     width: 100%; /* Ensure it uses full width */
     transition: background-color 0.3s, box-shadow 0.3s; /* Include box-shadow in transition */
     box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
+    position: relative;
 }
 
 .unique-listing-card.clicked {
@@ -32,6 +33,13 @@
 
 .unique-listing-card:hover {
     background-color: #60eefb;
+}
+
+.listing-image{
+    object-fit: cover; 
+    width: 5px;                /* Set width */
+    height: 5px;               /* Set height */
+    margin-right: 10px;         /* Space between image and title */
 }
 
 .vertical-line {
@@ -55,9 +63,10 @@
     border: 1px solid #ccc;
     padding: 10px;
     width: 100%;
-    margin: 10px;
+    margin: 10px 0 5px 0;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, box-shadow 0.3s; /* Include box-shadow in transition */
+    box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
 }
 
 .no-listings-container {
