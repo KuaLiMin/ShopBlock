@@ -10,6 +10,7 @@ from backend.core.models import (
     ListingPhoto,
     ListingType,
     Review,
+    Offer,
 )
 
 
@@ -139,3 +140,28 @@ class ListingCreateSerializer(ListingSerializer):
             )
 
         return listing
+
+
+class OfferSerializer(serializers.ModelSerializer):
+    offered_by = serializers.SerializerMethodField()
+    listing = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Offer
+        fields = ["id", "offered_by", "listing", "price", "status", "created_at"]
+
+    # For all offered_by, show the user detail that is offering
+    def get_offered_by(self, obj):
+        return {
+            "id": obj.offered_by.id,
+            "username": obj.offered_by.username,
+            "email": obj.offered_by.email,
+        }
+
+    # Show the listing detail for the offer
+    def get_listing(self, obj):
+        return {
+            "id": obj.listing.id,
+            "title": obj.listing.title,
+            "category": obj.listing.get_category_display(),
+        }

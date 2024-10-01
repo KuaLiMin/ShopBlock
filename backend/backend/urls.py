@@ -45,6 +45,8 @@ urlpatterns = [
     path("user/", views.UserView.as_view()),
     # user registration, [POST]
     path("register/", views.RegisterUserView.as_view()),
+    # offer routes, [GET, POST]
+    path("offers/", views.OfferView.as_view()),
     # authentication jwt tokens
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),

@@ -15,11 +15,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
-from backend.core.models import User, Listing, ListingPhoto
+from backend.core.models import User, Listing, ListingPhoto, Offer
 from backend.core.serializers import (
     UserSerializer,
     ListingSerializer,
     ListingCreateSerializer,
+    OfferSerializer,
 )
 
 # The views here will be mapped to a url in urls.py
@@ -105,6 +106,42 @@ class ListingView(GenericAPIView):
 
         # Otherwise, the input was not correct
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class OfferView(GenericAPIView):
+    """
+    Offers endpoint, [GET, POST]
+
+    For the GET request, it returns all offers for the given user
+
+    For the POST request, this lets the user make an offer to a listing
+    """
+
+    serializer_class = OfferSerializer
+
+    # The query set should filter out the listing for the user
+    def get_queryset(self):
+        # Get all listings requested by the JWT-ed user
+        user_listings = Listing.objects.filter(uploaded_by=self.request.user)
+        return Offer.objects.filter(listing__in=user_listings)
+
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def get(self, request: Request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    # user posts a listing
+    # @extend_schema(
+    #     request=ListingCreateSerializer,
+    #     responses={201: ListingSerializer},
+    # )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def post(self, request: Request):
+        # Otherwise, the input was not correct
+        return Response("TODO", status=status.HTTP_401_UNAUTHORIZED)
 
 
 class DebugUserList(GenericAPIView):
