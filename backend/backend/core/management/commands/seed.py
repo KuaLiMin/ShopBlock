@@ -101,6 +101,22 @@ class Command(BaseCommand):
             rate=70.00,
         )
 
+        listing4 = Listing.objects.create(
+            uploaded_by=user1,
+            title="SC2006 Smurfing Services",
+            description="NEED HELP FOR OS LAB? CONTACT ME",
+            latitude=1.34633,  # ccds building
+            longitude=103.68217,
+            category=Category.SERVICES,
+            listing_type=ListingType.SERVICE,
+        )
+
+        listing4_one_time_rate = ListingRate.objects.create(
+            listing=listing4,
+            time_unit=TimeUnit.ONETIME,
+            rate=100.00,
+        )
+
         print("Successfully Seeded - Listings")
 
         # Seed a listing photo - sample cat image
@@ -128,12 +144,22 @@ class Command(BaseCommand):
         # Simulate an accept
         offer1.accept()
 
+        # User 3 makes an offer to User 1, for listing 1, first reject, second pending
+        offer2 = Offer.objects.create(offered_by=user3, listing=listing1, price=5.0)
+        offer2.reject()
+        offer3 = Offer.objects.create(offered_by=user3, listing=listing1, price=8.0)
+
         print("Seeded offer 1 - User 2 to Listing 1 - Accepted")
+        print("Seeded offer 2 - User 3 to Listing 1 - Rejected")
+        print("Seeded offer 3 - User 3 to Listing 1 - Pending")
 
         # User 3 makes an offer to User 2, for listing 2, but pending
-        offer2 = Offer.objects.create(offered_by=user3, listing=listing2, price=50.0)
+        offer4 = Offer.objects.create(offered_by=user3, listing=listing2, price=50.0)
 
-        print("Seeded offer 2 - User 3 to Listing 2 - Pending")
+        print("Seeded offer 4 - User 3 to Listing 2 - Pending")
+
+        # User 3 makes an offer to User 1, for listing 4, but pending
+        offer5 = Offer.objects.create(offered_by=user3, listing=listing4, price=95.0)
 
         # Since User 1 accepted an offer from User 2, User 2 reviews User 1
         review1 = Review.objects.create(
