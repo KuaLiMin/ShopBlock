@@ -67,7 +67,7 @@ export const SignUp = () => {
             <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
             <div className='error-container'>
                 {passwordErrorMessage && !lock && <p style={{ color: 'red' }}>{passwordErrorMessage}</p>}
-                {!lock && <p className="loginsignup-signup">Forget Password?</p>}
+                {!lock && <Link to='/resetpassword' style={{ textDecoration: 'none' }}><p className="loginsignup-signup">Forget Password?</p></Link>}
                 {lockMessage && <p style={{ color: 'red', fontWeight: 'bold', textAlign: 'center' }}>{lockMessage}
                  <Link to='/resetpassword' style={{ textDecoration: 'none' }}><span style={{ fontWeight: 'bold', textDecoration: 'underline', color: 'red'}}>reset your password</span></Link></p>}
             </div>

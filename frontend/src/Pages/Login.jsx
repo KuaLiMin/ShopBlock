@@ -24,7 +24,10 @@ export const Login = () => {
       let splitMobile = e?.split(value?.dialCode)
       //console.log("splitMobile===== ", splitMobile?.[1] || "")
       setCountryCode(value?.dialCode)
-      setPhone(splitMobile?.[1] || "")
+
+      // Convert phoneNo to integer
+      let phoneNo = parseInt(splitMobile?.[1] || "", 10)
+      setPhone(phoneNo)
     }
 
     setContactNo(value) // set contactNo : value is the dict

@@ -19,6 +19,7 @@ import electronics_banner from './components/Images/banner_mens.png'
 import services_banner from './components/Images/banner_women.png'
 import supplies_banner from './components/Images/banner_kids.png'
 import ListingDetail from './Pages/ListingDetail';
+import ChangePassword from './Pages/ChangePassword';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<SignUp/>}/>
         <Route path='/resetpassword' element={<ResetPassword/>}/>
+        <Route path='/changepassword' element={<ChangePassword/>}/>
         <Route path='/FAQ' element={<FAQ/>}/>
         <Route path='/geo' element={<geo/>}/>
         <Route path='/user' element={<user/>}/>
