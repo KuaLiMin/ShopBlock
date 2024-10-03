@@ -41,7 +41,7 @@ class UserView(GenericAPIView):
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
         user = request.user
-        serializer = UserSerializer(user)
+        serializer = self.get_serializer(user)
         return Response(serializer.data)
 
 

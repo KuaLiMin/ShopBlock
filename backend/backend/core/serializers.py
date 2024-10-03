@@ -29,15 +29,22 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         return avg_rating if avg_rating is not None else 0
 
+    def get_avatar(self, obj):
+        if obj.avatar:
+            return self.context["request"].build_absolute_uri(obj.avatar.url)
+        return None
+
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
 
 
 class UserCreateSerializer(UserSerializer):
-    avatar = serializers.ImageField(
+    avatar = (
+        serializers.ImageField(
             max_length=1000000, allow_empty_file=False, use_url=False
         ),
+    )
 
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields
