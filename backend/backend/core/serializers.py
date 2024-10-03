@@ -34,6 +34,19 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class UserCreateSerializer(UserSerializer):
+    avatar = serializers.ImageField(
+            max_length=1000000, allow_empty_file=False, use_url=False
+        ),
+
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+
+
 class ListingPhotoSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
 

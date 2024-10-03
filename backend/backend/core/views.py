@@ -18,6 +18,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from backend.core.models import User, Listing, ListingPhoto, Offer
 from backend.core.serializers import (
     UserSerializer,
+    UserCreateSerializer,
     ListingSerializer,
     ListingCreateSerializer,
     OfferSerializer,
@@ -45,8 +46,8 @@ class UserView(GenericAPIView):
 
 
 class RegisterUserView(APIView):
-    serializer_class = UserSerializer
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
+    serializer_class = UserCreateSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
         # Check if the email already exists - all emails are unique
@@ -58,7 +59,7 @@ class RegisterUserView(APIView):
             )
 
         # Serialize the user data
-        serializer = UserSerializer(data=request.data)
+        serializer = UserCreateSerializer(data=request.data)
 
         # If data is successfully serialized then save it into the db
         if serializer.is_valid():
