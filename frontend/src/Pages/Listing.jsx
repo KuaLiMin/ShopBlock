@@ -3,9 +3,9 @@ This is for the Product page
 */
 import React from 'react'
 
-export const Product = () => {
+export const Listing = () => {
   return (
-    <div>Product</div>
+    <div>Listing</div>
   )
 }
-export default Product
+export default Listing
