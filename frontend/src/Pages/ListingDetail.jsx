@@ -145,7 +145,7 @@ const ListingDetail = () => {
   if (!listingData) return <p>No listing found.</p>;
 
   return (
-    <div className="container">
+    <div className="listing-detail-container">
       <p>
         <Link className="linkcolor" to={`/${listingData.category}`}>{listingData.category}</Link>
         {' '}{'>'} {listingData.title}

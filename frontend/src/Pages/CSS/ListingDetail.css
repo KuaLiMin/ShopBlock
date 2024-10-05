@@ -1,4 +1,4 @@
-.container {
+.listing-detail-container {
     display: flex;               /* Use Flexbox to arrange children */
     align-items: flex-start; 
     justify-content: flex-start;
