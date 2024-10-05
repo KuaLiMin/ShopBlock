@@ -1,17 +1,19 @@
 /* General Profile Container */
 .profile-container {
-    max-width: 90%;
-    height: 800px;
+    width: 100vw;
+    height: 70vh;
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    /* height: 80vh; */
+    /* justify-content: center;
+    align-items: center; */
   }
   
   h1 {
-    font-size: 2rem;
+    font-size: 3rem;
     margin-bottom: 10px;
+    /* padding-left: 40px; */
   }
   
   .short-description {

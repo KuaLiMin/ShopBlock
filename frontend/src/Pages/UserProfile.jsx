@@ -44,8 +44,8 @@ const UserProfile = () => {
             <div className="biography">
               <h3>Biography</h3>
               <p className="bio-text">
-                Hey there! I’m Ronaldo, a marketing professional by day and a sports enthusiast by night.
-                Originally from Brazil and now calling Singapore home, I’ve embraced the blend of cultures 
+                Hey there! I'm Ronaldo, a marketing professional by day and a sports enthusiast by night.
+                Originally from Brazil and now calling Singapore home, I've embraced the blend of cultures 
                 and the vibrant lifestyle this city offers. My weekends are often filled with football matches, 
                 hiking, and capturing the beauty of Singapore with my DSLR camera.
               </p>
