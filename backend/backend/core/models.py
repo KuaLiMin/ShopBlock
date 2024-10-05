@@ -155,23 +155,3 @@ class Offer(models.Model):
             self.status = self.REJECTED
             self.save()
 
-
-class Review(models.Model):
-    reviewer = models.ForeignKey(
-        User, related_name="reviews_given", on_delete=models.CASCADE
-    )
-
-    # Reference to the user being reviewed
-    user = models.ForeignKey(
-        User,
-        related_name="reviews_received",
-        on_delete=models.CASCADE,
-    )
-
-    rating = models.PositiveSmallIntegerField()
-
-    # Optional description for the review
-    description = models.TextField(blank=True, null=True)
-
-    # Automatically set the time when the review was created
-    created_at = models.DateTimeField(auto_now_add=True)
