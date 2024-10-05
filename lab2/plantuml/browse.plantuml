@@ -3,6 +3,10 @@ actor User as U
 boundary BrowseUI as BUI
 control BrowseManager as BM
 entity ListingEn as L
+entity LocationEn as Loc
+entity JobEn as Job
+entity ItemEn as Item
+entity SchedulingEn as Sched
 
 activate U
 
@@ -43,23 +47,18 @@ BM -> L : Fetch Listing Data
 activate L
 L --> BM : Listing Data
 deactivate L
+BM -> Loc : Fetch Location Data
+activate Loc
+Loc --> BM : Location Data
+deactivate Loc
+'Branching to fetch availability from Scheduling
+BM -> Sched : Fetch Availability
+activate Sched
+Sched --> BM : Availability Info
+deactivate Sched
 BM --> BUI : Display Listing Details
 deactivate BM
 BUI --> U : Show Listing Details
-deactivate BUI
-
-'User posting a listing
-U -> BUI : Post New Listing
-activate BUI
-BUI -> BM : Submit Listing Info
-activate BM
-BM -> L : Create New Listing
-activate L
-L --> BM : Listing Created
-deactivate L
-BM --> BUI : Listing Posted
-deactivate BM
-BUI --> U : Listing Confirmation
 deactivate BUI
 
 'User editing a listing
@@ -71,10 +70,58 @@ BM -> L : Update Listing
 activate L
 L --> BM : Listing Updated
 deactivate L
+BM -> Loc : Update Location Data
+activate Loc
+Loc --> BM : Location Updated
+deactivate Loc
+'Branching to fetch availability from Scheduling
+BM -> Sched : Update Availability
+activate Sched
+Sched --> BM : Availability Updated
+deactivate Sched
 BM --> BUI : Listing Edit Confirmed
 deactivate BM
 BUI --> U : Listing Updated
 deactivate BUI
+
+'User posting a new listing (Job/Item)
+U -> BUI : Post New Listing
+activate BUI
+BUI -> BM : Submit Listing Info
+activate BM
+alt Posting Job
+    BM -> Job : Create Job Listing
+    activate Job
+    Job --> BM : Request for Details
+    BM -> Job : Submit Job Details
+    Job --> BM : Job Created
+    deactivate Job
+else Posting Item
+    BM -> Item : Create Item Listing
+    activate Item
+    Item --> BM : Request for Details
+    BM -> Item : Submit Item Details
+    Item --> BM : Item Created
+    deactivate Item
+end
+BM -> L : Add Listing
+activate L
+L --> BM : Listing Added
+deactivate L
+BM -> Loc : Add Location
+activate Loc
+Loc --> BM : Location Added
+deactivate Loc
+'Branching to fetch availability from Scheduling
+BM -> Sched : Add Availability Info
+activate Sched
+Sched --> BM : Availability Info Added
+deactivate Sched
+BM --> BUI : Listing Posted
+deactivate BM
+BUI --> U : Listing Confirmation
+deactivate BUI
+
 
 'User deleting a listing
 U -> BUI : Delete Listing
@@ -85,9 +132,33 @@ BM -> L : Remove Listing
 activate L
 L --> BM : Listing Deleted
 deactivate L
+BM -> Loc : Remove Location
+activate Loc
+Loc --> BM : Location Deleted
+deactivate Loc
+'Branching to fetch availability from Scheduling
+BM -> Sched : Remove Availability Info
+activate Sched
+Sched --> BM : Availability Info Deleted
+deactivate Sched
 BM --> BUI : Deletion Confirmation
 deactivate BM
 BUI --> U : Listing Deleted
 deactivate BUI
+
+'User reporting a listing
+U -> BUI : Report Listing
+activate BUI
+BUI -> BM : Submit Report Info
+activate BM
+BM -> L : Create Report Entry
+activate L
+L --> BM : Report Created
+deactivate L
+BM --> BUI : Listing Reported
+deactivate BM
+BUI --> U : Report Confirmation
+deactivate BUI
+
 deactivate U
 @enduml

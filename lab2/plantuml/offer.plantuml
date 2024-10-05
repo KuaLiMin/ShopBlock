@@ -8,6 +8,16 @@ entity OfferEn as O
 activate U
 
 ' User making an offer
+actor User as U
+boundary OfferUI as OUI
+control OfferManager as OM
+entity ListingEn as L
+entity OfferEn as O
+
+' Activate User
+activate U
+
+' User making an offer
 U -> OUI : Make Offer
 activate OUI
 
@@ -16,63 +26,114 @@ activate OM
 OM -> L : Initialize Offer
 activate L
 
-L -> O : Initialize Offer Object
+' Set initial offer details
+L -> O : Set Offer Details
 activate O
-O --> L : Initialised Offer Object
+O --> L : Offer Details Set
 deactivate O
 
-L --> OM : Offer Created
+L --> OM : Offer Initialized
 deactivate L
-OM -> L : Populate Offer Details
-activate L
-L --> OM : Completed Offer
-deactivate L
-OM --> OUI : Completed Offer
+
+OM --> OUI : Offer Created
+
+OUI --> U : Offer made Successfully
 deactivate OM
-OUI --> U : Offer Submitted
+deactivate OUI
+
+' User updating offer details
+U -> OUI : Update Offer
+activate OUI
+
+OUI -> OM : Update Offer Details
+activate OM
+OM -> L : Update Offer Details
+activate L
+
+L -> O : Update Offer Details
+activate O
+O --> L : Offer Details Updated
+deactivate O
+
+L --> OM : Offer Updated
+deactivate L
+
+OM --> OUI : Offer Update Completed
+deactivate OM
+OUI --> U : Offer Updated Successfully
 deactivate OUI
 
 ' User accepting an offer
 U -> OUI : Accept Offer
 activate OUI
-OUI -> OM : Accept Offer
+OUI -> OM : Confirmation Popup [choice == confirm/cancel]
 activate OM
-OM -> L : Set Offer Status to Accepted
-activate L
 
-L -> O : Set Offer Status to Accepted
-activate O
-O --> L : Offer Accepted
-deactivate O
+alt choice == confirm
+    OM -> L : Set Offer Status to Accepted
+    activate L
+    L -> O : Set Offer Status to Accepted
+    activate O
+    O --> L : Offer Accepted
+    deactivate O
+    L --> OM : Offer Accepted
+    deactivate L
+    OM --> OUI : Acceptance Confirmation
+    OUI --> U : Offer Accepted
 
-L --> OM : Offer Accepted
-deactivate L
-OM --> OUI : Acceptance Confirmation
-deactivate OM
-OUI --> U : Offer Accepted
-deactivate OUI
+else choice == cancel
+    OM --> OUI : Cancel Action
+    deactivate OM
+    OUI --> U : Offer Acceptance Canceled
+    deactivate OUI
+end
+
 
 ' User rejecting an offer
 U -> OUI : Reject Offer
 activate OUI
-OUI -> OM : Reject Offer
+OUI -> OM : Confirmation Popup [choice == confirm/cancel]
 activate OM
-OM -> L : Set Offer Status to Rejected
+
+alt choice == confirm
+    OM -> L : Set Offer Status to Rejected
+    activate L
+    L -> O : Set Offer Status to Rejected
+    activate O
+    O --> L : Offer Rejected
+    deactivate O
+    L --> OM : Offer Rejected
+    deactivate L
+    OM --> OUI : Rejection Confirmation
+    OUI --> U : Offer Rejected
+
+else choice == cancel
+    OM --> OUI : Cancel Action
+    deactivate OM
+    OUI --> U : Offer Rejection Canceled
+    deactivate OUI
+end
+
+
+' User canceling an offer
+U -> OUI : Cancel Offer
+activate OUI
+OUI -> OM : Cancel Offer
+activate OM
+OM -> L : Cancel Offer
 activate L
 
-L -> O : Set Offer Status to Rejected
+L -> O : Cancel Offer
 activate O
-O --> L : Offer Rejected
+O --> L : Offer Canceled
 deactivate O
 
-
-L --> OM : Offer Rejected
+L --> OM : Offer Canceled
 deactivate L
-OM --> OUI : Rejection Confirmation
+OM --> OUI : Cancellation Confirmation
 deactivate OM
-OUI --> U : Offer Rejected
+OUI --> U : Offer Canceled
 deactivate OUI
 
-deactivate U
 
 @enduml
