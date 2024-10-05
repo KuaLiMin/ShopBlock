@@ -4,6 +4,8 @@ import Navbar from './components/Navbar/Navbar';
 import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
 import ResetPassword from './Pages/ResetPassword';
+import ChangePassword from './Pages/ChangePassword';
+import UserProfile from './Pages/UserProfile';
 import Categories from './Pages/Categories';
 import ShopCat from './Pages/ShopCat';
 import Listing from './Pages/Listing';
@@ -19,7 +21,7 @@ import electronics_banner from './components/Images/banner_mens.png'
 import services_banner from './components/Images/banner_women.png'
 import supplies_banner from './components/Images/banner_kids.png'
 import ListingDetail from './Pages/ListingDetail';
-import ChangePassword from './Pages/ChangePassword';
+
 
 function App() {
   return (
@@ -42,6 +44,7 @@ function App() {
         <Route path='/FAQ' element={<FAQ/>}/>
         <Route path='/geo' element={<geo/>}/>
         <Route path='/user' element={<user/>}/>
+        <Route path='/userprofile' element={<UserProfile/>}/>
         <Route path='/search' element={<search/>}/>
         <Route path='/history' element={<TransactionHistory/>}/>
       </Routes>
