@@ -1,9 +1,10 @@
-.container{
+.list-of-offers-container{
     display:flex;
     flex-direction: row;
     align-items: flex-start;
     width: 80%;
     max-width: 1536px;
+    padding: 20px 10%; 
     height: auto;/* Set height to fill the viewport */
 }
 
