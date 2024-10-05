@@ -111,7 +111,7 @@ export const Login = () => {
             <p>By continuing, I agree to the terms of use & privacy policy.</p>
           </div>
         </form>
-        <p className="loginsignup-login">Already have an account? <Link to='/userprofile' style={{ textDecoration: 'none' }}><span>Login here</span></Link></p>
+        <p className="loginsignup-login">Already have an account? <Link to='/signup' style={{ textDecoration: 'none' }}><span>Login here</span></Link></p>
       </div>
       {modal && (
       <div className="modal">
