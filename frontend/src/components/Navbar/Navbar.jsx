@@ -8,12 +8,18 @@ import supplies_icon from '../Images/supplies_icon.png';
 import categories_icon from '../Images/categories_icon.png';
 import services_icon from '../Images/services_icon.png';
 import { Link } from 'react-router-dom';
+import ClearIcon from '@mui/icons-material/Clear';
+import { SidebarData } from './SidebarData';
 
 const Navbar = () => {
 
   const [menu, setMenu] = useState("Categories");
+  const [sidebar, setSideBar] = useState(false);
+
+  const showSidebar = () => setSideBar(!sidebar);
 
   return (
+    <>
     <div className='navbar'>
       <Link style={{textDecoration: 'none'}} to='/'>
         <div className="nav-logo" onClick={() => setMenu("Categories")}>
@@ -57,15 +63,33 @@ const Navbar = () => {
       <div className="nav-promo">
         <span>GET 20% OFF FIRST RENTAL</span>
       </div>
-      <div className="nav-actions">
-        <Link to='/faq'><button className="faq-button">FAQ</button></Link>
-        <Link to='/search'><img src={search_icon} alt="Search" className="search-icon" /></Link>
-        <Link to='/Listing'><img src={user_icon} alt="User" /></Link>
-      </div>
       <div className="nav-login-cart">
         <Link to='/Login'><button>login</button></Link>
       </div>
+      <div className="nav-actions">
+        <Link to='/search'><img src={search_icon} alt="Search" className="search-icon" /></Link>
+        <Link to='/faq'><button className="faq-button">FAQ</button></Link>
+        <img src={user_icon} alt="User" onClick={showSidebar}/>
+      </div>
     </div>
+    <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
+        <ul className="nav-menu-items" onClick={showSidebar}>
+          <li className="navbar-toggle">
+            <Link to='#' className='menu-bars'><ClearIcon sx={{ color: 'white' }}/></Link>
+          </li>
+          {SidebarData.map((item, index) => {
+            return(
+              <li key={index} className={item.cName}>
+                <Link to={item.path}>
+                  {item.icon}
+                  <span>{item.title}</span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
+    </>
   )
 }
 
