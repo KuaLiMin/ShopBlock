@@ -62,15 +62,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-class ListingLocation(models.Model):
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
-    query = models.CharField(max_length=255, null=True, blank=True)
-    notes = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return f"Location (Lat: {self.latitude}, Long: {self.longitude})"
-
 
 class Listing(models.Model):
     # If user is deleted, then delete all their listings as well
@@ -79,9 +70,6 @@ class Listing(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
-    location = models.OneToOneField(
-        ListingLocation, on_delete=models.SET_NULL, null=True, blank=True
-    )
     # These categories can be filtered, default is electronics
     category = models.CharField(
         max_length=2, choices=Category.choices, default=Category.ELECTRONICS
@@ -118,6 +106,18 @@ class ListingRate(models.Model):
             f"{self.listing.title} - {self.get_time_unit_display()} Rate: {self.rate}"
         )
 
+
+class ListingLocation(models.Model):
+    listing = models.ForeignKey(
+        "Listing", on_delete=models.CASCADE, related_name="locations"
+    )
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    query = models.CharField(max_length=255, null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Location (Lat: {self.latitude}, Long: {self.longitude})"
 
 
 class Offer(models.Model):
