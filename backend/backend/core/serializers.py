@@ -85,7 +85,7 @@ class ListingRateSerializer(serializers.ModelSerializer):
 class ListingLocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ListingLocation
-        fields = ['latitude', 'longitude', 'query', 'notes']
+        fields = ["latitude", "longitude", "query", "notes"]
 
 
 class ListingSerializer(serializers.ModelSerializer):
@@ -238,3 +238,18 @@ class OfferCreateSerializer(serializers.Serializer):
             listing=listing,
             price=validated_data["price"],
         )
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    reviewer = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ["id", "reviewer", "user", "rating", "description", "created_at"]
+        read_only_fields = ["created_at"]
+
+    def create(self, validated_data):
+        reviewer = self.context["request"].user
+        user = self.context["view"].kwargs.get("user_id")
+        return Review.objects.create(reviewer=reviewer, user_id=user, **validated_data)
