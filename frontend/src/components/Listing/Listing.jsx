@@ -1,6 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import './Listing.css'; // Make sure to create this CSS file
+import { Link, useParams } from 'react-router-dom';
+// import { Card, CardContent, Typography, CardMedia, CircularProgress, Box } from '@mui/material';
+import './Listing.css'; 
+
+const formatRate = (rates) => {
+  if (rates.length > 0) {
+    const rateInfo = rates[0]; // Assuming you're using the first rate in the array
+    const timeUnitMap = {
+      OT: 'OneTime',
+      H: 'Hour',
+      D: 'Day',
+      W: 'Week',
+    };
+
+    const timeUnit = timeUnitMap[rateInfo.time_unit] || 'Unknown'; // Map time_unit or default to 'Unknown'
+    const rate = `$${parseFloat(rateInfo.rate).toFixed(2)}`; // Format the rate with two decimal points
+
+    return `${rate} / ${timeUnit}`;
+  }
+  return 'Rate not available'; // Default if no rate is found
+};
+
+// Helper function to get the token from cookies
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
+
 
 const ListingCard = ({id, time, title, rate, image }) => {
   const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
@@ -17,40 +45,52 @@ const ListingCard = ({id, time, title, rate, image }) => {
 }
 
 
-
-const ListingsGrid = ({updateCount = () => {} }) => {
+const ListingsGrid = ({ updateCount = () => {} }) => {
   const [listingsData, setListingsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const { username } = useParams();
+
   useEffect(() => {
-    // Fetch the data from the backend
+    const token = getCookie('access'); 
+
+    if (!token) {
+      setError(new Error('User not logged in'));
+      setLoading(false);
+      return;
+    }
+
+    // Fetch the data from the backend with Authorization header
     fetch('/listing/', {
       method: 'GET',
-      // mode: 'no-cors',
       headers: {
-        'accept': 'application/json'
-      }
+        accept: 'application/json',
+        Authorization: `Bearer ${token}`, // Include the access token
+      },
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => {
-        // Map the backend data to match your card structure
-        const formattedData = data.map(listing => ({
+
+        const userSpecificListings = data.filter(listing => listing.created_by === username);
+
+        // Format the data for display
+        const formattedData = userSpecificListings.map(listing => ({
           id: listing.id,
           time: listing.created_at,
           title: listing.title,
           description: listing.description,
-          rate: `$${1}/Day`, 
-          image: listing.photos.length > 0 ? listing.photos[0].image_url : ''
+          rate: formatRate(listing.rates), 
+          image: listing.photos.length > 0 ? listing.photos[0].image_url : 'https://placehold.co/140x100',
         }));
+
         setListingsData(formattedData);
         setLoading(false);
-
         updateCount(formattedData.length);
       })
       .catch(error => {
@@ -61,7 +101,7 @@ const ListingsGrid = ({updateCount = () => {} }) => {
   }, [updateCount]);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error loading data</p>;
+  if (error) return <p>Error loading data: {error.message}</p>;
 
   return (
     <div className="listings-grid">
@@ -72,4 +112,4 @@ const ListingsGrid = ({updateCount = () => {} }) => {
   );
 };
 
-  export { ListingCard, ListingsGrid };
+export { ListingCard, ListingsGrid };
