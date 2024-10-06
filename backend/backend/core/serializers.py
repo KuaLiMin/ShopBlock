@@ -9,6 +9,7 @@ from backend.core.models import (
     ListingRate,
     ListingPhoto,
     ListingType,
+    ListingLocation,
     Review,
     Offer,
 )
@@ -81,6 +82,12 @@ class ListingRateSerializer(serializers.ModelSerializer):
         fields = ["time_unit", "rate"]
 
 
+class ListingLocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ListingLocation
+        fields = ['latitude', 'longitude', 'query', 'notes']
+
+
 class ListingSerializer(serializers.ModelSerializer):
     # the source = listingphoto_set tells django to look for the reverse
     # relationship from Listing -> ListingPhoto
@@ -93,6 +100,8 @@ class ListingSerializer(serializers.ModelSerializer):
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
     created_by = serializers.SerializerMethodField()
     rates = ListingRateSerializer(many=True, read_only=True)
+    # Optionally required only
+    location = ListingLocationSerializer(required=False)
 
     class Meta:
         model = Listing
@@ -106,8 +115,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "category",
             "listing_type",
             "photos",
-            "longitude",
-            "latitude",
+            "location",
             "rates",
         ]
         read_only_fields = ["created_at", "updated_at"]

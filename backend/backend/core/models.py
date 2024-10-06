@@ -65,8 +65,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 class ListingLocation(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    listing_query = models.CharField(max_length=255, null=True, blank=True)
-    listing_notes = models.TextField(null=True, blank=True)
+    query = models.CharField(max_length=255, null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"Location (Lat: {self.latitude}, Long: {self.longitude})"

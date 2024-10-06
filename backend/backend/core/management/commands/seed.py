@@ -50,8 +50,8 @@ class Command(BaseCommand):
         listing1_location = ListingLocation.objects.create(
             latitude=1.31745,  # somewhere in farrer road
             longitude=103.80704,
-            listing_query='Fareer Road',
-            listing_notes='',
+            query='Fareer Road',
+            notes='',
         )
 
         # Seed some listing data
@@ -79,8 +79,8 @@ class Command(BaseCommand):
         listing2_location = ListingLocation.objects.create(
             latitude=1.35160,  # somewhere in nex
             longitude=103.87119,
-            listing_query='Nex',
-            listing_notes='',
+            query='Nex',
+            notes='',
         )
 
         listing2 = Listing.objects.create(
@@ -101,8 +101,8 @@ class Command(BaseCommand):
         listing3_location = ListingLocation.objects.create(
             latitude=1.42953,  # somewhere in yishun
             longitude=103.83503,
-            listing_query='Yishun',
-            listing_notes='',
+            query='Yishun',
+            notes='',
         )
 
         listing3 = Listing.objects.create(
@@ -123,8 +123,8 @@ class Command(BaseCommand):
         listing4_location = ListingLocation.objects.create(
             latitude=1.34633,  # ccds building
             longitude=103.68217,
-            listing_query='NTU CCDS',
-            listing_notes='',
+            query='NTU CCDS',
+            notes='',
         )
 
         listing4 = Listing.objects.create(
