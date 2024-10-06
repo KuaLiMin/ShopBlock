@@ -16,6 +16,7 @@ from backend.core.models import (
     ListingRate,
     ListingType,
     ListingPhoto,
+    ListingLocation,
     Offer,
     Review,
 )
@@ -51,8 +52,6 @@ class Command(BaseCommand):
             uploaded_by=user1,
             title="Electronic Drill",
             description="Looking to rent out an electronic drill as I do not need it anymore",
-            latitude=1.31745,  # somewhere in farrer road
-            longitude=103.80704,
             category=Category.ELECTRONICS,
             listing_type=ListingType.RENTAL,
         )
@@ -69,12 +68,18 @@ class Command(BaseCommand):
             rate=50.00,
         )
 
+        listing1_location = ListingLocation.objects.create(
+            listing=listing1,
+            latitude=1.31745,  # somewhere in farrer road
+            longitude=103.80704,
+            query="Fareer Road",
+            notes="",
+        )
+
         listing2 = Listing.objects.create(
             uploaded_by=user2,
             title="Camping Tent",
             description="Looking to rent out a camping tent as it is unused in the house",
-            latitude=1.35160,  # somewhere in nex
-            longitude=103.87119,
             category=Category.SUPPLIES,
             listing_type=ListingType.RENTAL,
         )
@@ -85,12 +90,18 @@ class Command(BaseCommand):
             rate=150.00,
         )
 
+        listing2_location = ListingLocation.objects.create(
+            listing=listing2,
+            latitude=1.35160,  # somewhere in nex
+            longitude=103.87119,
+            query="Nex",
+            notes="",
+        )
+
         listing3 = Listing.objects.create(
             uploaded_by=user3,
             title="Plumbing services",
             description="Plumbing services, available from 9am to 5pm anywhere in Singapore.",
-            latitude=1.42953,  # somewhere in yishun
-            longitude=103.83503,
             category=Category.SERVICES,
             listing_type=ListingType.SERVICE,
         )
@@ -101,12 +112,18 @@ class Command(BaseCommand):
             rate=70.00,
         )
 
+        listing3_location = ListingLocation.objects.create(
+            listing=listing3,
+            latitude=1.42953,  # somewhere in yishun
+            longitude=103.83503,
+            query="Yishun",
+            notes="",
+        )
+
         listing4 = Listing.objects.create(
             uploaded_by=user1,
             title="SC2006 Smurfing Services",
             description="NEED HELP FOR OS LAB? CONTACT ME",
-            latitude=1.34633,  # ccds building
-            longitude=103.68217,
             category=Category.SERVICES,
             listing_type=ListingType.SERVICE,
         )
@@ -115,6 +132,14 @@ class Command(BaseCommand):
             listing=listing4,
             time_unit=TimeUnit.ONETIME,
             rate=100.00,
+        )
+
+        listing4_location = ListingLocation.objects.create(
+            listing=listing4,
+            latitude=1.34633,  # ccds building
+            longitude=103.68217,
+            query="NTU CCDS",
+            notes="",
         )
 
         print("Successfully Seeded - Listings")

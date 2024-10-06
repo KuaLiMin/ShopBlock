@@ -70,10 +70,6 @@ class Listing(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
-    # location fields, it's not fully accurate with floats but it's okay, the user
-    # may choose to not provide a location and thus null
-    latitude = models.FloatField(null=True)
-    longitude = models.FloatField(null=True)
     # These categories can be filtered, default is electronics
     category = models.CharField(
         max_length=2, choices=Category.choices, default=Category.ELECTRONICS
@@ -109,6 +105,19 @@ class ListingRate(models.Model):
         return (
             f"{self.listing.title} - {self.get_time_unit_display()} Rate: {self.rate}"
         )
+
+
+class ListingLocation(models.Model):
+    listing = models.ForeignKey(
+        "Listing", on_delete=models.CASCADE, related_name="locations"
+    )
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    query = models.CharField(max_length=255, null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Location (Lat: {self.latitude}, Long: {self.longitude})"
 
 
 class Offer(models.Model):

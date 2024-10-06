@@ -99,6 +99,8 @@ class ListingController(GenericAPIView):
         request_copy = request.data.copy()
         if "rates" in request_copy and isinstance(request_copy["rates"], str):
             request_copy["rates"] = json.loads(request_copy["rates"])
+        if "locations" in request_copy and isinstance(request_copy["locations"], str):
+            request_copy["locations"] = json.loads(request_copy["locations"])
 
         serializer = ListingCreateSerializer(data=request_copy)
         # Use custom serializer for the post request here

@@ -9,6 +9,7 @@ from backend.core.models import (
     ListingRate,
     ListingPhoto,
     ListingType,
+    ListingLocation,
     Review,
     Offer,
 )
@@ -81,6 +82,12 @@ class ListingRateSerializer(serializers.ModelSerializer):
         fields = ["time_unit", "rate"]
 
 
+class ListingLocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ListingLocation
+        fields = ['latitude', 'longitude', 'query', 'notes']
+
+
 class ListingSerializer(serializers.ModelSerializer):
     # the source = listingphoto_set tells django to look for the reverse
     # relationship from Listing -> ListingPhoto
@@ -93,6 +100,8 @@ class ListingSerializer(serializers.ModelSerializer):
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
     created_by = serializers.SerializerMethodField()
     rates = ListingRateSerializer(many=True, read_only=True)
+    # Optionally required only
+    locations = ListingLocationSerializer(many=True, required=False)
 
     class Meta:
         model = Listing
@@ -106,8 +115,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "category",
             "listing_type",
             "photos",
-            "longitude",
-            "latitude",
+            "locations",
             "rates",
         ]
         read_only_fields = ["created_at", "updated_at"]
@@ -135,14 +143,23 @@ class ListingCreateSerializer(ListingSerializer):
         write_only=True,
     )
 
+    locations = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.CharField(),  # Handle individual rate fields
+        ),
+        write_only=True,
+    )
+
     class Meta(ListingSerializer.Meta):
-        fields = ListingSerializer.Meta.fields + ["photos", "rates"]
+        fields = ListingSerializer.Meta.fields + ["photos", "rates", "locations"]
 
     def create(self, validated_data):
         # Extract the photos from the validated data
         photos_data = validated_data.pop("photos", [])
         # Extract the rates from the validated data
         rates_data = validated_data.pop("rates", [])
+        # Extract the location from the validated data
+        location_data = validated_data.pop("locations", [])
 
         # Create the base Listing object
         listing = Listing.objects.create(**validated_data)
@@ -157,6 +174,15 @@ class ListingCreateSerializer(ListingSerializer):
                 listing=listing,
                 time_unit=rate_data["time_unit"],
                 rate=rate_data["rate"],
+            )
+
+        for location in location_data:
+            ListingLocation.objects.create(
+                listing=listing,
+                latitude=location["latitude"],
+                longitude=location["longitude"],
+                query=location["query"],
+                notes=location["notes"],
             )
 
         return listing
