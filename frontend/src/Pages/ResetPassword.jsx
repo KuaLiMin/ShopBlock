@@ -1,29 +1,24 @@
 import React, { useState } from 'react'
-import PhoneInput from 'react-phone-input-2'
 import './CSS/LoginSignup.css'
-import 'react-phone-input-2/lib/style.css'
 import './CSS/Modal.css'
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
-export const Login = () => {
+export const ResetPassword = () => {
   // State for form fields
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
-  const [agree, setAgree] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+  const [phoneErrorMessage, setPhoneErrorMessage] = useState('');
   const [contactno, setContactNo] = useState('');
   const [countryCode, setCountryCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newPasswordMessage, setNewPasswordMessage] = useState('');
   const [modal, setModal] = useState(false);
 
-  // Regular expression for email validation
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
   const navigate = useNavigate();
 
   const toggleModal = () => {
@@ -37,7 +32,6 @@ export const Login = () => {
   const handlePhoneChange = (e, value, name) => {
     if (name === "contactno") {
       let splitMobile = e?.split(value?.dialCode)
-      //console.log("splitMobile===== ", splitMobile?.[1] || "")
       setCountryCode(value?.dialCode)
 
       // Convert phoneNo to integer
@@ -51,36 +45,29 @@ export const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Basic validation checks
-    if (!username || !email || !password || !phone) {
+
+    if (!username || !phone || !newPassword) {
       setErrorMessage('All fields are required.');
       return;
     }
-    if (username.length < 4) {
-      setUsernameErrorMessage('Username must be at least 4 characters long.');
-      return;
-    } else setUsernameErrorMessage("")
 
-    if (!emailPattern.test(email)) {
-      setErrorMessage('Please enter a valid email address.');
+    if (username !== "oooo") {
+      setUsernameErrorMessage('Username not found!');
       return;
-    }
+    } else setUsernameErrorMessage('');
 
-    if (regex.test(password) ===  false) {
-      setPasswordErrorMessage('Password does not meet the password requirements.');
-      return;
-    } else setPasswordErrorMessage('');
+    if (phone !== 99999999) {
+        setPhoneErrorMessage('Phone number does not match!');
+        return;
+    } else setPhoneErrorMessage('');
 
-    if (!agree) {
-      setErrorMessage('You must agree to the terms and conditions.');
+    if (regex.test(newPassword) ===  false) {
+      setNewPasswordMessage('New password does not match the password requirements.');
       return;
-    }
+  } else setNewPasswordMessage('');
 
     // If validation passes, clear the error message and submit the form
     setErrorMessage('');
-    console.log(username)
-    console.log(email)
-    console.log(password)
-    console.log(phone)
 
     // Call toggleModal function here
     toggleModal();
@@ -90,36 +77,32 @@ export const Login = () => {
   return (
     <div className='loginsignup'>
       <div className='loginsignup-container'>
-        <h1>Create Account</h1>
+        <h1>Reset Password</h1>
         <form onSubmit={handleSubmit}>
           <div className='loginsignup-fields'>
             <input type='text' placeholder='Enter Username' value={username} onChange={(e) => setUsername(e.target.value)}/>
             {usernameErrorMessage && <p style={{ color: 'red' }}>{usernameErrorMessage}</p>}
-            <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
-            {passwordErrorMessage && <p style={{ color: 'red' }}>{passwordErrorMessage}</p>}
             <PhoneInput 
               country={"sg"}
               value={`${countryCode}${contactno}`}
               onChange={(e, phone) => handlePhoneChange(e, phone, "contactno")}
               inputStyle={{height: "72px", width: "100%", paddingLeft: "48px", border: "1px solid #c9c9c9", outline: "none", color: "#5c5c5c", fontSize: "18px", borderRadius: "0px" }} />
-              {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
+              {phoneErrorMessage && <p style={{ color: 'red' }}>{phoneErrorMessage}</p>}
+            <input type='password' placeholder='Password' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+            {newPasswordMessage && <p style={{ color: 'red' }}>{newPasswordMessage}</p>}
+            {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
           </div>
-          <button type='submit'>Register</button>
-          <div className="loginsignup-agree">
-            <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
-            <p>By continuing, I agree to the terms of use & privacy policy.</p>
-          </div>
+          <button type='submit'>Reset Password</button>
         </form>
-        <p className="loginsignup-login">Already have an account? <Link to='/signup' style={{ textDecoration: 'none' }}><span>Login here</span></Link></p>
       </div>
+
       {modal && (
       <div className="modal">
         <div className="overlay" onClick={nextPage}>
           <div className="modal-content">
-            <h2>Account Registration</h2>
+            <h2>Reset Password</h2>
             <p>
-              Your account has been registered successfully.
+              Password has been resetted successfully.
             </p>
             <button className='close-modal' onClick={nextPage}>CLOSE</button>
           </div>
@@ -129,4 +112,4 @@ export const Login = () => {
     </div>
   );
 }
-export default Login
+export default ResetPassword

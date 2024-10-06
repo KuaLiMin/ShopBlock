@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import './Navbar.css'
 import logo from '../Images/logo.png'
-import cart_icon from '../Images/cart_icon.png'
 import user_icon from '../Images/user_icon.png';
 import search_icon from '../Images/search_icon.png';
-import geo_icon from '../Images/geo_icon.png';
 import thunderbolt_icon from '../Images/thunderbolt_icon.png';
 import supplies_icon from '../Images/supplies_icon.png';
 import categories_icon from '../Images/categories_icon.png';
@@ -13,16 +11,16 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
 
-  //User state Variable
-
   const [menu, setMenu] = useState("Categories");
 
   return (
     <div className='navbar'>
-      <div className="nav-logo">
-        <img src={logo} alt=" " />
-        <p>SHOPBLOCK</p>
-      </div>
+      <Link style={{textDecoration: 'none'}} to='/'>
+        <div className="nav-logo" onClick={() => setMenu("Categories")}>
+          <img src={logo} alt=" " />
+          <p>SHOPBLOCK</p> 
+        </div>
+      </Link>
       <ul className="nav-menu">
         <li onClick={() => { setMenu("Categories") }}>
           <Link style={{textDecoration: 'none'}} to='/'>
@@ -60,15 +58,12 @@ const Navbar = () => {
         <span>GET 20% OFF FIRST RENTAL</span>
       </div>
       <div className="nav-actions">
-        <Link to='/geo'><button className="faq-button">FAQ</button></Link> {/*error cannot change /geo to /faq*/} 
-        <Link to='/geo'><img src={geo_icon} alt="Geo" className="geo-icon" /></Link>
+        <Link to='/faq'><button className="faq-button">FAQ</button></Link>
         <Link to='/search'><img src={search_icon} alt="Search" className="search-icon" /></Link>
         <Link to='/Listing'><img src={user_icon} alt="User" /></Link>
       </div>
       <div className="nav-login-cart">
         <Link to='/Login'><button>login</button></Link>
-        <Link to='/cart'><img src={cart_icon} alt="Cart Icon" /></Link>
-        <div className="nav-cart-count">0</div>
       </div>
     </div>
   )
