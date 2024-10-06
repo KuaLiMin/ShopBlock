@@ -37,16 +37,16 @@ urlpatterns = [
     # default django admin portal
     path("admin/", admin.site.urls),
     # debugging purposes
-    path("debug/user/", views.DebugUserList.as_view()),
-    path("debug/listing/", views.DebugListingList.as_view()),
+    path("debug/user/", views.DebugUserController.as_view()),
+    path("debug/listing/", views.DebugListingController.as_view()),
     # listings [GET, POST]
-    path("listing/", views.ListingView.as_view()),
+    path("listing/", views.ListingController.as_view()),
     # user routes, [GET]
-    path("user/", views.UserView.as_view()),
+    path("user/", views.UserController.as_view()),
     # user registration, [POST]
-    path("register/", views.RegisterUserView.as_view()),
+    path("register/", views.RegisterController.as_view()),
     # offer routes, [GET, POST]
-    path("offers/", views.OfferView.as_view()),
+    path("offers/", views.OfferController.as_view()),
     # authentication jwt tokens
     path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
