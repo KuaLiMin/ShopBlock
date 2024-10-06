@@ -14,15 +14,6 @@ const ListingCard = ({id, time, title, rate, image }) => {
       </div>
     </Link>   // {/* CREATED BY HAYES */}
   );
-  // return (
-  //   <div className="listing-card">
-  //     <img src={image} alt={title} className="listing-image"/>
-  //     <div className="listing-info">
-  //       <h4>{title}</h4>
-  //       <p>{rate}</p>
-  //     </div>
-  //   </div>
-  // );
 }
 
 
