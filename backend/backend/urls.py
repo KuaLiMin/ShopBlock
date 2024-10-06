@@ -47,6 +47,8 @@ urlpatterns = [
     path("register/", views.RegisterController.as_view()),
     # offer routes, [GET, POST]
     path("offers/", views.OfferController.as_view()),
+    # review routes, [GET, POST]
+    path("reviews/", views.ReviewsController.as_view()),
     # authentication jwt tokens
     path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
