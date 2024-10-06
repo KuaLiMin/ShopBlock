@@ -30,7 +30,7 @@ from backend.core.serializers import (
 # Make it small and distinct and easy to work on
 
 
-class UserView(GenericAPIView):
+class UserController(GenericAPIView):
     """
     User endpoint for GET
     """
@@ -45,7 +45,7 @@ class UserView(GenericAPIView):
         return Response(serializer.data)
 
 
-class RegisterUserView(APIView):
+class RegisterController(APIView):
     serializer_class = UserCreateSerializer
     parser_classes = (MultiPartParser, FormParser)
 
@@ -70,7 +70,7 @@ class RegisterUserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ListingView(GenericAPIView):
+class ListingController(GenericAPIView):
     """
     Listing endpoint, [GET, POST]
 
@@ -111,7 +111,7 @@ class ListingView(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class OfferView(GenericAPIView):
+class OfferController(GenericAPIView):
     """
     Offers endpoint, [GET, POST, PUT]
 
@@ -215,7 +215,7 @@ class OfferView(GenericAPIView):
         return Response(serializer.data)
 
 
-class DebugUserList(GenericAPIView):
+class DebugUserController(GenericAPIView):
     """
     Admin endpoint to debug the user endpoint
     """
@@ -228,7 +228,7 @@ class DebugUserList(GenericAPIView):
         return Response(serializer.data)
 
 
-class DebugListingList(GenericAPIView):
+class DebugListingController(GenericAPIView):
     """
     Admin endpoint to debug the listings endpoint
     """
