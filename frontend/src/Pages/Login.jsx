@@ -21,12 +21,6 @@ export const Login = () => {
   const [countryCode, setCountryCode] = useState('');
   const [modal, setModal] = useState(false);
 
-  const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    password: '',
-  });
-
   // Regular expression for email validation
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
