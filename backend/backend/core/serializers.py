@@ -12,6 +12,7 @@ from backend.core.models import (
     ListingLocation,
     Review,
     Offer,
+    Transaction,
 )
 
 
@@ -253,3 +254,42 @@ class ReviewSerializer(serializers.ModelSerializer):
         reviewer = self.context["request"].user
         user = self.context["view"].kwargs.get("user_id")
         return Review.objects.create(reviewer=reviewer, user_id=user, **validated_data)
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    offer = OfferSerializer(read_only=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
+
+    class Meta:
+        model = Transaction
+        fields = [
+            "id",
+            "user",
+            "offer",
+            "amount",
+            "status",
+            "status_display",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    # def create(self, validated_data):
+    #     user = self.context["request"].user
+    #     offer_id = self.context["request"].data.get("offer_id")
+    #     offer = Transaction.offer.field.related_model.objects.get(id=offer_id)
+
+    #     transaction = Transaction.objects.create(
+    #         user=user,
+    #         offer=offer,
+    #         amount=validated_data["amount"],
+    #         status=validated_data.get("status", Transaction.PENDING),
+    #     )
+    #     return transaction
+
+    # def update(self, instance, validated_data):
+    #     instance.amount = validated_data.get("amount", instance.amount)
+    #     instance.status = validated_data.get("status", instance.status)
+    #     instance.save()
+    #     return instance
