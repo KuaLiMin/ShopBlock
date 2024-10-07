@@ -155,15 +155,16 @@
 }
 
 .menu-bars {
-    margin-left: 12rem;
+    margin-left: 10rem;
     font-size: 2.5rem;
     background: none;
     cursor: pointer;
 }
 
 .navbar-toggle .menu-bars {
-    font-size: 2.5rem; /* Increase the size of the X button */
+    font-size: 4rem; /* Increase the size of the X button */
     color: white;
+    padding-right: 35px;
 }
 
 .side-menu {
@@ -211,7 +212,7 @@
   
   .side-menu-items {
     width: 100%;
-    padding-left: 10px;
+    padding-left: 0px;
     margin-top: -5px;
   }
   
