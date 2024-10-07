@@ -180,3 +180,48 @@ class Review(models.Model):
     description = models.TextField(blank=True, null=True)
     # Automatically set the time when the review was created
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Transaction(models.Model):
+    PENDING = "P"
+    COMPLETED = "C"
+    FAILED = "F"
+    REFUNDED = "R"
+
+    TRANSACTION_STATUS_CHOICES = [
+        (PENDING, "Pending"),
+        (COMPLETED, "Completed"),
+        (FAILED, "Failed"),
+        (REFUNDED, "Refunded"),
+    ]
+
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="transaction"
+    )
+    offer = models.OneToOneField(
+        Offer, on_delete=models.CASCADE, related_name="transaction"
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(
+        max_length=1, choices=TRANSACTION_STATUS_CHOICES, default=PENDING
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def complete(self):
+        if self.status == self.PENDING:
+            self.status = self.COMPLETED
+            self.save()
+
+    def fail(self):
+        if self.status == self.PENDING:
+            self.status = self.FAILED
+            self.save()
+
+    def refund(self):
+        if self.status == self.COMPLETED:
+            self.status = self.REFUNDED
+            self.save()
+
+    def __str__(self):
+        return f"Transaction {self.id} - {self.get_status_display()} - {self.amount}"

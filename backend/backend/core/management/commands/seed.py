@@ -19,6 +19,7 @@ from backend.core.models import (
     ListingLocation,
     Offer,
     Review,
+    Transaction,
 )
 
 
@@ -192,3 +193,11 @@ class Command(BaseCommand):
         )
 
         print("Seeded review 1 - User 2 to User 1")
+
+        transaction1 = Transaction.objects.create(
+            user=user2,
+            offer=offer1,
+            amount=10.0,
+            status=Transaction.COMPLETED,
+        )
+        print("Seeded transaction 1 for user2, offer1")

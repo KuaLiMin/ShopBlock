@@ -15,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
-from backend.core.models import User, Listing, ListingPhoto, Offer, Review
+from backend.core.models import User, Listing, ListingPhoto, Offer, Review, Transaction
 from backend.core.serializers import (
     UserSerializer,
     UserCreateSerializer,
@@ -24,6 +24,7 @@ from backend.core.serializers import (
     OfferSerializer,
     OfferCreateSerializer,
     ReviewSerializer,
+    TransactionSerializer,
 )
 
 # The views here will be mapped to a url in urls.py
@@ -242,6 +243,33 @@ class ReviewsController(GenericAPIView):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
+
+
+class TransactionController(GenericAPIView):
+    """
+    Reviews endpoint, [GET, POST]
+
+    For the GET request, it returns all reviews for the requested user
+
+    For the POST request, a user can post a review
+    """
+
+    serializer_class = TransactionSerializer
+
+    # The query set should filter out the listing for the user
+    def get_queryset(self):
+        # Get all listings requested by the JWT-ed user
+        user_transactions = Transaction.objects.filter(user=self.request.user)
+        # user_listings = Listing.objects.filter(uploaded_by=self.request.user)
+        return user_transactions
+
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def get(self, request: Request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
 
 
 class DebugUserController(GenericAPIView):
