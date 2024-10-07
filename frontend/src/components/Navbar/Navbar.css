@@ -166,7 +166,7 @@
     color: white;
 }
 
-.nav-menu {
+.side-menu {
     background-color: #0a2c47;
     width: 300px;
     height: 100vh;
@@ -179,7 +179,7 @@
     transition: 850ms;
 }
   
-.nav-menu.active {
+.side-menu.active {
     right: 0;
     transition: 350ms;
 }
@@ -209,7 +209,7 @@
     background-color: #1a73e8;
   }
   
-  .nav-menu-items {
+  .side-menu-items {
     width: 100%;
     padding-left: 10px;
     margin-top: -5px;

@@ -72,8 +72,8 @@ const Navbar = () => {
         <img src={user_icon} alt="User" onClick={showSidebar}/>
       </div>
     </div>
-    <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
-        <ul className="nav-menu-items" onClick={showSidebar}>
+    <nav className={sidebar ? 'side-menu active' : 'side-menu'}>
+        <ul className="side-menu-items" onClick={showSidebar}>
           <li className="navbar-toggle">
             <Link to='#' className='menu-bars'><ClearIcon sx={{ color: 'white' }}/></Link>
           </li>
