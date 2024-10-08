@@ -34,16 +34,19 @@ class Command(BaseCommand):
         user1 = User.objects.create(
             email="user1@gmail.com",
             username="user1",
+            phone_number="99999999",
             password=make_password("password"),
         )
         user2 = User.objects.create(
             email="user2@gmail.com",
             username="user2",
+            phone_number="88888888",
             password=make_password("password"),
         )
         user3 = User.objects.create(
             email="user3@gmail.com",
             username="user3",
+            phone_number="77777777",
             password=make_password("password"),
         )
         print("Successfully Seeded - Users")
