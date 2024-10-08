@@ -22,6 +22,7 @@ import services_banner from './components/Images/banner_women.png'
 import supplies_banner from './components/Images/banner_kids.png'
 import ListingDetail from './Pages/ListingDetail';
 import ListOfOffers from './Pages/ListOfOffers';
+import EditListing from './components/Listing/EditListing';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
         <Route path="/listing" element={<Listing />} />
         <Route path="/user/:username/listing" element={<Listing />} />
         <Route path="/listing/:slug" element={<ListingDetail />} />
+        {/* <Route path="/listing/edit/:id" element={<EditListing />} /> */}
         <Route path='/cart' element={<cart/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<SignUp/>}/>

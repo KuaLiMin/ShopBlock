@@ -36,7 +36,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     description: '', // For the description of the listing
     locationAddress: '', // For storing the full address
     locationNotes: '', // Additional notes for the location
-    image_url: 'http://152.42.253.110:8000/media/listings/Cat03_vUn36m1.jpg', // For storing the image URL after upload
+    image_url: '', // For storing the image URL after upload
     listing_type: '', // Rental or Service (RE or SE)
     longitude: '', // Longitude of the selected location
     latitude: '', // Latitude of the selected location
@@ -50,7 +50,8 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
-      image_url: e.target.files[0], // Set the file in formData
+      image_url: e.target.files[0], 
+      // image_url: file,
     });
   };
 
@@ -70,11 +71,31 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
     formPayload.append('listing_type', formData.listing_type);
-    formPayload.append('longitude', formData.longitude);
-    formPayload.append('latitude', formData.latitude);
-    formPayload.append('photos', formData.image_url); 
-    formPayload.append('rates[0][time_unit]', formData.unit);
-    formPayload.append('rates[0][rate]', formData.price);
+    // formPayload.append('photos', formData.image_url); 
+    // formPayload.append('rates[0][time_unit]', formData.unit);
+    // formPayload.append('rates[0][rate]', formData.price);
+
+    const photosArray = [];
+    photosArray.push(formData.image_url); // Assuming `formData.image_url` holds the file
+
+    // Since the API expects photos as an array, use a loop to append each file
+    photosArray.forEach((photo, index) => {
+      formPayload.append(`photos[${index}]`, photo);
+    });
+
+    const locations = [{
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      query: formData.locationAddress,
+      notes: formData.locationNotes
+    }];
+    formPayload.append('locations', JSON.stringify(locations));
+
+    const rates = [{
+      time_unit: formData.unit,
+      rate: parseFloat(formData.price)
+    }];
+    formPayload.append('rates', JSON.stringify(rates));
 
     // const payload = {
     //   created_by: username, // Use the username from the URL as created_by
@@ -103,12 +124,13 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     }
 
 
-    fetch('/listing/', {
+    fetch('http://152.42.253.110:8000/listing/', {
       method: 'POST',
       headers: {
         // 'Accept': 'application/json',
         // 'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`, 
+        // mode: 'no-cors',
+        // 'Authorization': `Bearer ${token}`, 
       },
       // body: JSON.stringify(payload),
       body: formPayload,
@@ -128,13 +150,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       });
       
   };
-  // const handleChange = (e) => {
-  //     const { name, value } = e.target;
-  //     setFormData((prevData) => ({
-  //       ...prevData,
-  //       [name]: value
-  //     }));
-  // };
+
   const searchLocation = () => {
     const input = formData.locationAddress.replace(/ /g, '+');
     fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${input}&returnGeom=Y&getAddrDetails=Y&pageNum=1`, {
@@ -295,7 +311,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
               </Typography>
               <Button variant="contained" component="label" style={{ }}>
                 📷 Add Photo
-                <input type="file" hidden />
+                <input type="file" hidden onChange={handleFileChange} />
               </Button>
             </Grid>
           </Grid>
@@ -338,7 +354,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                     title="Selected Location"
                     width="100%"
                     height="200"
-                    frameborder="0"
+                    frameBorder="0"
                     scrolling="no"
                     src={mapUrl}
                     style={{ marginTop: '16px' }}

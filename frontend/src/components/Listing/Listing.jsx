@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useNavigate } from 'react';
 import { Link, useParams } from 'react-router-dom';
 // import { Card, CardContent, Typography, CardMedia, CircularProgress, Box } from '@mui/material';
 import './Listing.css'; 
+import EditListing from './EditListing'; 
 
 const formatRate = (rates) => {
   if (rates.length > 0) {
@@ -32,15 +33,46 @@ const getCookie = (name) => {
 
 const ListingCard = ({id, time, title, rate, image }) => {
   const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
+  const [isModalOpen, setModalOpen] = useState(false);
+  const handleEditClick = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    setModalOpen(true); // Open the modal when edit button is clicked
+  };
+
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen); // Function to toggle modal visibility
+  };
+
+  const handleDeleteClick = (e) => {
+    e.preventDefault();
+    // call an API to delete the listing
+    console.log(`Listing with ID ${id} deleted.`);
+  };
 
   return (
-    <Link to={`/listing/${title}-${formattedTime}-${id}`}> {/* CREATED BY HAYES */}
-      <img src={image} alt={title} className="listing-image"/>
-      <div className="listing-info">
-        <h4>{title}</h4>
-        <p>{rate}</p>
+    <div className="listing-card">
+      {/* Link wrapping only the image and title */}
+      <Link to={`/listing/${title}-${formattedTime}-${id}`}> {/* CREATED BY HAYES */}
+        <img src={image} alt={title} className="listing-image" />
+        <div className="listing-info">
+          <h4>{title}</h4>
+          <p>{rate}</p>
+        </div>
+      </Link>   {/* CREATED BY HAYES */}
+
+      
+      <div className="button-container">
+        <button onClick={handleEditClick} className="edit-button">
+          Edit
+        </button>
+        <button onClick={handleDeleteClick} className="delete-button">
+          Delete
+        </button>
       </div>
-    </Link>   // {/* CREATED BY HAYES */}
+
+      {/* Render the EditListing modal */}
+      <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal} />
+    </div>
   );
 }
 

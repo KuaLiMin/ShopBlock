@@ -171,10 +171,12 @@
 }
 
 .listing-card {
+    display: inline-block;
     border: 1px solid #ccc;
     border-radius: 8px;
     overflow: hidden;
     transition: box-shadow 0.3s;
+
 }
 
 .listing-card:hover {
@@ -225,6 +227,35 @@
 }
 
 
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .edit-button, .delete-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .edit-button {
+    background-color: #007bff;
+  }
+  
+  .delete-button {
+    background-color: #ec6b78;
+  }
+  
+  .edit-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .delete-button:hover {
+    background-color: #c64854;
+  }
 
 /*-------- ADD LISTING --------- */
 
