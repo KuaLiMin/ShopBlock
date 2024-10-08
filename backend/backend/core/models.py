@@ -34,12 +34,16 @@ class TimeUnit(models.TextChoices):
 class UserManager(BaseUserManager):
     # Do some validation here before creating a new user
     # if validation goes through, then create the new user
-    def create_user(self, email, username, password=None, avatar=None):
+    def create_user(
+        self, email, username, password=None, phone_number=None, avatar=None
+    ):
         if not email:
             raise ValueError("Users must have an email")
 
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, avatar=avatar)
+        user = self.model(
+            email=email, username=username, phone_number=phone_number, avatar=avatar
+        )
 
         user.set_password(password)
         user.save(using=self._db)
@@ -51,6 +55,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
     avatar = models.ImageField(upload_to="avatars/", null=True)
+    # 8 for singapore only
+    phone_number = models.CharField(max_length=8, unique=True)
 
     objects = UserManager()
 

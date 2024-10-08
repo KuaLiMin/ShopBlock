@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "email", "username", "password", "avatar", "average_rating")
+        fields = ("id", "email", "username", "password", "phone_number", "avatar", "average_rating")
         extra_kwargs = {"password": {"write_only": True}}
 
     def get_average_rating(self, obj):
