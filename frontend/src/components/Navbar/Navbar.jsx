@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import './Navbar.css'
+import React from 'react';
 import logo from '../Images/logo.png'
 import user_icon from '../Images/user_icon.png';
 import search_icon from '../Images/search_icon.png';

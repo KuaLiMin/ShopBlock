@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import (
@@ -35,17 +37,23 @@ urlpatterns = [
     # default django admin portal
     path("admin/", admin.site.urls),
     # debugging purposes
-    path("debug/user/", views.DebugUserList.as_view()),
-    path("debug/listing/", views.DebugListingList.as_view()),
+    path("debug/user/", views.DebugUserController.as_view()),
+    path("debug/listing/", views.DebugListingController.as_view()),
     # listings [GET, POST]
-    path("listing/", views.ListingView.as_view()),
+    path("listing/", views.ListingController.as_view()),
     # user routes, [GET]
-    path("user/", views.UserView.as_view()),
+    path("user/", views.UserController.as_view()),
     # user registration, [POST]
-    path("register/", views.RegisterUserView.as_view()),
+    path("register/", views.RegisterController.as_view()),
+    # offer routes, [GET, POST]
+    path("offers/", views.OfferController.as_view()),
+    # review routes, [GET, POST]
+    path("reviews/", views.ReviewsController.as_view()),
+    # review routes, [GET, POST]
+    path("transactions/", views.TransactionController.as_view()),
     # authentication jwt tokens
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # swagger and redoc
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
@@ -59,3 +67,10 @@ urlpatterns = [
         name="redoc",
     ),
 ]
+
+# This is quite a hack to keep things to be a monolith as much as possible
+# ideally in prod, we would just serve it over nginx but i think this will
+# change quickly so it's fine to dev like this - there's not much
+# media content to be served for now anwyay
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

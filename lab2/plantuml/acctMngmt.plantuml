@@ -11,43 +11,135 @@ U -> AUI : Register
 activate AUI
 AUI -> AM : Register Request
 activate AM
-AM -> UA : Create User Account
-activate UA
-UA --> AM : Account Created
-deactivate UA
-AM --> AUI : Registration Confirmation
-deactivate AM
-AUI --> U : Account Registered
-deactivate AUI
+  alt Phone number already taken
+  AM --> AUI: Registration Fail
+  AUI -> AUI: Display "Phone Number Taken"
+  else Username already taken
+  AM --> AUI: Registration Fail
+  AUI -> AUI: Display "Username Taken"
+  else Password Requirements Invalid
+  AM --> AUI: Registration Fail
+  AUI -> AUI: Display "Password does not meet requirements"
+  else Credentials == Valid
+  AM -> UA : Create User Account
+  activate UA
+  UA --> AM : Account Created
+  deactivate UA
+  end
+  opt Account Created == True
+  AM --> AUI : Registration Confirmation
+  deactivate AM
+  AUI --> U : Account Registered
+  deactivate AUI
+  end
 
 'User login
 U -> AUI : Login
 activate AUI
-AUI -> AM : Validate Login
+AUI -> AM : Login Request
 activate AM
-AM -> UA : Check Credentials
-activate UA
-UA --> AM : Credentials Valid
-deactivate UA
-AM --> AUI : Login Success
-deactivate AM
-AUI --> U : Login Successful
-deactivate AUI
+AM -> AM : Check Credentials
+  alt Username not found
+  AM --> AUI: Login Fail
+  AUI -> AUI: Display "Username not found"
+  else Username found but incorrect password
+  AM --> AUI: Login Fail
+  alt Password incorrect (less than 3 times || 4 times)
+    AUI -> AUI: Display "Incorrect Password! Please Try again"
+      alt Psasword incorrect 3 times
+      AUI -> AUI: Display" Your account will be locked after two more attempts"
+        alt Password incorrect 5 times
+        AUI -> AUI: Display "Your password has been temporarily locked for 5 mins"
+        end
+      end
+    end
+  else credentials == true
+  AM -> UA: Login to account
+  activate UA
+  UA --> AM : Account Logged in
+  deactivate UA
+  end
+  opt if Credentials == valid
+  AM --> AUI : Login Success
+  deactivate AM
+  AUI --> U : Login Successful
+  deactivate AUI
+  end
 
 'User forget password
 U -> AUI : Forget Password
 activate AUI
 AUI -> AM : Password Reset Request
 activate AM
-AM -> UA : Verify User
-activate UA
-UA --> AM : User Verified
-deactivate UA
-AM --> AUI : Send Password Reset Email
-deactivate AM
-AUI --> U : Password Reset Link Sent
-deactivate AUI
+AM -> AM : Verify User
+  alt Username not found
+  AM --> AUI: Verification failed
+  else Phone Number does not match
+  AM --> AUI: Verification failed
+  else If user verified == true
+  AM --> AUI: User prompted to enter password
+  AUI -> AM: Password Change Request
+  AM -> AM: Check Password Requirements
+    alt Password Requirements Invalid
+    AM --> AUI: Password Change Fail
+    AUI -> AUI: Display "Password does not meet requirements"
+    else Password meets requirements
+    AM -> UA: Change Password
+    activate UA
+    UA --> AM: Password Changed
+    deactivate UA
+    end
+  end
+  
+  opt password changed == true
+  AM --> AUI : Password Succesfully Changed
+  deactivate AM
+  AUI --> U : Password Succesfully Changed
+  deactivate AUI
+  end
 
-deactivate U
+'View Account Details
+U -> AUI: View Account Details
+activate AUI
+  alt User edits account details
+  AUI -> AUI: Manage Account Details
+    alt User choose to change Password
+    AUI->AM: Change Password Request
+    activate AM
+    AM->AM: Check Password Requirements
+      alt Password does not meet requirement
+      AM --> AUI: Password Change Fail
+      AUI -> AUI: Display "Password does not meet requirements"
+      else Password meets requirements
+      AM -> UA: Change Password
+      activate UA
+      UA --> AM: Password Changed
+      deactivate UA
+      AM-->AUI: Password Successfully Changed
+      deactivate AM
+      end
+    end
+    alt User choose to edit User Details
+    AUI->AM: Change User Details Request
+    activate AM
+    AM -> AM: Check edit details
+      alt Phone number Taken
+      AM --> AUI: Edit failed
+      AUI -> AUI: Display "Phone Number Taken"
+      else Username Taken
+      AM --> AUI: Edit failed
+      AUI -> AUI: Display "Username Taken"
+      else Requirements valid
+      AM-> UA: Change User Details
+      activate UA
+      UA-->AM: User Details Changed
+      deactivate UA
+      AM-->AUI: User Details Successfuly Changed
+      deactivate AM
+      end
+    end
+  end
+AUI-->U: Exit Account Details
+deactivate AUI
 
 @enduml

@@ -155,3 +155,10 @@ SIMPLE_JWT = {
 
 # For public ip
 ALLOWED_HOSTS = ["*"]
+
+# Where the files will be stored
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# MEDIA FILES - for user-uploaded content
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"

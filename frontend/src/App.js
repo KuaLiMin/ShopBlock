@@ -1,5 +1,4 @@
 import './App.css';
-import JsonDisplay from './components/JsonDisplay';
 import Navbar from './components/Navbar/Navbar';
 import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
@@ -24,11 +23,23 @@ import ListingDetail from './Pages/ListingDetail';
 import ListOfOffers from './Pages/ListOfOffers';
 
 
+
+import Login from './components/UserAccountManagement/Login';
+import Profile from './components/UserAccountManagement/Profile';
+
+
+import Browse from './components/Listing/Browse';
+import Listing from './components/Listing/Listing';
+
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 function App() {
   return (
-    <div>
+    <div >
       <BrowserRouter>
       <Navbar/>
+      <div style={{ padding: '20px' }}>
       <Routes>
         <Route path='/'element={<Categories/>}/>
         <Route path='/electronics'element={<ShopCat banner ={electronics_banner} category = "electronics"/>}/>
@@ -49,11 +60,10 @@ function App() {
         <Route path='/history' element={<TransactionHistory/>}/>
         <Route path='/offers' element={<ListOfOffers/>}/>
       </Routes>
-      <Footer/>
+      </div>
       </BrowserRouter>
     </div>
   );
-  
 }
 
 export default App;
