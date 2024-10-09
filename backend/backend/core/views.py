@@ -1,5 +1,6 @@
 import json
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
 from django.shortcuts import render
@@ -77,6 +78,7 @@ class ListingController(GenericAPIView):
     Listing endpoint, [GET, POST, DELETE]
 
     For the GET request, it returns all listings that are stored in the database.
+        This will also support searching the listings by name with a query parameter.
 
     For the POST request, this is the same as "creating" a new listing.
 
@@ -87,8 +89,25 @@ class ListingController(GenericAPIView):
     serializer_class = ListingSerializer
     parser_classes = (MultiPartParser, FormParser)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="search",
+                description="Search listings by name",
+                required=False,
+                type=str,
+            ),
+        ],
+    )
     def get(self, request: Request):
         queryset = self.get_queryset()
+        search_query = request.query_params.get("search", None)
+        # if a search query param was passed in
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) | Q(description__icontains=search_query)
+            )
+
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
 
