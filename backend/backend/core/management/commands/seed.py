@@ -80,6 +80,15 @@ class Command(BaseCommand):
             notes="",
         )
 
+        listing1_location2 = ListingLocation.objects.create(
+            listing=listing1,
+            latitude=1.42953,  # somewhere in yishun
+            longitude=103.83503,
+            query="Yishun",
+            notes="",
+        )
+
+
         listing2 = Listing.objects.create(
             uploaded_by=user2,
             title="Camping Tent",
