@@ -74,11 +74,13 @@ class RegisterController(APIView):
 
 class ListingController(GenericAPIView):
     """
-    Listing endpoint, [GET, POST]
+    Listing endpoint, [GET, POST, DELETE]
 
     For the GET request, it returns all listings that are stored in the database.
 
     For the POST request, this is the same as "creating" a new listing.
+
+    For the DELETE request, it deletes a specific listing if the user is authorized.
     """
 
     queryset = Listing.objects.all()
@@ -113,6 +115,32 @@ class ListingController(GenericAPIView):
 
         # Otherwise, the input was not correct
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name="id", type=int, location=OpenApiParameter.QUERY)
+        ],
+        responses={204: None, 403: None, 404: None},
+    )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def delete(self, request: Request):
+        listing_id = request.query_params.get("id")
+        try:
+            listing = Listing.objects.get(id=listing_id)
+        except Listing.DoesNotExist:
+            return Response(
+                {"error": "Listing not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if listing.uploaded_by != request.user:
+            return Response(
+                {"error": "You don't have permission to delete this listing"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        listing.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class OfferController(GenericAPIView):
@@ -269,7 +297,6 @@ class TransactionController(GenericAPIView):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
-
 
 
 class DebugUserController(GenericAPIView):
