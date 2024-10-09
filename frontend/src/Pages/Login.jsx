@@ -80,7 +80,7 @@ export const Login = () => {
     setErrorMessage('');
 
     // POST request method here
-    axios.post('http://152.42.253.110:8000/api/schema/swagger-ui/#/register/', {email: email, username: username, password: password})
+    axios.post('http://152.42.253.110:8000/register/', {email: email, username: username, password: password})
     .then(response => {console.log('Response data:', response.data)}) // Handle success
     .catch(error => {console.error('There was an error!', error)}) // Handle error
     // Call toggleModal function here
