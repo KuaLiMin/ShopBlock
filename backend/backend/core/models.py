@@ -131,11 +131,15 @@ class Offer(models.Model):
     PENDING = "P"
     ACCEPTED = "A"
     REJECTED = "R"
+    PAID = "D"  # 'D' for 'Paid' to avoid confusion with 'P' for 'Pending'
+    DECLINED = "C"  # 'C' for 'Declined' to avoid confusion with 'D' for 'Paid'
 
     STATUS_CHOICES = [
         (PENDING, "Pending"),
         (ACCEPTED, "Accepted"),
         (REJECTED, "Rejected"),
+        (PAID, "Paid"),
+        (DECLINED, "Declined"),
     ]
 
     # The user making the offer
@@ -168,6 +172,16 @@ class Offer(models.Model):
     def reject(self):
         if self.status == self.PENDING:
             self.status = self.REJECTED
+            self.save()
+
+    def paid(self):
+        if self.status == self.ACCEPTED:
+            self.status = self.PAID
+            self.save()
+
+    def decline(self):
+        if self.status == self.ACCEPTED:
+            self.status = self.DECLINED
             self.save()
 
 
