@@ -20,6 +20,7 @@ export const Login = () => {
   const [contactno, setContactNo] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [modal, setModal] = useState(false);
+  const formData = new FormData();
 
   // Regular expression for email validation
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,6 +53,7 @@ export const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Basic validation checks
+
     if (!username || !email || !password || !phone) {
       setErrorMessage('All fields are required.');
       return;
@@ -78,11 +80,28 @@ export const Login = () => {
 
     // If validation passes, clear the error message and submit the form
     setErrorMessage('');
+    console.log("contact no", contactno)
+    console.log("phone ===== ", phone)
+    // Append form fields to FormData
+    formData.append('email', email);
+    formData.append('username', username);
+    formData.append('password', password);
+    formData.append('phone_number', phone);
 
     // POST request method here
-    axios.post('http://152.42.253.110:8000/register/', {email: email, username: username, password: password})
-    .then(response => {console.log('Response data:', response.data)}) // Handle success
-    .catch(error => {console.error('There was an error!', error)}) // Handle error
+    axios.post('/register/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then(response => {
+      console.log('Response data:', response.data); // Handle success
+      // Call toggleModal function here
+      toggleModal(); // Assuming toggleModal is your modal function
+    })
+    .catch(error => {
+      console.error('There was an error!', error); // Handle error
+    });
     // Call toggleModal function here
     //toggleModal();
   };
