@@ -231,3 +231,21 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"Transaction {self.id} - {self.get_status_display()} - {self.amount}"
+
+
+class Report(models.Model):
+    reporter = models.ForeignKey(
+        "User", on_delete=models.SET_NULL, null=True, related_name="reports_filed"
+    )
+    listing = models.ForeignKey(
+        "Listing", on_delete=models.CASCADE, related_name="reports"
+    )
+    reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Report {self.id} - Listing: {self.listing.title}"
+
+    class Meta:
+        unique_together = ["reporter", "listing"]
