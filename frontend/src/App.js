@@ -26,29 +26,28 @@ function App() {
   return (
     <div >
       <BrowserRouter>
-      <Navbar/>
-      <div style={{ padding: '20px' }}>
-      <Routes>
-        <Route path='/'element={<Categories/>}/>
-        <Route path='/electronics'element={<ShopCat banner ={electronics_banner} category = "electronics"/>}/>
-        <Route path='/services'element={<ShopCat banner = {services_banner} category = "services"/>}/>
-        <Route path='/supplies'element={<ShopCat banner = {supplies_banner} category = "supplies"/>}/>
-        <Route path="/listing" element={<Listing />} />
-        <Route path="/listing/:slug" element={<ListingDetail />} />
-        <Route path='/cart' element={<cart/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/signup' element={<SignUp/>}/>
-        <Route path='/resetpassword' element={<ResetPassword/>}/>
-        <Route path='/changepassword' element={<ChangePassword/>}/>
-        <Route path='/FAQ' element={<FAQ/>}/>
-        <Route path='/geo' element={<geo/>}/>
-        <Route path='/user' element={<user/>}/>
-        <Route path='/userprofile' element={<UserProfile/>}/>
-        <Route path='/search' element={<search/>}/>
-        <Route path='/history' element={<TransactionHistory/>}/>
-        <Route path='/offers' element={<ListOfOffers/>}/>
-      </Routes>
-      </div>
+        <Navbar />
+        <Routes>
+          <Route path='/' element={<Categories />} />
+          <Route path='/electronics' element={<ShopCat banner={electronics_banner} category="electronics" />} />
+          <Route path='/services' element={<ShopCat banner={services_banner} category="services" />} />
+          <Route path='/supplies' element={<ShopCat banner={supplies_banner} category="supplies" />} />
+          <Route path="/listing" element={<Listing />} />
+          <Route path="/listing/:slug" element={<ListingDetail />} />
+          <Route path='/cart' element={<cart />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<SignUp />} />
+          <Route path='/resetpassword' element={<ResetPassword />} />
+          <Route path='/changepassword' element={<ChangePassword />} />
+          <Route path='/FAQ' element={<FAQ />} />
+          <Route path='/geo' element={<geo />} />
+          <Route path='/user' element={<user />} />
+          <Route path='/userprofile' element={<UserProfile />} />
+          <Route path='/search' element={<search />} />
+          <Route path='/history' element={<TransactionHistory />} />
+          <Route path='/offers' element={<ListOfOffers />} />
+        </Routes>
+        <Footer />
       </BrowserRouter>
     </div>
   );
