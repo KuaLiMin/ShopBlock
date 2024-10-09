@@ -5,7 +5,6 @@ import 'react-phone-input-2/lib/style.css'
 import './CSS/Modal.css'
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 
 export const Login = () => {
   // State for form fields
@@ -78,13 +77,13 @@ export const Login = () => {
 
     // If validation passes, clear the error message and submit the form
     setErrorMessage('');
+    console.log(username)
+    console.log(email)
+    console.log(password)
+    console.log(phone)
 
-    // POST request method here
-    axios.post('http://152.42.253.110:8000/api/schema/swagger-ui/#/register/', {email: email, username: username, password: password})
-    .then(response => {console.log('Response data:', response.data)}) // Handle success
-    .catch(error => {console.error('There was an error!', error)}) // Handle error
     // Call toggleModal function here
-    //toggleModal();
+    toggleModal();
   };
 
   
