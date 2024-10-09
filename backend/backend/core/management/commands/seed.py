@@ -88,7 +88,6 @@ class Command(BaseCommand):
             notes="",
         )
 
-
         listing2 = Listing.objects.create(
             uploaded_by=user2,
             title="Camping Tent",

@@ -39,8 +39,8 @@ urlpatterns = [
     # debugging purposes
     path("debug/user/", views.DebugUserController.as_view()),
     path("debug/listing/", views.DebugListingController.as_view()),
-    # listings [GET, POST]
-    path("listing/", views.ListingController.as_view()),
+    # listings [GET, POST, DELETE]
+    path("listing/", views.ListingController.as_view(), name="test"),
     # user routes, [GET]
     path("user/", views.UserController.as_view()),
     # user registration, [POST]
