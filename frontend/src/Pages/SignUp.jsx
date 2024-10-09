@@ -71,7 +71,7 @@ export const SignUp = () => {
       console.log('Success:', response.data);
       document.cookie = `access=${response.data.access}; path=/;`;
       document.cookie = `refresh=${response.data.refresh}; path=/;`;
-      window.location.href = '/browse';
+      window.location.href = '/';
     } catch (error) {
       console.error('Error:', error);
     }

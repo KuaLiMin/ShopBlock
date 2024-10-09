@@ -1,4 +1,4 @@
-import React from 'react';
+import {React, useState} from 'react';
 import logo from '../Images/logo.png'
 import user_icon from '../Images/user_icon.png';
 import search_icon from '../Images/search_icon.png';
@@ -9,6 +9,7 @@ import services_icon from '../Images/services_icon.png';
 import { Link } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import { SidebarData } from './SidebarData';
+import './Navbar.css';
 
 const Navbar = () => {
 

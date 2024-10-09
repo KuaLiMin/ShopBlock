@@ -13,7 +13,6 @@ import FAQ from './Pages/FAQ';
 import geo from './Pages/geo';
 import user from './Pages/user';
 import search from './Pages/search';
-import LandingPage from './UserAcccountManagent/LandingPage';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Footer from './components/Footer/Footer';
 import electronics_banner from './components/Images/banner_mens.png'
@@ -21,18 +20,7 @@ import services_banner from './components/Images/banner_women.png'
 import supplies_banner from './components/Images/banner_kids.png'
 import ListingDetail from './Pages/ListingDetail';
 import ListOfOffers from './Pages/ListOfOffers';
-
-
-
-import Login from './components/UserAccountManagement/Login';
-import Profile from './components/UserAccountManagement/Profile';
-
-
 import Browse from './components/Listing/Browse';
-import Listing from './components/Listing/Listing';
-
-
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
