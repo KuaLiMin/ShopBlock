@@ -6,6 +6,7 @@ import Rating from '@mui/material/Rating';
 import AcceptButton from '../components/AcceptButton';
 import RejectButton from '../components/RejectButton';
 import ListingsToggle from '../components/ListingsToggle';
+import Paypal from './Paypal';
 
 export const ListOfOffers = () => {
     const [uniqueListings, setUniqueListings] = useState([]);
@@ -424,10 +425,16 @@ export const ListOfOffers = () => {
                                                             <strong>Price:</strong> <br />$
                                                             {listing.price}
                                                         </p>
-                                                        <p style={{ padding: '0 30px', textAlign: 'center' }}>
+                                                        <p style={{ padding: '0 70px', textAlign: 'center' }}>
                                                             <strong>Status:</strong> <br /> 
                                                             Pending Payment
                                                         </p>
+                                                        <Paypal 
+                                                            className = "paypal-container"
+                                                            price={listing.price}
+                                                            offerID={listing.offer_id}
+                                                            accessToken={token}
+                                                        />
                                                     </div>
                                                 );
                                             })}
