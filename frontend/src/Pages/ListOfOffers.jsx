@@ -3,6 +3,8 @@ import './CSS/ListOfOffers.css';
 import Avatar from '@mui/material/Avatar';
 import { Typography } from '@mui/material';
 import Rating from '@mui/material/Rating';
+import AcceptButton from '../components/AcceptButton';
+import RejectButton from '../components/RejectButton';
 
 export const ListOfOffers = () => {
     const [uniqueListings, setUniqueListings] = useState([]);
@@ -59,6 +61,7 @@ export const ListOfOffers = () => {
 
                 if (Array.isArray(offersData)) {
                     const allListingsData = offersData.map(offer => ({
+                        offer_id: offer.id,
                         title: offer.listing.title,
                         id: offer.listing.id,
                         price: offer.price,
@@ -87,7 +90,7 @@ export const ListOfOffers = () => {
         };
 
         fetchData();
-    }, [token]);
+    }, [token,]);
 
     //Get all user information
     const fetchAllUserData = async () => {
@@ -151,108 +154,218 @@ export const ListOfOffers = () => {
         return <div>Loading...</div>; // Show loading indicator
     }
 
-    
+    // Handle Reject Button
+    const handleReject = async (offerId) => {
+        try {
+            const response = await fetch(`/offers/`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    offer_id: offerId,  // Use offerId here
+                    action: "reject",     
+                }),
+            });
 
-return (
-    <div className='list-of-offers-container'>
-      {hasListings ? (
-        <>
-          <div className="unique-listing-container">
-          <h2>Listings</h2>
-            {uniqueListings.map((unique, index) => {
-              // Find the corresponding listing details using the unique title
-              const matchedListing = listingDetails.find(listing => listing.id === unique.id);
-              return (
-                <div 
-                  key={index} 
-                  className={`unique-listing-card ${clickedCardId === unique.id ? 'clicked' : ''}`}
-                  onClick={() => {
-                      handleUniqueListingClick(unique.title);
-                      setClickedCardId(unique.id); // Update clicked card ID
-                  }}
-                >
-                  <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
-                  <div className="listing-details">
-                    <strong className="listing-title">{unique.title}</strong>
-                    <p className="listing-price">{matchedListing?.price}</p> {/* Show price if matched listing is found */}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="vertical-line"></div>
-          <div className="filtered-listing-container">
-            <h2>{selectedTitle}</h2>
-            {filteredListings.length > 0 ? ( // Only render if there are filtered listings
-                <>
-                    {/* Section for listings with status 'P' */}
-                    {filteredListings
-                        .filter(listing => listing.status === 'P')
-                        .map((listing, index) => {
-                            // Find the user data that matches the offeredByID
-                            const user = userData.find(user => user.id === listing.offeredByID);
-                            console.log("Listing:", listing); // Log the current listing for debugging
-                            console.log("Matching User:", user); // Log the found user for debugging
-                            
-                            return (
-                                <div key={index} className="filtered-listing-card">
-                                    {/* Display the user's avatar and average rating if user exists */}
-                                    {user ? (
-                                        <>
-                                            <Avatar
-                                                src={user.avatar || "/api/placeholder/40/40"} 
-                                                alt={user.username || "User Avatar"} 
-                                                sx={{ width: 45, height: 45 }}
-                                                onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} // Optional: handle image error
-                                            />
-                                            <div className ="user-rating">
-                                                <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                                    {user.username}
-                                                </Typography>
-                                                <Rating 
-                                                    name="user-rating" 
-                                                    value={parseFloat(user.average_rating)} 
-                                                    precision={0.5} 
-                                                    readOnly 
-                                                />
-                                            </div>
-                                        </>
-                                    ) 
-                                    : (
-                                        <p>User data not found.</p> // Fallback message if no user is found
-                                    )}
-                                    <p>Price: <br /> {listing.price}</p>
-                                    <p>Status: <br /> {listing.status}</p>
-                                </div>
-                            );
-                        })}
-                    {/* Section for listings with status 'A' */}
-                    <h3>For Testing Purposes: Accepted Offers</h3>
-                    {filteredListings
-                        .filter(listing => listing.status === 'A')
-                        .map((listing, index) => (
-                        <div key={index} className="filtered-listing-card">
-                            <p>Offered By: {listing.offeredBy}</p>
-                            <p>Offered By ID: {listing.offeredByID}</p>
-                            <p>Price: {listing.price}</p>
-                            <p>Status: {listing.status}</p>
+            if (!response.ok) {
+                throw new Error('Failed to reject the offer');
+            }
+
+            const data = await response.json();
+            console.log('Offer rejected:', data);
+
+            // Optionally, update the UI or remove the offer from the list
+            setAllListings((prevListings) =>
+                prevListings.filter((listing) => listing.offer_id !== offerId) // Use offer_id here
+            );
+        } catch (error) {
+            console.error('Error rejecting offer:', error);
+        }
+    };
+
+// Handle Accept Button
+    const handleAccept = async (offerId) => {
+        try {
+            const offer = allListings.find(listing => listing.offer_id === offerId); // Use offer_id here
+            if (!offer || offer.status !== 'P') {
+                throw new Error("Offer not found or not pending");
+            }
+
+            const response = await fetch('/offers/', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    offer_id: offerId,
+                    action: "accept"
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Failed to accept the offer: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Offer accepted:', data);
+
+            // Update the UI
+            setAllListings((prevListings) =>
+                prevListings.map((listing) => 
+                    listing.offer_id === offerId ? { ...listing, status: 'A' } : listing // Use offer_id here
+                )
+            );
+
+        } catch (error) {
+            console.error('Error accepting offer:', error.message);
+            alert(`Failed to accept offer: ${error.message}`);
+        }
+    };
+
+    return (
+        <div className='list-of-offers-container'>
+          {hasListings ? (
+            <>
+                <div className="unique-listing-container">
+                <h2>Listings</h2>
+                    {uniqueListings.map((unique, index) => {
+                    // Find the corresponding listing details using the unique title
+                    const matchedListing = listingDetails.find(listing => listing.id === unique.id);
+                    return (
+                        <div 
+                        key={index} 
+                        className={`unique-listing-card ${clickedCardId === unique.id ? 'clicked' : ''}`}
+                        onClick={() => {
+                            handleUniqueListingClick(unique.title);
+                            setClickedCardId(unique.id); // Update clicked card ID
+                        }}
+                        >
+                        <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
+                        <div className="listing-details">
+                            <strong className="listing-title">{unique.title}</strong>
+                            <p className="listing-price">{matchedListing?.price}</p> {/* Show price if matched listing is found */}
                         </div>
-                        ))}
-              </>
-            ) : (
-            <div>
-                <h2 style={{ color: 'red' }}>Select a Listing!</h2>
-            </div> 
-            )}
-          </div>
-        </>
-      ) : (
-        <div className="no-listings-container">
-            <h2>No listings available</h2>
-        </div>      
-    )}
-    </div>
-  );
-};
+                        </div>
+                    );
+                    })}
+                </div>
+                <div className="vertical-line"></div>
+                <div className="filtered-listing-container">
+                    <h2>{selectedTitle}</h2>
+                    {filteredListings.length > 0 ? ( // Only render if there are filtered listings
+                        <>
+                            {/* Section for listings with status 'P' */}
+                            {filteredListings
+                                .filter(listing => listing.status === 'P')
+                                .map((listing, index) => {
+                                    // Find the user data that matches the offeredByID
+                                    const user = userData.find(user => user.id === listing.offeredByID);
+                                    console.log("Listing:", listing); // Log the current listing for debugging
+                                    console.log("Matching User:", user); // Log the found user for debugging
+                                    
+                                    return (
+                                        <div key={index} className="filtered-listing-card">
+                                            {/* Display the user's avatar and average rating if user exists */}
+                                            {user ? (
+                                                <>
+                                                    <Avatar
+                                                        src={user.avatar || "/api/placeholder/40/40"} 
+                                                        alt={user.username || "User Avatar"} 
+                                                        sx={{ width: 45, height: 45 }}
+                                                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} // Optional: handle image error
+                                                    />
+                                                    <div className ="user-rating">
+                                                        <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                                            {user.username}
+                                                        </Typography>
+                                                        <Rating 
+                                                            name="user-rating" 
+                                                            value={parseFloat(user.average_rating)} 
+                                                            precision={0.5} 
+                                                            readOnly 
+                                                        />
+                                                    </div>
+                                                </>
+                                            ) 
+                                            : (
+                                                <p>User data not found.</p> // Fallback message if no user is found
+                                            )}
+                                            <p>Price: <br /> {listing.price}</p>
+                                            <p>Status: <br /> Pending</p>
+                                            <AcceptButton 
+                                                className="accept-button-position" 
+                                                onClick={() => handleAccept(listing.offer_id)} // Pass the listing ID to accept the offer
+                                                />
+                                            <RejectButton 
+                                                className="reject-button-position" 
+                                                onClick={() => handleReject(listing.offer_id)} // Pass the listing ID to reject the offer
+                                                />
+                                        </div>
+                                    );
+                                })}
+                            {/* Section for listings with status 'A' */}
+                            <h3>Accepted Offers</h3>
+                            {filteredListings
+                                .filter(listing => listing.status === 'A')
+                                .map((listing, index) => {
+                                    const user = userData.find(user => user.id === listing.offeredByID);
 
-export default ListOfOffers;
+                                    return (
+                                        <div key={index} className="filtered-listing-card">
+                                            {user ? (
+                                                <>
+                                                    <Avatar
+                                                        src={user.avatar || "/api/placeholder/40/40"} 
+                                                        alt={user.username || "User Avatar"} 
+                                                        sx={{ width: 45, height: 45 }}
+                                                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} // Handle image error
+                                                    />
+                                                    <div className="user-rating">
+                                                        <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                                            {user.username}
+                                                        </Typography>
+                                                        <Rating 
+                                                            name="user-rating" 
+                                                            value={parseFloat(user.average_rating)} 
+                                                            precision={0.5} 
+                                                            readOnly 
+                                                        />
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <p>User data not found.</p>
+                                            )}
+                                            <p style={{ padding: '0 30px' }}>
+                                                <strong>Price:</strong> <br /> 
+                                                {listing.price}
+                                            </p>
+                                            <p style={{ padding: '0 30px' }}>
+                                                <strong>Status:</strong> <br /> 
+                                                Accepted
+                                            </p>
+                                        </div>
+                                    );
+                                })}
+                        </>
+                    ) : (
+                        <div>
+                            <h2 style={{ color: 'red' }}>Select a Listing!</h2>
+                        </div>
+                    )}
+                </div>
+            </>
+          ) : (
+            <div className="no-listings-container">
+                <h2>No listings available</h2>
+            </div>      
+        )}
+        </div>
+      );
+    };
+    
+    export default ListOfOffers;
+    
