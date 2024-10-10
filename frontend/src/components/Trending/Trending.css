@@ -1,4 +1,5 @@
-.Trending{
+/* Styles for Trending Page */
+.Trending {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -6,39 +7,109 @@
     max-width: 1280px;
     margin: auto;
 }
-.Trending h1{
+
+.Trending h1 {
     color: #171717;
     font-size: 40px;
     font-weight: 600;
 }
 
-.Trending h2{
+.Trending h2 {
     color: #171717;
     font-size: 20px;
     font-weight: 600;
 }
-.Trending hr{
-    width: 1000px;
-    height: 4px;
+
+.Trending hr {
+    width: 80%;
+    border: none;
     border-radius: 10px;
-    background: #2525254b;
+    height: 2px;
+    background: #c7c7c7;
 }
-.Trending-item{
-    margin-top: 40px;
+
+/* Grid container for trending items */
+.Trendings-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 25px;
     justify-content: center;
+    gap: 25px;
+    margin-top: 40px;
 }
-/* ---------- media query------------ */
 
-@media(max-width: 800px){
-    .Trending h1{
+/* Individual trending item card */
+.Trending-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+    overflow: hidden; /* Ensure content stays inside card */
+    margin: 20px; /* Adjust margin to add spacing */
+}
+
+.Trending-card:hover {
+    transform: scale(1.05);
+}
+
+/* Image hover effect */
+.Trending-card:hover .Trending-item {
+    transform: scale(1.1); /* Zoom in the image on hover */
+}
+
+/* Image inside the trending card */
+.Trending-item {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* Info section inside the card */
+.Trending-info {
+    padding: 10px;
+    background-color: #f8f8f8;
+}
+
+.Trending-info h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #171717;
+    margin: 10px 0;
+}
+
+.Trending-info p {
+    font-size: 16px;
+    color: #777;
+}
+
+
+/* Media query for smaller screens */
+@media (max-width: 800px) {
+    .Trending h1 {
         font-size: 30px;
     }
-    .Trending hr{
+
+    .Trending hr {
         width: 80px;
         height: 4px;
-        
+    }
+
+    .Trendings-grid {
+        gap: 15px;
+    }
+
+    .Trending-card {
+        width: 200px;
+    }
+
+    .Trending-info h4 {
+        font-size: 16px;
+    }
+
+    .Trending-info p {
+        font-size: 14px;
     }
 }
