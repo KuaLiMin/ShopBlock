@@ -38,7 +38,6 @@ function App() {
         <Route path="/listing" element={<Listing />} />
         <Route path="/user/:username/listing" element={<Listing />} />
         <Route path="/listing/:slug" element={<ListingDetail />} />
-        {/* <Route path="/listing/edit/:id" element={<EditListing />} /> */}
         <Route path='/cart' element={<cart/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<SignUp/>}/>

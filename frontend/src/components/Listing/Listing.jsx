@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useNavigate } from 'react';
 import { Link, useParams } from 'react-router-dom';
-// import { Card, CardContent, Typography, CardMedia, CircularProgress, Box } from '@mui/material';
 import './Listing.css'; 
 import EditListing from './EditListing'; 
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+
+axios.defaults.baseURL = 'http://152.42.253.11:8000';
 
 const formatRate = (rates) => {
   if (rates.length > 0) {
@@ -43,10 +46,30 @@ const ListingCard = ({id, time, title, rate, image }) => {
     setModalOpen(!isModalOpen); // Function to toggle modal visibility
   };
 
-  const handleDeleteClick = (e) => {
+  const handleDeleteClick = async (e) => {
     e.preventDefault();
     // call an API to delete the listing
-    console.log(`Listing with ID ${id} deleted.`);
+    const confirmed = window.confirm(`Are you sure you want to delete the listing "${title}"?`);
+    
+    if (!confirmed) {
+      return; // If the user clicks "Cancel", don't proceed with the delete
+    }
+    try {
+      // Call the delete API
+      // await axios.delete(`/listing/${id}/`);
+      const response = await fetch(`http://152.42.253.11:8000/listing/?id=${id}`, {
+        method: 'DELETE', // Specify the DELETE method
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      console.log(`Listing with ID ${id} deleted.`);
+      // window.location.reload();
+
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+    }
+    // console.log(`Listing with ID ${id} deleted.`);
   };
 
   return (
@@ -71,7 +94,7 @@ const ListingCard = ({id, time, title, rate, image }) => {
       </div>
 
       {/* Render the EditListing modal */}
-      <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal} />
+      {/* <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal}/> */}
     </div>
   );
 }
@@ -86,12 +109,26 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
 
   useEffect(() => {
     const token = getCookie('access'); 
+    console.log(token)
 
     if (!token) {
       setError(new Error('User not logged in'));
       setLoading(false);
       return;
     }
+
+    let decodedToken;
+    try {
+      decodedToken = jwtDecode(token);
+    } catch (error) {
+      setError(new Error('Invalid token'));
+      setLoading(false);
+      return;
+    }
+
+    const loggedInUserId = decodedToken.user_id; // Extracting the user_id
+    console.log("Logged in user ID:", loggedInUserId);
+    
 
     // Fetch the data from the backend with Authorization header
     fetch('/listing/', {

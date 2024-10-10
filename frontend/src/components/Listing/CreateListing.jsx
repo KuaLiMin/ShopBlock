@@ -74,63 +74,38 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     // formPayload.append('photos', formData.image_url); 
     // formPayload.append('rates[0][time_unit]', formData.unit);
     // formPayload.append('rates[0][rate]', formData.price);
-
-    const photosArray = [];
-    photosArray.push(formData.image_url); // Assuming `formData.image_url` holds the file
-
-    // Since the API expects photos as an array, use a loop to append each file
+    const photosArray = [formData.image_url]; // Assuming `formData.image_url` is a File
     photosArray.forEach((photo, index) => {
-      formPayload.append(`photos[${index}]`, photo);
+      formPayload.append(`photos[${index}]`, photo); // Append each photo in an array format
     });
+    
 
-    const locations = [{
+    const locations = {
       latitude: formData.latitude,
       longitude: formData.longitude,
       query: formData.locationAddress,
       notes: formData.locationNotes
-    }];
+    };
     formPayload.append('locations', JSON.stringify(locations));
 
-    const rates = [{
+    const rates = {
       time_unit: formData.unit,
       rate: parseFloat(formData.price)
-    }];
+    };
     formPayload.append('rates', JSON.stringify(rates));
-
-    // const payload = {
-    //   created_by: username, // Use the username from the URL as created_by
-    //   title: formData.title,
-    //   description: formData.description,
-    //   category: formData.category,
-    //   listing_type: formData.listing_type, // Assuming unit maps to listing type
-    //   photos: [
-    //     {
-    //       image_url: formData.image_url || '', // Image URL from upload
-    //     },
-    //   ],
-    //   longitude: formData.longitude, // Use the longitude from the location data
-    //   latitude: formData.latitude,   // Use the latitude from the location data
-    //   rates: [
-    //     {
-    //       time_unit: formData.unit,
-    //       rate: parseFloat(formData.price),
-    //     },
-    //   ],
-    // };
-    // console.log("Payload to be submitted:", formPayload);
 
     for (let pair of formPayload.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`);
     }
 
 
-    fetch('http://152.42.253.110:8000/listing/', {
+    fetch('/listing/', {
       method: 'POST',
       headers: {
         // 'Accept': 'application/json',
         // 'Content-Type': 'application/json',
         // mode: 'no-cors',
-        // 'Authorization': `Bearer ${token}`, 
+        'Authorization': `Bearer ${token}`, 
       },
       // body: JSON.stringify(payload),
       body: formPayload,
