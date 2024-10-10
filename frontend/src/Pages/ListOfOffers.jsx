@@ -12,7 +12,17 @@ export const ListOfOffers = () => {
     const [loading, setLoading] = useState(true); // Loading state
     const [clickedCardId, setClickedCardId] = useState(null); // State to track which card is clicked
     const [selectedTitle, setSelectedTitle] = useState(null); // State for the selected listing title
-    const accessCode = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI4MjA3OTkyLCJpYXQiOjE3Mjc3NzU5OTIsImp0aSI6IjA0ZDliN2I5Y2Q2ODQ3MThiMDQwYWI3NWQ5M2JmNzEzIiwidXNlcl9pZCI6MX0.t0g4lt1M1TRg_2f-2-zq2HHIqgmfwj_LZ1X95koZvwM"; // Replace with your actual access code
+
+    const getCookie = (name) => {
+        const value = document.cookie; // Get all cookies
+        const parts = value.split(`; `).find((cookie) => cookie.startsWith(`${name}=`)); // Find the cookie by name
+        if (parts) {
+          return parts.split('=')[1]; // Return the value after the "="
+        }
+        return null; // Return null if the cookie isn't found
+      };
+      
+    const token = getCookie('access'); // Get the 'access' cookie value
 
     // Handler for clicking a unique listing card
     const handleUniqueListingClick = (title) => {
@@ -36,7 +46,7 @@ export const ListOfOffers = () => {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'Authorization': `Bearer ${accessCode}`,
+                        'Authorization': `Bearer ${token}`,
                     }
                 });
 
@@ -77,7 +87,7 @@ export const ListOfOffers = () => {
         };
 
         fetchData();
-    }, [accessCode]);
+    }, [token]);
 
     //Get all user information
     const fetchAllUserData = async () => {
