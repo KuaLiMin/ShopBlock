@@ -5,6 +5,7 @@ import { Typography } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import AcceptButton from '../components/AcceptButton';
 import RejectButton from '../components/RejectButton';
+import ListingsToggle from '../components/ListingsToggle';
 
 export const ListOfOffers = () => {
     const [uniqueListings, setUniqueListings] = useState([]);
@@ -14,6 +15,7 @@ export const ListOfOffers = () => {
     const [loading, setLoading] = useState(true); // Loading state
     const [clickedCardId, setClickedCardId] = useState(null); // State to track which card is clicked
     const [selectedTitle, setSelectedTitle] = useState(null); // State for the selected listing title
+    const [isListingReceived, setIsListingReceived] = useState(true);
 
     const getCookie = (name) => {
         const value = document.cookie; // Get all cookies
@@ -26,10 +28,22 @@ export const ListOfOffers = () => {
       
     const token = getCookie('access'); // Get the 'access' cookie value
 
+    //Toggle Button
+    const handleToggle = () => {
+        setIsListingReceived(prevState => !prevState);
+        setClickedCardId(null); // Reset clicked card ID
+    };
+
+    useEffect(() => {
+        setClickedCardId(null);
+        handleUniqueListingClick(null);
+    }, [isListingReceived]); // This will run every time `isListingReceived` changes
+    
+
     // Handler for clicking a unique listing card
     const handleUniqueListingClick = (title) => {
-        setSelectedTitle(title); // Set the selected title
-        };
+    setSelectedTitle(title); // Set the selected title
+    };
 
     // Filter all listings based on the selected title
     const filteredListings = selectedTitle
@@ -44,7 +58,7 @@ export const ListOfOffers = () => {
         const fetchData = async () => {
             setLoading(true); // Set loading to true before fetching
             try {
-                const offersResponse = await fetch('/offers/', {
+                const offersResponse = await fetch(`/offers/?type=${isListingReceived ? 'received' : 'made'}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -90,7 +104,7 @@ export const ListOfOffers = () => {
         };
 
         fetchData();
-    }, [token,]);
+    }, [token, isListingReceived]);
 
     //Get all user information
     const fetchAllUserData = async () => {
@@ -226,146 +240,234 @@ export const ListOfOffers = () => {
         }
     };
 
-    return (
-        <div className='list-of-offers-container'>
-          {hasListings ? (
-            <>
-                <div className="unique-listing-container">
-                <h2>Listings</h2>
-                    {uniqueListings.map((unique, index) => {
-                    // Find the corresponding listing details using the unique title
-                    const matchedListing = listingDetails.find(listing => listing.id === unique.id);
-                    return (
-                        <div 
-                        key={index} 
-                        className={`unique-listing-card ${clickedCardId === unique.id ? 'clicked' : ''}`}
-                        onClick={() => {
-                            handleUniqueListingClick(unique.title);
-                            setClickedCardId(unique.id); // Update clicked card ID
-                        }}
-                        >
-                        <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
-                        <div className="listing-details">
-                            <strong className="listing-title">{unique.title}</strong>
-                            <p className="listing-price">{matchedListing?.price}</p> {/* Show price if matched listing is found */}
-                        </div>
-                        </div>
-                    );
-                    })}
-                </div>
-                <div className="vertical-line"></div>
-                <div className="filtered-listing-container">
-                    <h2>{selectedTitle}</h2>
-                    {filteredListings.length > 0 ? ( // Only render if there are filtered listings
-                        <>
-                            {/* Section for listings with status 'P' */}
-                            {filteredListings
-                                .filter(listing => listing.status === 'P')
-                                .map((listing, index) => {
-                                    // Find the user data that matches the offeredByID
-                                    const user = userData.find(user => user.id === listing.offeredByID);
-                                    console.log("Listing:", listing); // Log the current listing for debugging
-                                    console.log("Matching User:", user); // Log the found user for debugging
-                                    
-                                    return (
-                                        <div key={index} className="filtered-listing-card">
-                                            {/* Display the user's avatar and average rating if user exists */}
-                                            {user ? (
-                                                <>
-                                                    <Avatar
-                                                        src={user.avatar || "/api/placeholder/40/40"} 
-                                                        alt={user.username || "User Avatar"} 
-                                                        sx={{ width: 45, height: 45 }}
-                                                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} // Optional: handle image error
-                                                    />
-                                                    <div className ="user-rating">
-                                                        <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                                            {user.username}
-                                                        </Typography>
-                                                        <Rating 
-                                                            name="user-rating" 
-                                                            value={parseFloat(user.average_rating)} 
-                                                            precision={0.5} 
-                                                            readOnly 
-                                                        />
-                                                    </div>
-                                                </>
-                                            ) 
-                                            : (
-                                                <p>User data not found.</p> // Fallback message if no user is found
-                                            )}
-                                            <p>Price: <br /> {listing.price}</p>
-                                            <p>Status: <br /> Pending</p>
-                                            <AcceptButton 
-                                                className="accept-button-position" 
-                                                onClick={() => handleAccept(listing.offer_id)} // Pass the listing ID to accept the offer
-                                                />
-                                            <RejectButton 
-                                                className="reject-button-position" 
-                                                onClick={() => handleReject(listing.offer_id)} // Pass the listing ID to reject the offer
-                                                />
-                                        </div>
-                                    );
-                                })}
-                            {/* Section for listings with status 'A' */}
-                            <h3>Accepted Offers</h3>
-                            {filteredListings
-                                .filter(listing => listing.status === 'A')
-                                .map((listing, index) => {
-                                    const user = userData.find(user => user.id === listing.offeredByID);
 
+
+      return (
+        <div>
+            <div className="ternary-operator-container">
+                <ListingsToggle isReceived={isListingReceived} onToggle={handleToggle} />
+            </div>
+            <div className='list-of-offers-container'>
+                {isListingReceived ? ( // Check if isReceived is true
+                    hasListings ? ( // Now this runs only if isReceived is true
+                        <>
+                            <div className="unique-listing-container">
+                                <h2>Listing Received</h2>
+                                {uniqueListings.map((unique, index) => {
+                                    // Find the corresponding listing details using the unique title
+                                    const matchedListing = listingDetails.find(listing => listing.id === unique.id);
                                     return (
-                                        <div key={index} className="filtered-listing-card">
-                                            {user ? (
-                                                <>
-                                                    <Avatar
-                                                        src={user.avatar || "/api/placeholder/40/40"} 
-                                                        alt={user.username || "User Avatar"} 
-                                                        sx={{ width: 45, height: 45 }}
-                                                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} // Handle image error
-                                                    />
-                                                    <div className="user-rating">
-                                                        <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                                            {user.username}
-                                                        </Typography>
-                                                        <Rating 
-                                                            name="user-rating" 
-                                                            value={parseFloat(user.average_rating)} 
-                                                            precision={0.5} 
-                                                            readOnly 
-                                                        />
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <p>User data not found.</p>
-                                            )}
-                                            <p style={{ padding: '0 30px' }}>
-                                                <strong>Price:</strong> <br /> 
-                                                {listing.price}
-                                            </p>
-                                            <p style={{ padding: '0 30px' }}>
-                                                <strong>Status:</strong> <br /> 
-                                                Accepted
-                                            </p>
+                                        <div 
+                                            key={index} 
+                                            className={`unique-listing-card ${clickedCardId === unique.id ? 'clicked' : ''}`}
+                                            onClick={() => {
+                                                handleUniqueListingClick(unique.title);
+                                                setClickedCardId(unique.id); // Update clicked card ID
+                                            }}
+                                        >
+                                            <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
+                                            <div className="listing-details">
+                                                <strong className="listing-title">{unique.title}</strong>
+                                                <p className="listing-price">{matchedListing?.price}</p>
+                                            </div>
                                         </div>
                                     );
                                 })}
+                            </div>
+                            <div className="vertical-line"></div>
+                            <div className="filtered-listing-container">
+                                <h2>{selectedTitle}</h2>
+                                {filteredListings.length > 0 ? (
+                                    <>
+                                        {/* Section for listings with status 'P' */}
+                                        {filteredListings
+                                            .filter(listing => listing.status === 'P')
+                                            .map((listing, index) => {
+                                                const user = userData.find(user => user.id === listing.offeredByID);
+                                                return (
+                                                    <div key={index} className="filtered-listing-card-received">
+                                                        {user ? (
+                                                            <>
+                                                                <Avatar
+                                                                    src={user.avatar || "/api/placeholder/40/40"} 
+                                                                    alt={user.username || "User Avatar"} 
+                                                                    sx={{ width: 45, height: 45 }}
+                                                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }}
+                                                                />
+                                                                <div className="user-rating">
+                                                                    <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                                                        {user.username}
+                                                                    </Typography>
+                                                                    <Rating 
+                                                                        name="user-rating" 
+                                                                        value={parseFloat(user.average_rating)} 
+                                                                        precision={0.5} 
+                                                                        readOnly 
+                                                                    />
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <p>User data not found.</p>
+                                                        )}
+                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                            <strong>Price:</strong> <br />$
+                                                            {listing.price}
+                                                        </p>
+                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                            <strong>Status:</strong> <br /> 
+                                                            Pending
+                                                        </p>
+                                                        <AcceptButton 
+                                                            className="accept-button-position" 
+                                                            onClick={() => handleAccept(listing.offer_id)} 
+                                                        />
+                                                        <RejectButton 
+                                                            className="reject-button-position" 
+                                                            onClick={() => handleReject(listing.offer_id)} 
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        <h3>Accepted Offers</h3>
+                                        {filteredListings
+                                            .filter(listing => listing.status === 'A')
+                                            .map((listing, index) => {
+                                                const user = userData.find(user => user.id === listing.offeredByID);
+                                                return (
+                                                    <div key={index} className="filtered-listing-card-received">
+                                                        {user ? (
+                                                            <>
+                                                                <Avatar
+                                                                    src={user.avatar || "/api/placeholder/40/40"} 
+                                                                    alt={user.username || "User Avatar"} 
+                                                                    sx={{ width: 45, height: 45 }}
+                                                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} 
+                                                                />
+                                                                <div className="user-rating">
+                                                                    <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                                                        {user.username}
+                                                                    </Typography>
+                                                                    <Rating 
+                                                                        name="user-rating" 
+                                                                        value={parseFloat(user.average_rating)} 
+                                                                        precision={0.5} 
+                                                                        readOnly 
+                                                                    />
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <p>User data not found.</p>
+                                                        )}
+                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                            <strong>Price:</strong> <br />$ 
+                                                            {listing.price}
+                                                        </p>
+                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                            <strong>Status:</strong> <br /> 
+                                                            Accepted
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })}
+                                    </>
+                                ) : (
+                                    <div>
+                                        <h2 style={{ color: 'red' }}>Select a Listing!</h2>
+                                    </div>
+                                )}
+                            </div>
                         </>
                     ) : (
-                        <div>
-                            <h2 style={{ color: 'red' }}>Select a Listing!</h2>
+                        <div className="no-listings-container">
+                            <h2>No listings available</h2>
                         </div>
-                    )}
-                </div>
-            </>
-          ) : (
-            <div className="no-listings-container">
-                <h2>No listings available</h2>
-            </div>      
-        )}
+                    )
+                ) : (
+///////////////////////////////////////////// MADE LISTING//////////////////////////////////////////
+                    hasListings ? ( // Now this runs only if isReceived is true
+                        <>
+                            <div className="unique-listing-container">
+                                <h2>Listing Made</h2>
+                                {uniqueListings.map((unique, index) => {
+                                    // Find the corresponding listing details using the unique title
+                                    const matchedListing = listingDetails.find(listing => listing.id === unique.id);
+                                    return (
+                                        <div 
+                                            key={index} 
+                                            className={`unique-listing-card ${clickedCardId === unique.id ? 'clicked' : ''}`}
+                                            onClick={() => {
+                                                handleUniqueListingClick(unique.title);
+                                                setClickedCardId(unique.id); // Update clicked card ID
+                                            }}
+                                        >
+                                            <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
+                                            <div className="listing-details">
+                                                <strong className="listing-title">{unique.title}</strong>
+                                                <p className="listing-price">{matchedListing?.price}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div className="vertical-line"></div>
+                            <div className="filtered-listing-container">
+                                <h2>{selectedTitle}</h2>
+                                {filteredListings.length > 0 ? (
+                                    <>
+                                        {/* Section for listings with status 'P' */}
+                                        {filteredListings
+                                            .filter(listing => listing.status === 'A')
+                                            .map((listing, index) => {
+                                                return (
+                                                    <div key={index} className="filtered-listing-card-made">
+                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                            <strong>Price:</strong> <br />$
+                                                            {listing.price}
+                                                        </p>
+                                                        <p style={{ padding: '0 30px', textAlign: 'center' }}>
+                                                            <strong>Status:</strong> <br /> 
+                                                            Pending Payment
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })}
+                                        <h3>Rejected Offers</h3>
+                                        {filteredListings
+                                            .filter(listing => listing.status === 'R')
+                                            .map((listing, index) => {
+                                                return (
+                                                    <div key={index} className="filtered-listing-card-made">
+                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                            <strong>Price:</strong> <br />$
+                                                            {listing.price}
+                                                        </p>
+                                                        <p style={{ padding: '0 80px', textAlign: 'center'  }}>
+                                                            <strong>Status:</strong> <br /> 
+                                                            Rejected
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })}
+                                    </>
+                                ) : (
+                                    <div>
+                                        <h2 style={{ color: 'red' }}>Select a Listing!</h2>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="no-listings-container">
+                            <h2>No listings available</h2>
+                        </div>
+                    )
+                )}
+            </div>
         </div>
-      );
-    };
+    );
+}
     
-    export default ListOfOffers;
+    
+    
+export default ListOfOffers;
     
