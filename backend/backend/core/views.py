@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 from rest_framework import permissions, viewsets, status
@@ -14,7 +14,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.decorators import authentication_classes, permission_classes, action
 
 from backend.core.models import User, Listing, ListingPhoto, Offer, Review, Transaction
 from backend.core.serializers import (
@@ -105,7 +105,8 @@ class ListingController(GenericAPIView):
         # if a search query param was passed in
         if search_query:
             queryset = queryset.filter(
-                Q(title__icontains=search_query) | Q(description__icontains=search_query)
+                Q(title__icontains=search_query)
+                | Q(description__icontains=search_query)
             )
 
         serializer = self.get_serializer(queryset, many=True)
@@ -182,10 +183,31 @@ class OfferController(GenericAPIView):
         user_listings = Listing.objects.filter(uploaded_by=self.request.user)
         return Offer.objects.filter(listing__in=user_listings)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="type",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="Type of offers to retrieve: 'received' or 'made'",
+                required=False,
+                enum=["received", "made"],
+            ),
+        ],
+        responses={200: OfferSerializer(many=True)},
+    )
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
-        queryset = self.get_queryset()
+        offer_type = request.query_params.get("type", "received")
+
+        if offer_type == "received":
+            # Get offers for listings uploaded by the current user
+            queryset = Offer.objects.filter(listing__uploaded_by=request.user)
+        elif offer_type == "made":
+            # Get offers made by the current user
+            queryset = Offer.objects.filter(offered_by=request.user)
+
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
 
@@ -316,6 +338,51 @@ class TransactionController(GenericAPIView):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
+
+    @extend_schema(
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "offer_id": {"type": "integer"},
+                    "amount": {"type": "number"},
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            choice[0]
+                            for choice in Transaction.TRANSACTION_STATUS_CHOICES
+                        ],
+                    },
+                },
+                "required": ["offer_id", "amount"],
+            }
+        },
+        responses={201: TransactionSerializer},
+        examples=[
+            OpenApiExample(
+                "Valid Transaction Creation",
+                summary="Create a new transaction",
+                description="Create a new transaction for an accepted offer",
+                value={
+                    "offer_id": 1,
+                    "amount": 100.00,
+                    "status": "C",
+                },
+                request_only=True,
+            ),
+        ],
+    )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def post(self, request: Request):
+        request.data["user_id"] = request.user.id
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            transaction = serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DebugUserController(GenericAPIView):
