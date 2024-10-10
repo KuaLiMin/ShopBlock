@@ -78,6 +78,7 @@ export const SignUp = () => {
 
     setErrorMessage('');
     if (email && password) {
+      console.error('over here ===== ');
       navigate('/');
     }
   };
