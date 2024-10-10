@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 from rest_framework import permissions, viewsets, status
@@ -339,10 +339,6 @@ class TransactionController(GenericAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-    # @extend_schema(
-    #     request=TransactionSerializer,
-    #     responses={201: TransactionSerializer},
-    # )
     @extend_schema(
         request={
             "application/json": {
@@ -370,7 +366,7 @@ class TransactionController(GenericAPIView):
                 value={
                     "offer_id": 1,
                     "amount": 100.00,
-                    "status": "P",
+                    "status": "C",
                 },
                 request_only=True,
             ),
@@ -379,28 +375,8 @@ class TransactionController(GenericAPIView):
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def post(self, request: Request):
-        offer_id = request.data.get("offer_id")
-        amount = request.data.get("amount")
-        status = request.data.get("status", None)
-        if status == None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            offer = Offer.objects.get(id=offer_id, status=Offer.ACCEPTED)
-        except Offer.DoesNotExist:
-            return Response(
-                {"error": "Offer not found or not accepted"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        serializer = self.get_serializer(
-            data={
-                "user": request.user.id,
-                "offer": offer.id,
-                "amount": amount,
-                "status": status,
-            }
-        )
+        request.data["user_id"] = request.user.id
+        serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
             transaction = serializer.save()
