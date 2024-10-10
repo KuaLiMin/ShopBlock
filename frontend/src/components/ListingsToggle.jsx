@@ -22,7 +22,7 @@ const ListingsToggle = ({ isReceived, onToggle }) => {
         }}
       >
         <Typography variant="button" sx={{ fontSize: '1.2em' }}> {/* Increased font size */}
-          LISTINGS RECEIVED
+          OFFERS RECEIVED
         </Typography>
       </Button>
       <Button
@@ -39,7 +39,7 @@ const ListingsToggle = ({ isReceived, onToggle }) => {
         }}
       >
         <Typography variant="button" sx={{ fontSize: '1.2em' }}> {/* Increased font size */}
-          LISTINGS MADE
+          OFFERS MADE
         </Typography>
       </Button>
     </Stack>

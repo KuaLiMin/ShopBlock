@@ -253,7 +253,7 @@ export const ListOfOffers = () => {
                     hasListings ? ( // Now this runs only if isReceived is true
                         <>
                             <div className="unique-listing-container">
-                                <h2>Listing Received</h2>
+                                <h2>Offers Received</h2>
                                 {uniqueListings.map((unique, index) => {
                                     // Find the corresponding listing details using the unique title
                                     const matchedListing = listingDetails.find(listing => listing.id === unique.id);
@@ -388,7 +388,7 @@ export const ListOfOffers = () => {
                     hasListings ? ( // Now this runs only if isReceived is true
                         <>
                             <div className="unique-listing-container">
-                                <h2>Listing Made</h2>
+                                <h2>Offers Made</h2>
                                 {uniqueListings.map((unique, index) => {
                                     // Find the corresponding listing details using the unique title
                                     const matchedListing = listingDetails.find(listing => listing.id === unique.id);

@@ -35,13 +35,13 @@ export const SidebarData = [
     },
     {
         title: 'Purchases',
-        path: '/',
+        path: '/history',
         icon: <ShoppingCartRoundedIcon />,
         cName: 'nav-text'
     },
     {
         title: 'Offers',
-        path: '/',
+        path: '/offers',
         icon: <CheckCircleSharpIcon />,
         cName: 'nav-text'
     },
