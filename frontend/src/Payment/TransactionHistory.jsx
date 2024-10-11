@@ -8,80 +8,97 @@ const TransactionHistory = () => {
 
 {/* This is for toggle button*/}
   const [isTaskCompleted, setIsTaskCompleted] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const getCookie = (name) => {
+    const value = document.cookie; // Get all cookies
+    const parts = value.split(`; `).find((cookie) => cookie.startsWith(`${name}=`)); // Find the cookie by name
+    if (parts) {
+      return parts.split('=')[1]; // Return the value after the "="
+    }
+    return null; // Return null if the cookie isn't found
+  };
+  
+const token = getCookie('access'); // Get the 'access' cookie value
 
   const handleToggle = () => {
     setIsTaskCompleted(prevState => !prevState);
   };
 
-
-{/* This is to fetch listing data from database */}
-  const [listings, setListings] = useState([]);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
-    fetch('http://152.42.253.110:8000/listing/', {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json'
-      }
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setListings(data); // Store the fetched data in state
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        setError(error.message); // Set error message in state
-      });
-  }, []);
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch('/transactions/', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          }
+        });
 
+        if (!response.ok) {
+          throw new Error('Failed to fetch transactions');
+        }
+
+        const data = await response.json();
+        setTransactions(data); // Store transactions in state
+        setLoading(false); // Set loading to false after data is fetched
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+        setError(error.message); // Set error in state if there's an issue
+        setLoading(false); // Stop loading if there's an error
+      }
+    };
+
+    fetchTransactions(); // Call the function when the component mounts
+  }, []); // Empty dependency array so it runs only on component mount
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div style={{ marginBottom: '50px' }}>
       <div className="transaction-history-container">
-        <h1>TRANSACTION HISTORY</h1>
+        <h1>PURCHASE HISTORY</h1>
         <ProgressToggle isCompleted={isTaskCompleted} onToggle={handleToggle} />
       </div>
 {/* When "In Progress"*/}
       {!isTaskCompleted && (
           <div className="task-container">
-            <CardTemplate
-              title="Pet Walking Service"
-              name="Hazard23"
-              hourlyRate={9}
-              timeStart="19/12/2024 1700"
-              timeEnd="19/12/2024 2300"
-              amount={54}
-              completed={isTaskCompleted}
-            />
-            <CardTemplate
-              title="Mahjong Table Rental"
-              name="Ze Ming"
-              hourlyRate={5}
-              timeStart="16/10/2024 1800"
-              timeEnd="16/10/2024 2200"
-              amount={20}
-              completed={isTaskCompleted}
-            />
+          {transactions.length > 0 ? (
+        <ul>
+          {transactions.map((transaction) => (
+            <li key={transaction.id}>
+              <strong>ID:</strong> {transaction.id} <br />
+              <strong>User:</strong> {transaction.user.username} ({transaction.user.email}) <br />
+              <strong>Phone Number:</strong> {transaction.user.phone_number} <br />
+              <strong>Offer:</strong> {transaction.offer.listing} <br />
+              <strong>Offer Price:</strong> ${transaction.offer.price} <br />
+              <strong>Status:</strong> {transaction.status_display} <br />
+              <strong>Amount:</strong> ${transaction.amount} <br />
+              <strong>Payment ID:</strong> {transaction.payment_id} <br />
+              <strong>Created At:</strong> {new Date(transaction.created_at).toLocaleString()} <br />
+              <strong>Updated At:</strong> {new Date(transaction.updated_at).toLocaleString()} <br />
+              <hr />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No transactions available.</p>
+      )}
           </div>
         )}
 {/* When "Completed"*/}
       {isTaskCompleted && (
           <div className='task-container'>
-            <CardTemplate
-              title="Pet Walking Service"
-              name="Hazard23"
-              hourlyRate={9}
-              timeStart="20/8/2024 1700"
-              timeEnd="20/8/2024 2300"
-              amount={54}
-              completed={isTaskCompleted}
-            />
+          Hello
           </div>
         )}
     </div>
@@ -89,18 +106,3 @@ const TransactionHistory = () => {
 };
 
 export default TransactionHistory;
-
-{/* Use when we have available listing data.
- When "If there are available listings"
-            {listings.length > 0 ? (
-              listings.map(listing => (
-              <div key={listing.id}>
-                <h2>{listing.title}</h2>
-                <p>Created on: {new Date(listing.created_at).toLocaleDateString()}</p>
-              </div>
-            ))
-When there are no available listings"
-            ) : (
-              <p>No listings available.</p>
-            )}
-*/}

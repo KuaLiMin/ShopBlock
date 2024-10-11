@@ -33,7 +33,7 @@ const Checkout = ({price, offerID, accessToken, onTransactionSuccess}) => {
             const transactionData={
                 offer_id: offerID,          // Use the offerID passed as a prop
                 amount: parseInt(price),              // Use the price passed as a prop
-                status: "C",                // Status can be "C" or whatever you want
+                status: "D",                // Status can be "C" or whatever you want
                 payment_id: String(data.paymentID), // Use the paymentID from the PayPal response
             };
 

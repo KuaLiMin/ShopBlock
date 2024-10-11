@@ -8,13 +8,16 @@ import {
   TextField,
   Box,
   Rating,
+  Snackbar
 } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+
 
 const RateButton = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State to manage dialog visibility
   const [inputValue, setInputValue] = useState(''); // State to store text input value
   const [starValue, setStarValue] = useState(0); // State to store star rating value
-  const [image, setImage] = useState(null); // State to store selected image
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   // Function to toggle the dialog visibility
   const toggleDialog = () => {
@@ -26,28 +29,24 @@ const RateButton = () => {
     setInputValue(event.target.value);
   };
 
-  // Function to handle image upload
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImage(URL.createObjectURL(file)); // Create a preview URL
-    }
-  };
 
   // Function to handle dialog close
   const handleDialogClose = () => {
     setIsDialogOpen(false);
     setInputValue(''); // Clear the text input on close
     setStarValue(0); // Reset the star rating
-    setImage(null); // Clear the selected image
   };
 
   // Function to handle submission
   const handleSubmit = () => {
     // Here you can handle the submission logic, e.g., sending data to the server
-    console.log({ starValue, inputValue, image });
+    setOpenSnackbar(true);
     handleDialogClose();
   };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+};
 
   return (
     <div>
@@ -130,25 +129,8 @@ const RateButton = () => {
             }}
             InputLabelProps={{ style: { color: 'white' } }}
           />
-
-          {/* Image Upload and Action Buttons */}
-          <Box mt={2} display="flex" alignItems="center" justifyContent="space-between">
-            <Box display="flex" alignItems="center">
-              <Button variant="outlined" component="label" sx={{ marginRight: 1, color: 'white', borderColor: 'white' }}>
-                Upload Image
-                <input type="file" hidden accept="image/*" onChange={handleImageChange} />
-              </Button>
-              {image && (
-                <img
-                  src={image}
-                  alt="preview"
-                  style={{ width: '50px', height: '50px', marginLeft: '10px' }}
-                />
-              )}
-            </Box>
-
             {/* Cancel and Submit Buttons */}
-            <Box>
+            <Box display="flex" justifyContent="flex-end">
               <Button onClick={handleDialogClose} color="white" sx={{ marginRight: 1 }}>
                 Cancel
               </Button>
@@ -156,9 +138,25 @@ const RateButton = () => {
                 Submit
               </Button>
             </Box>
-          </Box>
         </DialogContent>
       </Dialog>
+      <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000} // Duration before it automatically closes
+          onClose={handleCloseSnackbar}
+          message={
+              <Box display="flex" alignItems="center">
+                  <CheckCircleIcon sx={{ color: 'white', marginRight: 1 }} />
+                  Review submitted
+              </Box>
+          }
+          ContentProps={{
+              sx: {
+                  backgroundColor: 'green', // Set the Snackbar background color to green
+                  color: 'white', // Set the text color to white
+              },
+          }}
+      />
     </div>
   );
 };
