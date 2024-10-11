@@ -115,7 +115,7 @@
 .filtered-listing-card-made{
     border: 1px solid #ccc;
     padding: 10px 10px 10px 20px;
-    width: 45%;
+    width: 60%;
     height: 60px;
     margin: 10px 0 5px 0;
     border-radius: 5px;
@@ -126,10 +126,26 @@
     box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
 }
 
+.user-rating > h1 {
+    margin-right: 10px; /* Space between username and rating */
+}
+
+.filtered-listing-card-received p {
+    flex: 1; /* Make both paragraphs take equal space */
+    margin: 0; /* Remove default margin */
+    text-align: center; /* Center text */
+}
+
+.filtered-listing-card-made p {
+    flex: 1; /* Make both paragraphs take equal space */
+    margin: 0; /* Remove default margin */
+    text-align: center; /* Center text */
+}
 
 .filtered-listing-container h3{
     margin-top: 100px;
 }
+
 
 .no-listings-container {
     display: flex; /* Use flex to center the content */

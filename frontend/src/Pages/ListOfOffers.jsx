@@ -321,11 +321,11 @@ export const ListOfOffers = () => {
                                                         ) : (
                                                             <p>User data not found.</p>
                                                         )}
-                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                        <p>
                                                             <strong>Price:</strong> <br />$
                                                             {listing.price}
                                                         </p>
-                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                        <p>
                                                             <strong>Status:</strong> <br /> 
                                                             Pending
                                                         </p>
@@ -370,11 +370,11 @@ export const ListOfOffers = () => {
                                                         ) : (
                                                             <p>User data not found.</p>
                                                         )}
-                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                        <p>
                                                             <strong>Price:</strong> <br />$ 
                                                             {listing.price}
                                                         </p>
-                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                        <p>
                                                             <strong>Status:</strong> <br /> 
                                                             Accepted
                                                         </p>
@@ -437,16 +437,15 @@ export const ListOfOffers = () => {
                                             .map((listing, index) => {
                                                 return (
                                                     <div key={index} className="filtered-listing-card-made">
-                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                        <div style = {{marginRight: "20px"}}> 
                                                             <strong>Price:</strong> <br />$
                                                             {listing.price}
-                                                        </p>
-                                                        <p style={{ padding: '0 70px', textAlign: 'center' }}>
+                                                        </div>
+                                                        <p>
                                                             <strong>Status:</strong> <br /> 
                                                             Pending Payment
                                                         </p>
                                                         <Paypal 
-                                                            className = "paypal-container"
                                                             price={listing.price}
                                                             offerID={listing.offer_id}
                                                             accessToken={token}
@@ -460,11 +459,11 @@ export const ListOfOffers = () => {
                                             .map((listing, index) => {
                                                 return (
                                                     <div key={index} className="filtered-listing-card-made">
-                                                        <p style={{ padding: '0 30px', textAlign: 'center'  }}>
+                                                        <p>
                                                             <strong>Price:</strong> <br />$
                                                             {listing.price}
                                                         </p>
-                                                        <p style={{ padding: '0 80px', textAlign: 'center'  }}>
+                                                        <p>
                                                             <strong>Status:</strong> <br /> 
                                                             Rejected
                                                         </p>

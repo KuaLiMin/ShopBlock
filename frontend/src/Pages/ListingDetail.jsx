@@ -31,6 +31,17 @@ const ListingDetail = () => {
   const [selectedTimeUnit, setSelectedTimeUnit] = useState(null); // Default to the first time unit
   const [anchorEl, setAnchorEl] = useState(null); // State for the menu anchor
 
+  const getCookie = (name) => {
+    const value = document.cookie; // Get all cookies
+    const parts = value.split(`; `).find((cookie) => cookie.startsWith(`${name}=`)); // Find the cookie by name
+    if (parts) {
+      return parts.split('=')[1]; // Return the value after the "="
+    }
+    return null; // Return null if the cookie isn't found
+  };
+  
+const token = getCookie('access'); // Get the 'access' cookie value
+
   const handleAdornmentClick = (event) => {
       setAnchorEl(event.currentTarget); // Open the menu
   };
@@ -44,12 +55,39 @@ const ListingDetail = () => {
       handleClose(); // Close the menu
   };
 
-  const handleMakeOffer = () => {
-    if (inputValue) {
-      setOfferMessage(`Offer of S$ ${inputValue}/${selectedTimeUnit} given.`);
-      setSnackbarSeverity('success'); // Set severity to success
-      setOpenSnackbar(true); // Show the Snackbar
-      setInputValue(''); // Clear the input
+  const handleMakeOffer = async () => {
+    if (inputValue && !isNaN(inputValue) && inputValue.trim() !== '') {
+      try {
+        const offerData = {
+          listing_id: parseInt(id),
+          price: inputValue.trim(),
+        };
+        // Fetch request to send the offer to the backend
+        const response = await fetch('/offers/', {
+            method: 'POST', // Assuming you are sending data
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(offerData), // Convert the offer data to JSON
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // If the fetch is successful, you can proceed to update the message
+        setOfferMessage(`Offer of S$ ${inputValue}/${selectedTimeUnit} given.`);
+        setSnackbarSeverity('success'); // Set severity to success
+        setOpenSnackbar(true); // Show the Snackbar
+        setInputValue(''); // Clear the input
+      } catch (error) {
+          // Handle errors from the fetch request
+          console.error('Error making offer:', error);
+          setOfferMessage('Failed to make offer. Please try again.'); // Message for fetch error
+          setSnackbarSeverity('error'); // Set severity to error
+          setOpenSnackbar(true); // Show the Snackbar
+      }
     } else {
       setOfferMessage('Please enter an amount.'); // Message for empty input
       setSnackbarSeverity('error'); // Set severity to error
