@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -16,23 +16,38 @@ const mapContainerStyle = {
     width: '800px',
 };
 
-const MyMapComponent = ({ latitude, longitude }) => {
-    const center = {
-        lat: latitude,
-        lng: longitude,
-    };
+const MyMapComponent = ({locations}) => {
+    const center = locations.length > 0
+        ? { lat: locations[0].latitude, lng: locations[0].longitude }
+        : { lat: 0, lng: 0 }; // Default center if no locations
+
+    const singaporeCoordinates = [1.3521, 103.8198]; // Latitude and Longitude of Singapore
+    const zoomLevel = 11; // Adjust the zoom level to show the whole of Singapore
+    
 
     return (
-        <MapContainer style={mapContainerStyle} center={center} zoom={12} scrollWheelZoom={false}>
+        <MapContainer style={mapContainerStyle} center = {singaporeCoordinates} zoom={zoomLevel} scrollWheelZoom={false}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            <Marker position={center}>
-                <Popup>
-                    Location: {latitude}, {longitude}
-                </Popup>
-            </Marker>
+            {locations.map((location, index) => (
+                <Marker
+                    key={index}
+                    position={{ lat: location.latitude, lng: location.longitude }}
+                >
+                    <Tooltip>
+                        Location: {location.query}<br />
+                    </Tooltip>
+                    <Popup>
+                        {location.notes && location.notes.trim() !== "" ? (
+                            <span>Notes: {location.notes}</span>
+                        ) : (
+                            <span>No instructions given</span>
+                        )}
+                    </Popup>
+                </Marker>
+            ))}
         </MapContainer>
     );
 };

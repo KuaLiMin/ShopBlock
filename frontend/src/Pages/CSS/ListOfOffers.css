@@ -133,12 +133,11 @@
 
 .no-listings-container {
     display: flex; /* Use flex to center the content */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
     flex: 1; /* Take up the remaining space */
-    margin-top: 100px; /* Margin on top */
-    margin-bottom: 100px; /* Margin on bottom */
     width: 100%; /* Full width */
+    display: flex;
+    margin: 20px 0; /* Margin top and bottom */
+    padding-left: 30%;
 }
 
 .user-rating{

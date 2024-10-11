@@ -79,11 +79,15 @@ const ListingDetail = () => {
             title: listing.title,
             description: listing.description,
             rate: `$${1}/Day`, // Assuming you still want a fixed rate, replace with listing.rate if available
-            image: listing.photos[0]?.image_url || 'default-image-url.jpg', // Use the first image or a default
+            images: listing.photos.map(photo => photo.image_url || 'default-image-url.jpg'), // Extract all images or use a default
             category: categoryMap[listing.category] || 'Others',
             user: listing.created_by,
-            longitude: parseFloat(listing.longitude) || 0, // Ensure this is a number
-            latitude: parseFloat(listing.latitude) || 0,   // Ensure this is a number
+            locations: listing.locations.map(location => ({
+              latitude: parseFloat(location.latitude) || 0,   // Ensure the latitude is a number
+              longitude: parseFloat(location.longitude) || 0, // Ensure the longitude is a number
+              query: location.query,
+              notes: location.notes
+            })), // Extract all location details
           };
           setListingData(formattedData);
         } else {
@@ -150,7 +154,18 @@ const ListingDetail = () => {
         <Link className="linkcolor" to={`/${listingData.category}`}>{listingData.category}</Link>
         {' '}{'>'} {listingData.title}
       </p>
-      <img src={listingData.image} alt={listingData.title} />
+      {/* New section to display a list of images */}
+      <div className="image-list-container">
+        {listingData.images && listingData.images.length > 0 ? (
+          listingData.images.map((image, index) => (
+            <img key={index} src={image} alt={`Listing ${listingData.title} Image ${index + 1}`} className="listing-image" />
+                ))
+            ) : (
+              <div className="placeholder-image">
+                <img src="path/to/placeholder-image.jpg" alt="No images available" className="listing-image" />
+            </div>
+            )}
+      </div>
       {/* New Flex container for title, rate, and description with user rating */}
       <div className="title-rate-description-container">
         <div className ="title-rate-description">
@@ -258,9 +273,9 @@ const ListingDetail = () => {
             <LocationOnIcon className="location-icon" />
             View Location
           </Typography>
-          {userData && listingData.latitude && listingData.longitude ? (
+          {listingData && listingData.locations && listingData.locations.length > 0 ? (
             <div className="map-container">
-              <MyMapComponent latitude={listingData.latitude} longitude={listingData.longitude} />
+              <MyMapComponent locations={listingData.locations} />
             </div>
           ) : (
             <p className="error-message">Location data is not available.</p>
