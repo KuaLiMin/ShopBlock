@@ -301,4 +301,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             user=user, offer=offer, **validated_data
         )
 
+        # Set the offer to be paid afterwards
+        offer.paid()
+
         return transaction
