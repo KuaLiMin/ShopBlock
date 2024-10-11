@@ -12,7 +12,6 @@ import {
   Grid,
   Select,
   MenuItem,
-  InputLabel,
   FormControl,
   Typography,
 } from '@mui/material';
@@ -43,16 +42,20 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
   });
 
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapUrl, setMapUrl] = useState(''); 
+  const [fileName, setFileName] = useState(''); 
 
   // Handle file input for the photo
   const handleFileChange = (e) => {
-    setFormData({
-      ...formData,
-      image_url: e.target.files[0], 
-      // image_url: file,
-    });
+    const file = e.target.files[0]; // Get the selected file
+    if (file) {
+      setFormData({
+        ...formData,
+        image_url: file, 
+      });
+      setFileName(file.name); // Set the file name
+    }
+    
   };
 
   const handleChange = (e) => {
@@ -71,9 +74,6 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
     formPayload.append('listing_type', formData.listing_type);
-    // formPayload.append('photos', formData.image_url); 
-    // formPayload.append('rates[0][time_unit]', formData.unit);
-    // formPayload.append('rates[0][rate]', formData.price);
     const photosArray = [formData.image_url]; // Assuming `formData.image_url` is a File
     photosArray.forEach((photo, index) => {
       formPayload.append(`photos[${index}]`, photo); // Append each photo in an array format
@@ -102,12 +102,9 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     fetch('/listing/', {
       method: 'POST',
       headers: {
-        // 'Accept': 'application/json',
-        // 'Content-Type': 'application/json',
-        // mode: 'no-cors',
         'Authorization': `Bearer ${token}`, 
       },
-      // body: JSON.stringify(payload),
+      
       body: formPayload,
     })
       .then((response) => {
@@ -160,14 +157,6 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       latitude: parseFloat(LATITUDE), // Set the latitude
     });
   };
-
-  // const handleLocationSelect = (address) => {
-  //   const formattedAddress = address.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '+');
-  //   setMapUrl(`https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${formattedAddress}&t=&z=14&ie=UTF8&iwloc=B&output=embed`);
-  //   setSelectedLocation(address);
-  //   setFormData({ 
-  //     ...formData, locationAddress: address,});
-  // };
 
 
   return (
@@ -288,6 +277,11 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                 📷 Add Photo
                 <input type="file" hidden onChange={handleFileChange} />
               </Button>
+              {fileName && (
+                <Typography variant="body2" style={{ marginTop: '8px' }}>
+                  Selected file: {fileName}
+                </Typography>
+              )}
             </Grid>
           </Grid>
 
