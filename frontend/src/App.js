@@ -29,9 +29,9 @@ function App() {
         <Navbar />
         <Routes>
           <Route path='/' element={<Categories />} />
-          <Route path='/electronics' element={<ShopCat banner={electronics_banner} category="electronics" />} />
-          <Route path='/services' element={<ShopCat banner={services_banner} category="services" />} />
-          <Route path='/supplies' element={<ShopCat banner={supplies_banner} category="supplies" />} />
+          <Route path='/electronics' element={<ShopCat.EL banner={electronics_banner} />} />
+          <Route path='/supplies' element={<ShopCat.SU banner={supplies_banner} />} />
+          <Route path='/services' element={<ShopCat.SE banner={services_banner} />} />
           <Route path="/listing" element={<Listing />} />
           <Route path="/user/:username/listing" element={<Listing />} />
           <Route path="/listing/:slug" element={<ListingDetail />} />
