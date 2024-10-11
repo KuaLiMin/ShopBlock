@@ -22,7 +22,7 @@ const Checkout = ({price, offerID, accessToken, onTransactionSuccess}) => {
 
     const onApproveOrder = async (data, actions) => {
         return actions.order.capture().then(async (details) => {
-            alert(`Transaction completed by ${userData?.username}`);
+            alert(`Transaction of ${price} completed by ${userData?.username}`);
 
             // If we need Date/Time
             // const capture = details.purchase_units[0].payments.captures[0];
