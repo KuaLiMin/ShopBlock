@@ -29,6 +29,7 @@ export const ListOfOffers = () => {
       
     const token = getCookie('access'); // Get the 'access' cookie value
 
+
     //Toggle Button
     const handleToggle = () => {
         setIsListingReceived(prevState => !prevState);
@@ -151,7 +152,10 @@ export const ListOfOffers = () => {
                     return {
                         id: matchedListing.id,
                         title: matchedListing.title,
-                        price: `$${1}/Day`,//matchedListing.price, // Ensure this key matches your fetched data structure
+                        prices: matchedListing.rates.map(rate => ({
+                            timeUnit: rate.time_unit,
+                            price: parseFloat(rate.rate) // Convert the rate to a number
+                        })),
                         imageUrl: matchedListing.photos[0]?.image_url // Assuming there's at least one photo
                     };
                 }
@@ -243,6 +247,8 @@ export const ListOfOffers = () => {
 
 
 
+
+
       return (
         <div>
             <div className="ternary-operator-container">
@@ -269,7 +275,12 @@ export const ListOfOffers = () => {
                                             <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
                                             <div className="listing-details">
                                                 <strong className="listing-title">{unique.title}</strong>
-                                                <p className="listing-price">{matchedListing?.price}</p>
+                                                <p className="listing-price">
+                                                    {matchedListing?.prices 
+                                                        ? matchedListing.prices.map(priceObj => `$${priceObj.price}/${priceObj.timeUnit}`).join(', ')
+                                                        : 'No price available'
+                                                    }
+                                                </p>
                                             </div>
                                         </div>
                                     );
@@ -404,7 +415,12 @@ export const ListOfOffers = () => {
                                             <img className="listing-image" src={matchedListing?.imageUrl} alt={unique.title} />
                                             <div className="listing-details">
                                                 <strong className="listing-title">{unique.title}</strong>
-                                                <p className="listing-price">{matchedListing?.price}</p>
+                                                <p className="listing-price">
+                                                    {matchedListing?.prices 
+                                                        ? matchedListing.prices.map(priceObj => `$${priceObj.price}/${priceObj.timeUnit}`).join(', ')
+                                                        : 'No price available'
+                                                    }
+                                                </p>
                                             </div>
                                         </div>
                                     );

@@ -6,7 +6,7 @@ import Avatar from '@mui/material/Avatar';
 import ReportListingButton from '../components/ReportListingButton';
 import MyMapComponent from '../components/MyMapComponent';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, Menu, MenuItem } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -28,10 +28,25 @@ const ListingDetail = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false); // State for Snackbar visibility
   const [offerMessage, setOfferMessage] = useState(''); // State for the offer message
   const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // State for Snackbar severity
+  const [selectedTimeUnit, setSelectedTimeUnit] = useState(null); // Default to the first time unit
+  const [anchorEl, setAnchorEl] = useState(null); // State for the menu anchor
+
+  const handleAdornmentClick = (event) => {
+      setAnchorEl(event.currentTarget); // Open the menu
+  };
+
+  const handleClose = () => {
+      setAnchorEl(null); // Close the menu
+  };
+
+  const handleSelectTimeUnit = (timeUnit) => {
+      setSelectedTimeUnit(timeUnit); // Update the selected time unit
+      handleClose(); // Close the menu
+  };
 
   const handleMakeOffer = () => {
     if (inputValue) {
-      setOfferMessage(`Offer of S$${inputValue} given.`);
+      setOfferMessage(`Offer of S$ ${inputValue}/${selectedTimeUnit} given.`);
       setSnackbarSeverity('success'); // Set severity to success
       setOpenSnackbar(true); // Show the Snackbar
       setInputValue(''); // Clear the input
@@ -78,7 +93,10 @@ const ListingDetail = () => {
           const formattedData = {
             title: listing.title,
             description: listing.description,
-            rate: `$${1}/Day`, // Assuming you still want a fixed rate, replace with listing.rate if available
+            prices: listing.rates.map(rate => ({
+                    timeUnit: rate.time_unit,
+                    price: parseFloat(rate.rate) // Convert the rate to a number
+                })),
             images: listing.photos.map(photo => photo.image_url || 'default-image-url.jpg'), // Extract all images or use a default
             category: categoryMap[listing.category] || 'Others',
             user: listing.created_by,
@@ -90,6 +108,7 @@ const ListingDetail = () => {
             })), // Extract all location details
           };
           setListingData(formattedData);
+          setSelectedTimeUnit(formattedData.prices[0]?.timeUnit);
         } else {
           setError('Listing not found');
         }
@@ -170,7 +189,12 @@ const ListingDetail = () => {
       <div className="title-rate-description-container">
         <div className ="title-rate-description">
           <h3>{listingData.title} <ReportListingButton /></h3>
-          <p>{listingData.rate}</p>
+          <p>
+              {listingData?.prices 
+                  ? listingData.prices.map(priceObj => `$${priceObj.price}/${priceObj.timeUnit}`).join(', ')
+                  : 'No price available'
+              }
+          </p>
           <hr />
           <div className="description">
             <h3>Description</h3>
@@ -219,13 +243,20 @@ const ListingDetail = () => {
           <div className="offer-input-container">
             {/* Text Input with "S$" prefix */}
             <TextField
-              variant="outlined"
-              placeholder="Amount"
-              value = {inputValue}
-              onChange={(e) => setInputValue(e.target.value)} // Update state on input change
-              InputProps={{
-                startAdornment: <InputAdornment position="start">S$</InputAdornment>,
-              }}
+                variant="outlined"
+                placeholder="Amount"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)} // Update state on input change
+                InputProps={{
+                    startAdornment: <InputAdornment position="start">S$</InputAdornment>,
+                    endAdornment: listingData.prices.length > 1 ? (
+                        <InputAdornment position="end" onClick={handleAdornmentClick} style={{ cursor: 'pointer' }}>
+                            {selectedTimeUnit}
+                        </InputAdornment>
+                    ) : (
+                        <InputAdornment position="end">{selectedTimeUnit}</InputAdornment>
+                    ),
+                }}
               sx={{
                 height: '40px',  // Set the height to 3px
                 fontSize: '10px', // Adjust the font size to make it match
@@ -234,6 +265,19 @@ const ListingDetail = () => {
                 }
                }}
             />
+              {listingData.prices.length > 1 && (
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  {listingData.prices.map((priceObj, index) => (
+                      <MenuItem key={index} onClick={() => handleSelectTimeUnit(priceObj.timeUnit)}>
+                          {priceObj.timeUnit}
+                      </MenuItem>
+                  ))}
+                </Menu>
+            )}
            </div>
             {/* Make Offer Button */}
             <Button className ="offer-button" variant="contained" onClick={handleMakeOffer} color="primary" sx={{ fontSize: ' 10px' }}>
