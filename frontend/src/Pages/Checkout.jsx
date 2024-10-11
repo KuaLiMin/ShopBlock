@@ -1,7 +1,7 @@
 import {React, useEffect, useState} from 'react';
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 
-const Checkout = ({price, offerID, accessToken}) => {
+const Checkout = ({price, offerID, accessToken, onTransactionSuccess}) => {
     const [{ isPending }] = usePayPalScriptReducer();
     const [userData, setUserData] = useState(null); // State to hold user data
     const [loading, setLoading] = useState(true); // State to track loading status
@@ -29,16 +29,16 @@ const Checkout = ({price, offerID, accessToken}) => {
             // const paymentTime = capture.create_time; // Time of payment
             // const formattedPaymentTime = new Date(paymentTime).toLocaleString(); // Display payment time in a user-friendly format
             // console.log(formattedPaymentTime);
-
             // Call the function to create a transaction
             const transactionData={
                 offer_id: offerID,          // Use the offerID passed as a prop
-                amount: price,              // Use the price passed as a prop
+                amount: parseInt(price),              // Use the price passed as a prop
                 status: "C",                // Status can be "C" or whatever you want
                 payment_id: String(data.paymentID), // Use the paymentID from the PayPal response
             };
 
             await createTransaction(transactionData);
+            onTransactionSuccess(offerID);
         });
     };
 

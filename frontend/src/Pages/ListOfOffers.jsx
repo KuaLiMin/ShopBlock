@@ -246,6 +246,11 @@ export const ListOfOffers = () => {
     };
 
 
+    const handleTransactionSuccess = (offerId) => {
+        setAllListings((prevListings) =>
+            prevListings.filter((listing) => listing.offer_id !== offerId)
+        );
+    }
 
 
 
@@ -449,6 +454,7 @@ export const ListOfOffers = () => {
                                                             price={listing.price}
                                                             offerID={listing.offer_id}
                                                             accessToken={token}
+                                                            onTransactionSuccess={() => handleTransactionSuccess(listing.offer_id)}
                                                         />
                                                     </div>
                                                 );
