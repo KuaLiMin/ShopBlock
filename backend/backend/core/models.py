@@ -227,6 +227,7 @@ class Transaction(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    payment_id = models.TextField()
 
     def complete(self):
         if self.status == self.PENDING:
