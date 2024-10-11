@@ -316,11 +316,11 @@ class ReviewsController(GenericAPIView):
 
 class TransactionController(GenericAPIView):
     """
-    Reviews endpoint, [GET, POST]
+    Transactions endpoint, [GET, POST]
 
-    For the GET request, it returns all reviews for the requested user
+    For the GET request, it returns the all transactions for the user
 
-    For the POST request, a user can post a review
+    For the POST request, once a user completes their payment, it will post to this endpoint to store for transaction history
     """
 
     serializer_class = TransactionSerializer
@@ -353,6 +353,9 @@ class TransactionController(GenericAPIView):
                             for choice in Transaction.TRANSACTION_STATUS_CHOICES
                         ],
                     },
+                    "payment_id": {
+                        "type": "string",
+                    },
                 },
                 "required": ["offer_id", "amount"],
             }
@@ -367,6 +370,7 @@ class TransactionController(GenericAPIView):
                     "offer_id": 1,
                     "amount": 100.00,
                     "status": "C",
+                    "payment_id": "QWER1234",
                 },
                 request_only=True,
             ),

@@ -284,6 +284,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             "status_display",
             "created_at",
             "updated_at",
+            "payment_id",
             "user_id",
             "offer_id",
         ]
