@@ -365,11 +365,11 @@ class TransactionController(GenericAPIView):
             OpenApiExample(
                 "Valid Transaction Creation",
                 summary="Create a new transaction",
-                description="Create a new transaction for an accepted offer",
+                description="Create a new transaction for an accepted offer, note that D is Paid",
                 value={
                     "offer_id": 1,
                     "amount": 100.00,
-                    "status": "C",
+                    "status": "D",
                     "payment_id": "QWER1234",
                 },
                 request_only=True,
