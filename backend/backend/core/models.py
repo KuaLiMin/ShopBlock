@@ -103,6 +103,22 @@ class Listing(models.Model):
         max_length=2, choices=ListingType.choices, default=ListingType.RENTAL
     )
 
+    def update_title(self, title: str):
+        self.title = title
+        self.save()
+
+    def update_description(self, description: str):
+        self.description = description
+        self.save()
+
+    def update_category(self, category: Category):
+        self.category = category
+        self.save()
+
+    def update_listing_Type(self, listing_type: ListingType):
+        self.listing_type = listing_type
+        self.save()
+
 
 class ListingPhoto(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
