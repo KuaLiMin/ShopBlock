@@ -1,19 +1,17 @@
-
-
 .transaction-history-container {
   display: flex;
   align-items: center; /* Center content vertically */
+  justify-content: space-between; /* Distribute space evenly */
   justify-content: center;
-  margin-top: 0; /* No margin-top for positioning at the top */
-  position: sticky;
   margin-top: 30px;
-  top: 0;
+  width: 100%; /* Ensure it takes the full width of the parent */
 }
 
 .transaction-history-container h1 {
-  font-size: 24px; /* Set your desired font size */
+  font-size: 28px; /* Set your desired font size */
   color: #333; /* Set the desired text color */
   margin-right:50px;
+  margin-top:10px;
 }
 
 .task-container{
@@ -22,7 +20,5 @@
   align-items: center; /* Center content vertically */
   justify-content: center;
   margin-top: 0; /* No margin-top for positioning at the top */
-  position: sticky;
   margin-top: 30px;
-  top: 0;
 }

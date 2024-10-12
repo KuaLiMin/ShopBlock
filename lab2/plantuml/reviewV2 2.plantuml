@@ -1,0 +1,55 @@
+@startuml
+actor User as U
+boundary ReviewUI as RUI
+control ReviewManager as RM
+entity ListingEn as L
+entity ReviewEn as R
+
+activate U
+
+' User initiating a Review after completing a product/service
+U -> RUI : Click Rate Service/Product
+activate RUI
+
+' User selects a rating
+U -> RUI : Choose Rating (1 to 5 stars)
+RUI -> RM : Validate Rating
+activate RM
+RM --> RUI : Rating Validated
+
+' Optional photo upload by user
+opt [User wants to upload a photo]
+    U -> RUI : Upload Photo
+    RUI -> RM : Validate Photo Upload
+    RM --> RUI : Photo Validated
+end
+
+' User enters text review
+U -> RUI : Enter Review Text
+
+' Submitting the review
+U -> RUI : Submit Review
+RUI -> RM : Validate and Submit Review
+RM -> L : Initialize Review Submission
+activate L
+
+L -> R : Initialize Review Object
+activate R
+R --> L : Review Object Initialized
+deactivate R
+
+L --> RM : Review Created
+deactivate L
+RM -> L : Populate Review Details (Rating, Text, Photo)
+activate L
+L --> RM : Review Details Saved
+deactivate L
+
+RM --> RUI : Review Successfully Submitted
+deactivate RM
+RUI --> U : Display Success Message
+
+deactivate RUI
+deactivate U
+
+@enduml

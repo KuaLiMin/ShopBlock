@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import (
     BaseUserManager,
@@ -68,6 +69,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    def update_username(self, username: str):
+        self.username = username
+        self.save()
+
+    # TODO : This is placeholder implementation, this should be updating the imagefield
+    def update_avatar(self, avatar: str):
+        self.avatar = avatar
+        self.save()
+
+    def update_number(self, number: str):
+        self.phone_number = number
+        self.save()
+
+    # TODO: Check if this password hashing works
+    def update_password(self, password: str):
+        self.password = make_password(password)
+        self.save()
+
 
 class Listing(models.Model):
     # If user is deleted, then delete all their listings as well
@@ -84,6 +103,22 @@ class Listing(models.Model):
     listing_type = models.CharField(
         max_length=2, choices=ListingType.choices, default=ListingType.RENTAL
     )
+
+    def update_title(self, title: str):
+        self.title = title
+        self.save()
+
+    def update_description(self, description: str):
+        self.description = description
+        self.save()
+
+    def update_category(self, category: Category):
+        self.category = category
+        self.save()
+
+    def update_listing_Type(self, listing_type: ListingType):
+        self.listing_type = listing_type
+        self.save()
 
 
 class ListingPhoto(models.Model):
@@ -162,6 +197,12 @@ class Offer(models.Model):
     # Timestamp when the offer is made
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # TODO : For scheduling checking
+    scheduled_start = models.DateTimeField(default=timezone.now)
+    scheduled_end = models.DateTimeField(default=timezone.now)
+    time_unit = models.CharField(max_length=2, choices=TimeUnit.choices, default=TimeUnit.HOURLY)
+    time_delta = models.IntegerField(default=1)
+
     # for the original listing owner to accept
     def accept(self):
         if self.status == self.PENDING:
@@ -208,25 +249,24 @@ class Transaction(models.Model):
     FAILED = "F"
     REFUNDED = "R"
 
-    TRANSACTION_STATUS_CHOICES = [
+    TRANSACTION_STATUS = [
         (PENDING, "Pending"),
         (COMPLETED, "Completed"),
         (FAILED, "Failed"),
         (REFUNDED, "Refunded"),
     ]
 
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="transaction"
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="transactions"
     )
-    offer = models.OneToOneField(
-        Offer, on_delete=models.CASCADE, related_name="transaction"
+    offer = models.ForeignKey(
+        Offer, on_delete=models.CASCADE, related_name="transactions"
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(
-        max_length=1, choices=TRANSACTION_STATUS_CHOICES, default=PENDING
-    )
+    status = models.CharField(max_length=1, choices=TRANSACTION_STATUS, default=PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    payment_id = models.TextField()
 
     def complete(self):
         if self.status == self.PENDING:

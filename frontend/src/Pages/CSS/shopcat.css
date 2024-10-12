@@ -4,77 +4,81 @@
     width: 80%;
 }
 
+.shop-cat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 1280px;
+    margin: auto;
+}
+
 .category-indexSort {
     display: flex;
-    margin: 0px 170px;
     justify-content: space-between;
     align-items: center;
+    width: 80%;
+    margin: 20px auto;
 }
 
-.cat-sort {
-    padding: 10px 20px;
-    border-radius: 40px;
-    border: 0px solid #888;
-}
-
-.category-indexSort p span {
+.category-indexSort p {
+    font-size: 16px;
     font-weight: 600;
 }
 
-.category-products {
-    width: 90%;
-    max-width: 1360px;
-    justify-content: center;
-    margin: 20px auto;
+.ShopCat-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 25px;
-}
-
-.category-loadmore {
-    display: flex;
     justify-content: center;
-    align-items: center;
-    margin: 100px auto;
-    width: 200px;
-    height: 60px;
-    border-radius: 75px;
-    background: #ededed;
-    color: #787878;
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.ShopCat-item {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.ShopCat-info {
+    padding: 10px;
+    background-color: #f8f8f8;
+    text-align: center;
+}
+
+.ShopCat-info h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #171717;
+    margin: 10px 0;
+}
+
+.ShopCat-info p {
     font-size: 16px;
-    font-weight: 500;
+    color: #777;
 }
 
-@media (max-width: 1280px) {
-    .shopcat-banner {
-        margin: 20px auto;
-        width: 90%;
-    }
-    
-    .category-indexSort {
-        width: 90%;
-        margin: auto;
-    }
-    
-    .cat-sort {
-        padding: 5px 10px;
-        font-size: 12px;
-    }
-    
-    .category-indexSort p {
-        font-size: 12px;
-    }
-}
-
+/* Responsive adjustments for smaller screens */
 @media (max-width: 800px) {
     .shopcat-banner {
         width: 95%;
     }
-    
-    .category-loadmore {
-        margin: 60px auto;
-        width: 150px;
-        height: 40px;
-        font-size: 13px;
+
+    .category-indexSort {
+        width: 90%;
+    }
+
+    .ShopCat-grid {
+        gap: 15px;
+    }
+
+    .ShopCat-info h4 {
+        font-size: 16px;
+    }
+
+    .ShopCat-info p {
+        font-size: 14px;
     }
 }

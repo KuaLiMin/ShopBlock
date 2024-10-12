@@ -21,7 +21,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "email", "username", "password", "phone_number", "avatar", "average_rating")
+        fields = (
+            "id",
+            "email",
+            "username",
+            "password",
+            "phone_number",
+            "avatar",
+            "average_rating",
+        )
         extra_kwargs = {"password": {"write_only": True}}
 
     def get_average_rating(self, obj):
@@ -261,6 +269,10 @@ class TransactionSerializer(serializers.ModelSerializer):
     offer = OfferSerializer(read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
 
+    # For data creation
+    user_id = serializers.IntegerField(write_only=True)
+    offer_id = serializers.IntegerField(write_only=True)
+
     class Meta:
         model = Transaction
         fields = [
@@ -272,24 +284,24 @@ class TransactionSerializer(serializers.ModelSerializer):
             "status_display",
             "created_at",
             "updated_at",
+            "payment_id",
+            "user_id",
+            "offer_id",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
-    # def create(self, validated_data):
-    #     user = self.context["request"].user
-    #     offer_id = self.context["request"].data.get("offer_id")
-    #     offer = Transaction.offer.field.related_model.objects.get(id=offer_id)
+    def create(self, validated_data):
+        user_id = validated_data.pop("user_id")
+        offer_id = validated_data.pop("offer_id")
 
-    #     transaction = Transaction.objects.create(
-    #         user=user,
-    #         offer=offer,
-    #         amount=validated_data["amount"],
-    #         status=validated_data.get("status", Transaction.PENDING),
-    #     )
-    #     return transaction
+        user = User.objects.get(id=user_id)
+        offer = Offer.objects.get(id=offer_id)
 
-    # def update(self, instance, validated_data):
-    #     instance.amount = validated_data.get("amount", instance.amount)
-    #     instance.status = validated_data.get("status", instance.status)
-    #     instance.save()
-    #     return instance
+        transaction = Transaction.objects.create(
+            user=user, offer=offer, **validated_data
+        )
+
+        # Set the offer to be paid afterwards
+        offer.paid()
+
+        return transaction

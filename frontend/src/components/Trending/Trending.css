@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     max-width: 1280px;
     margin: auto;
 }
@@ -37,6 +37,11 @@
     margin-top: 40px;
 }
 
+.Trendings-grid :hover {
+    transform: scale(1.05);
+}
+
+
 /* Individual trending item card */
 .Trending-card {
     background-color: white;
@@ -49,15 +54,6 @@
     margin: 20px; /* Adjust margin to add spacing */
 }
 
-.Trending-card:hover {
-    transform: scale(1.05);
-}
-
-/* Image hover effect */
-.Trending-card:hover .Trending-item {
-    transform: scale(1.1); /* Zoom in the image on hover */
-}
-
 /* Image inside the trending card */
 .Trending-item {
     width: 100%;
@@ -66,6 +62,7 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
+
 
 /* Info section inside the card */
 .Trending-info {
