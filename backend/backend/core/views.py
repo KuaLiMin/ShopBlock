@@ -350,7 +350,7 @@ class TransactionController(GenericAPIView):
                         "type": "string",
                         "enum": [
                             choice[0]
-                            for choice in Transaction.TRANSACTION_STATUS_CHOICES
+                            for choice in Transaction.TRANSACTION_STATUS
                         ],
                     },
                     "payment_id": {

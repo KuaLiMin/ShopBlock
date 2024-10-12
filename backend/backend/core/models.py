@@ -208,7 +208,7 @@ class Transaction(models.Model):
     FAILED = "F"
     REFUNDED = "R"
 
-    TRANSACTION_STATUS_CHOICES = [
+    TRANSACTION_STATUS = [
         (PENDING, "Pending"),
         (COMPLETED, "Completed"),
         (FAILED, "Failed"),
@@ -223,7 +223,7 @@ class Transaction(models.Model):
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(
-        max_length=1, choices=TRANSACTION_STATUS_CHOICES, default=PENDING
+        max_length=1, choices=TRANSACTION_STATUS, default=PENDING
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
