@@ -4,8 +4,8 @@ import './Listing.css';
 import EditListing from './EditListing'; 
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-
-// axios.defaults.baseURL = 'http://152.42.253.110:8000';
+import CustomSlider from "./Slider";
+import "./Slider.css";
 
 const formatRate = (rates) => {
   if (rates.length > 0) {
@@ -34,9 +34,10 @@ const getCookie = (name) => {
 };
 
 
-const ListingCard = ({id, time, title, rate, image }) => {
+const ListingCard = ({id, time, title, rate, image = [] }) => {
   const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
   const [isModalOpen, setModalOpen] = useState(false);
+  
   const handleEditClick = (e) => {
     e.preventDefault(); // Prevent default link behavior
     setModalOpen(true); // Open the modal when edit button is clicked
@@ -62,15 +63,6 @@ const ListingCard = ({id, time, title, rate, image }) => {
           'Authorization': `Bearer ${token}`,
         },
       });
-      // const response = await fetch(`http://152.42.253.110:8000/listing/?id=${id}`, {
-      //   method: 'DELETE', 
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`, 
-      //   }
-      // });
-      // if (!response.ok) {
-      //   throw new Error(`Error: ${response.status}`);
-      // }
 
       console.log(`Listing with ID ${id} deleted.`);
       // window.location.reload();
@@ -80,12 +72,26 @@ const ListingCard = ({id, time, title, rate, image }) => {
     }
     
   };
+  // const imagesToDisplay = image.length > 0 ? image : ["https://placehold.co/140x100"];
 
   return (
     <div className="listing-card">
       {/* Link wrapping only the image and title */}
       <Link to={`/listing/${title}-${formattedTime}-${id}`}> {/* CREATED BY HAYES */}
-        <img src={image} alt={title} className="listing-image" />
+        {/* <img src={image} alt={title} className="listing-image" /> */}
+        <CustomSlider>
+          {/* {imagesToDisplay.map((image, index) => {
+            return <img key={index} src={image} alt={''} />;
+          })} */}
+          {image.length > 0 ? (
+            image.map((img, index) => (
+              <img key={index} src={img} alt={title} className="listing-image" />
+            ))
+          ) : (
+            <img src="https://placehold.co/140x100" alt="No image available" className="listing-image" />
+          )}
+         
+        </CustomSlider>
         <div className="listing-info">
           <h4>{title}</h4>
           <p>{rate}</p>
@@ -115,6 +121,7 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
   const [error, setError] = useState(null);
 
   const { username } = useParams();
+  
 
   useEffect(() => {
     const token = getCookie('access'); 
@@ -135,10 +142,9 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
       return;
     }
 
-    const loggedInUserId = decodedToken.user_id; // Extracting the user_id
+    const loggedInUserId = decodedToken.user_id; 
     // console.log("Logged in user ID:", loggedInUserId);
     
-
     // Fetch the data from the backend with Authorization header
     fetch('/listing/', {
       method: 'GET',
@@ -164,7 +170,9 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
           title: listing.title,
           description: listing.description,
           rate: formatRate(listing.rates), 
-          image: listing.photos.length > 0 ? listing.photos[0].image_url : 'https://placehold.co/140x100',
+          // image: listing.photos.length > 0 ? listing.photos[0].image_url : 'https://placehold.co/140x100',
+          image: listing.photos ? listing.photos.map(photo => photo.image_url) : [],
+          
         }));
 
         setListingsData(formattedData);

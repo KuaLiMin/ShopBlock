@@ -6,7 +6,6 @@ import SideNav from '../components/Listing/SideNav';
 import { ListingsGrid } from '../components/Listing/Listing';
 import '../components/Listing/Listing.css';
 import CreateListing from '../components/Listing/CreateListing';
-import { Link } from 'react-router-dom';
 
 export const Listing = () => {
   const [listingsCount, setListingsCount] = useState(0);  // State to hold number of listings

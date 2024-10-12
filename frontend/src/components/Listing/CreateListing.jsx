@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useParams} from 'react-router-dom';
-import './Listing.css'; // Make sure to create this CSS file
+import './Listing.css'; 
 
 import {
   Dialog,
@@ -26,36 +26,44 @@ const getCookie = (name) => {
 const CreateListing = ({ isModalOpen, toggleModal }) => {
   const { username } = useParams();
   const token = getCookie('access'); 
-
   const [formData, setFormData] = useState({
     title: '',
-    price: '', // For rate in the payload
-    unit: '', // For time_unit in the payload (day, hour, etc.)
-    category: '', // For category in the payload (EL, SU, etc.)
-    description: '', // For the description of the listing
-    locationAddress: '', // For storing the full address
-    locationNotes: '', // Additional notes for the location
-    image_url: '', // For storing the image URL after upload
-    listing_type: '', // Rental or Service (RE or SE)
-    longitude: '', // Longitude of the selected location
-    latitude: '', // Latitude of the selected location
+    price: '', 
+    unit: '', 
+    category: '', 
+    description: '', 
+    locationAddress: '', 
+    locationNotes: '', 
+    image_url: '', 
+    listing_type: '', 
+    longitude: '', 
+    latitude: '', 
+    // rates: [],
+    photos: [],
   });
 
   const [searchResults, setSearchResults] = useState([]);
   const [mapUrl, setMapUrl] = useState(''); 
-  const [fileName, setFileName] = useState(''); 
+  // const [fileName, setFileName] = useState(''); 
+  const [fileNames, setFileNames] = useState([]);
 
   // Handle file input for the photo
   const handleFileChange = (e) => {
-    const file = e.target.files[0]; // Get the selected file
-    if (file) {
-      setFormData({
-        ...formData,
-        image_url: file, 
-      });
-      setFileName(file.name); // Set the file name
-    }
-    
+    // const file = e.target.files[0]; 
+    //   setFormData({
+    //     ...formData,
+    //     image_url: file, 
+    //   });
+    //   setFileName(file.name); 
+    // }
+    const files = Array.from(e.target.files); 
+    setFormData({
+      ...formData,
+      photos: [...formData.photos, ...files], 
+    });
+
+    const newFileNames = files.map(file => file.name); // Extract file names from the selected files
+    setFileNames([...fileNames, ...newFileNames]); 
   };
 
   const handleChange = (e) => {
@@ -67,18 +75,21 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Create a FormData object to handle multipart/form-data
     const formPayload = new FormData();
     formPayload.append('created_by', username); // Append username from URL
     formPayload.append('title', formData.title);
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
     formPayload.append('listing_type', formData.listing_type);
-    const photosArray = [formData.image_url]; // Assuming `formData.image_url` is a File
-    photosArray.forEach((photo, index) => {
-      formPayload.append(`photos[${index}]`, photo); // Append each photo in an array format
-    });
     
+    // const photosArray = [formData.image_url]; 
+    // photosArray.forEach((photo, index) => {
+    //   formPayload.append(`photos[${index}]`, photo); // Append each photo in an array format
+    // });
+
+    formData.photos.forEach((photo, index) => {
+      formPayload.append(`photos[${index}]`, photo);
+    });
 
     const locations = {
       latitude: formData.latitude,
@@ -97,14 +108,11 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     for (let pair of formPayload.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`);
     }
-
-
     fetch('/listing/', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`, 
       },
-      
       body: formPayload,
     })
       .then((response) => {
@@ -119,15 +127,14 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       })
       .catch((error) => {
         console.error('Error:', error); // Handle errors
-      });
-      
+      });      
   };
 
   const searchLocation = () => {
     const input = formData.locationAddress.replace(/ /g, '+');
     fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${input}&returnGeom=Y&getAddrDetails=Y&pageNum=1`, {
       headers: {
-        'Authorization': 'YOUR_API_KEY', // Use your valid API key here
+        'Authorization': 'YOUR_API_KEY', 
       },
     })
       .then((response) => response.json())
@@ -158,6 +165,18 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     });
   };
 
+  // const addRate = () => {
+  //   const newRate = {
+  //     time_unit: formData.unit,
+  //     rate: parseFloat(formData.price),
+  //   };
+  //   setFormData({
+  //     ...formData,
+  //     rates: [...formData.rates, newRate], // Append new rate to rates array
+  //     price: '', // Clear the input fields
+  //     unit: '',
+  //   });
+  // };
 
   return (
     <Dialog open={isModalOpen} onClose={(event, reason) => {
@@ -167,7 +186,6 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     }}
     maxWidth="md"
     fullWidth>
-
       <DialogTitle>Create Listing</DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit}>
@@ -217,6 +235,16 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                   </FormControl>
                 </Grid>
               </Grid>
+              {/* <Button onClick={addRate}>Add Rate</Button>
+              {Array.isArray(formData.rates) && formData.rates.length > 0 && (
+                <ul>
+                  {formData.rates.map((rate, index) => (
+                    <li key={index}>
+                      {rate.time_unit}: {rate.rate}
+                    </li>
+                  ))}
+                </ul>
+              )} */}
 
               {/* Category */}
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
@@ -271,17 +299,24 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
               {/* Add Photo - Move it under the description */}
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
-                Add Photo
+                Add Photo 
               </Typography>
               <Button variant="contained" component="label" style={{ }}>
-                📷 Add Photo
-                <input type="file" hidden onChange={handleFileChange} />
+                📷 Add photo
+                <input type="file" multiple hidden onChange={handleFileChange} />
               </Button>
-              {fileName && (
+              {fileNames.length > 0 && (
+                <ul>
+                  {fileNames.map((name, index) => (
+                    <li key={index}>{name}</li> // Display each selected file name in a list
+                  ))}
+                </ul>
+              )}
+              {/* {fileName && (
                 <Typography variant="body2" style={{ marginTop: '8px' }}>
                   Selected file: {fileName}
                 </Typography>
-              )}
+              )} */}
             </Grid>
           </Grid>
 
@@ -313,7 +348,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                     onClick={() => handleLocationSelect(result)}
                   >
                     {result.ADDRESS}
-                    {/* {result} */}
+          
                   </Button>
                 ))}
 

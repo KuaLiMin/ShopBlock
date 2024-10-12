@@ -1,4 +1,6 @@
 
+
+
 .sidenav {
     width: 250px; /* Adjust width of the side nav */
     background-color: white; 
@@ -126,6 +128,8 @@
 }
 
 /*--------------------------*/
+/* LISTING PAGE */
+/*--------------------------*/
 
 .listing-app {
     display: flex;  
@@ -183,12 +187,6 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.listing-image {
-    width: 100%;
-    height: 150px; /* Adjust height as needed */
-    object-fit: cover; /* Ensures the image covers the div without distorting */
-}
-
 .listing-info {
     padding: 10px;
     text-align: center;
@@ -198,7 +196,7 @@
 .listings-grid {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Creates a responsive grid */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Creates a responsive grid */
     gap: 20px; /* Space between cards */
     padding: 20px;
 }
@@ -212,7 +210,7 @@
   
   /* Styling for the Add Listing button */
 .add-listing-btn {
-    background-color: #63acc0;  /* Bootstrap blue or your preferred color */
+    background-color: #63acc0;  
     color: white;
     border: none;
     padding: 10px 20px;
