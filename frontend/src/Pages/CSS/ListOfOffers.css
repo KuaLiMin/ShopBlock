@@ -1,10 +1,17 @@
+.ternary-operator-container{
+    display: flex;
+    margin: 20px 0; /* Margin top and bottom */
+    padding-left: 20%;
+}
+
 .list-of-offers-container{
     display:flex;
     flex-direction: row;
     align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0 10% 0 20%;
     width: 80%;
     max-width: 1536px;
-    padding: 20px 10%; 
     height: auto;/* Set height to fill the viewport */
 }
 
@@ -12,8 +19,8 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    max-width: 30%;
-    width:300px;
+    max-width: 50%;
+    width:400px;
     flex-shrink: 1; /* Allow the item to shrink if necessary */
 }
 
@@ -88,12 +95,13 @@
     align-items: flex-start;
     max-width: 50%;
     width: 500px;
+    position: relative;
 }
 
-.filtered-listing-card{
+.filtered-listing-card-received{
     border: 1px solid #ccc;
     padding: 10px 10px 10px 20px;
-    width: 100%;
+    width: 65%;
     height: 60px;
     margin: 10px 0 5px 0;
     border-radius: 5px;
@@ -104,22 +112,62 @@
     box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
 }
 
+.filtered-listing-card-made{
+    border: 1px solid #ccc;
+    padding: 10px 10px 10px 20px;
+    width: 60%;
+    height: 60px;
+    margin: 10px 0 5px 0;
+    border-radius: 5px;
+    align-items: center;
+    display:flex;
+    gap: 10px;
+    transition: background-color 0.3s, box-shadow 0.3s; /* Include box-shadow in transition */
+    box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
+}
+
+.user-rating > h1 {
+    margin-right: 10px; /* Space between username and rating */
+}
+
+.filtered-listing-card-received p {
+    flex: 1; /* Make both paragraphs take equal space */
+    margin: 0; /* Remove default margin */
+    text-align: center; /* Center text */
+}
+
+.filtered-listing-card-made p {
+    flex: 1; /* Make both paragraphs take equal space */
+    margin: 0; /* Remove default margin */
+    text-align: center; /* Center text */
+}
+
 .filtered-listing-container h3{
     margin-top: 100px;
 }
 
+
 .no-listings-container {
     display: flex; /* Use flex to center the content */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
     flex: 1; /* Take up the remaining space */
-    margin-top: 100px; /* Margin on top */
-    margin-bottom: 100px; /* Margin on bottom */
     width: 100%; /* Full width */
+    display: flex;
+    margin: 20px 0; /* Margin top and bottom */
+    padding-left: 30%;
 }
 
 .user-rating{
     margin-right: 10px;
     display: flex;
     flex-direction: column;
+}
+
+.accept-button-position{
+    position: absolute; /* Allows positioning outside the parent */
+    right: 150px;
+}
+
+.reject-button-position{
+    position: absolute; /* Allows positioning outside the parent */
+    right: 70px;
 }

@@ -178,6 +178,7 @@
     top: 0;
     right: -100%;
     transition: 850ms;
+    z-index:1000;
 }
   
 .side-menu.active {
