@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import (
     BaseUserManager,
@@ -195,6 +196,12 @@ class Offer(models.Model):
 
     # Timestamp when the offer is made
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # TODO : For scheduling checking
+    scheduled_start = models.DateTimeField(default=timezone.now)
+    scheduled_end = models.DateTimeField(default=timezone.now)
+    time_unit = models.CharField(max_length=2, choices=TimeUnit.choices, default=TimeUnit.HOURLY)
+    time_delta = models.IntegerField(default=1)
 
     # for the original listing owner to accept
     def accept(self):
