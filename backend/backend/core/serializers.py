@@ -266,15 +266,23 @@ class ReviewSerializer(serializers.ModelSerializer):
     reviewer = UserSerializer(read_only=True)
     user = UserSerializer(read_only=True)
 
+    # For data creation
+    reviewer_id = serializers.IntegerField(write_only=True)
+    user_id = serializers.IntegerField(write_only=True)
+
     class Meta:
         model = Review
-        fields = ["id", "reviewer", "user", "rating", "description", "created_at"]
+        fields = ["id", "reviewer", "user", "rating", "description", "created_at", "user_id", "reviewer_id"]
         read_only_fields = ["created_at"]
 
     def create(self, validated_data):
-        reviewer = self.context["request"].user
-        user = self.context["view"].kwargs.get("user_id")
-        return Review.objects.create(reviewer=reviewer, user_id=user, **validated_data)
+        reviewer_id = validated_data.pop('reviewer_id')
+        user_id = validated_data.pop('user_id')
+
+        reviewer = User.objects.get(id=reviewer_id)
+        user = User.objects.get(id=user_id)
+
+        return Review.objects.create(reviewer=reviewer, user=user, **validated_data)
 
 
 class TransactionSerializer(serializers.ModelSerializer):

@@ -337,12 +337,14 @@ class OfferController(GenericAPIView):
                 # this technically isn't a bug, just something to take note.
                 status__in=[Offer.PENDING, Offer.ACCEPTED, Offer.PAID],
                 scheduled_start__lt=scheduled_end,
-                scheduled_end__gt=scheduled_start
+                scheduled_end__gt=scheduled_start,
             )
 
             if conflicting_offers.exists():
                 return Response(
-                    {"error": "Schedule collision detected. Please choose a different time."},
+                    {
+                        "error": "Schedule collision detected. Please choose a different time."
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -430,6 +432,55 @@ class ReviewsController(GenericAPIView):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
+
+    @extend_schema(
+        request=ReviewSerializer,
+        responses={201: ReviewSerializer},
+        description="Create a new review for a user",
+        examples=[
+            OpenApiExample(
+                "Valid Review Creation",
+                summary="Create a new review",
+                description="Create a new review for a user",
+                value={
+                    "user_id": 1,
+                    "rating": 5,
+                    "description": "Great experience working with this user!",
+                },
+                request_only=True,
+            ),
+        ],
+    )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def post(self, request: Request):
+        user_id = request.data.get("user_id")
+
+        if not user_id:
+            return Response(
+                {"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Ensure the reviewer is not reviewing themselves
+        if int(user_id) == request.user.id:
+            return Response(
+                {"error": "You cannot review yourself"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Add the reviewer (current user) to the request data
+        request.data['reviewer_id'] = request.user.id
+        
+        from pprint import pprint
+        pprint(request.data)
+
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TransactionController(GenericAPIView):
