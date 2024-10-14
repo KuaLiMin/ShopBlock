@@ -27,7 +27,7 @@ export const Listing = () => {
       <div className="listing-content">
         <div className="listings-header">
           <h1>Your Listings</h1>
-          <button onClick={toggleModal} className="add-listing-btn">+ Add Listing</button>
+          <button onClick={toggleModal} className="add-listing-btn">+ Create Listing</button>
         </div>
         <hr className="listings-underline" />
         <p>{listingsCount} items found in Your Listings</p>

@@ -108,7 +108,7 @@ const ListingCard = ({id, time, title, rate, image = [] }) => {
       </div>
 
       {/* Render the EditListing modal */}
-      {/* <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal}/> */}
+      <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal} listingId={id}/>
     </div>
   );
 }

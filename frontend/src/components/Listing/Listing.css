@@ -1,6 +1,5 @@
 
 
-
 .sidenav {
     width: 250px; /* Adjust width of the side nav */
     background-color: white; 
@@ -196,8 +195,8 @@
 .listings-grid {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Creates a responsive grid */
-    gap: 20px; /* Space between cards */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 20px; 
     padding: 20px;
 }
 

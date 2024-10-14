@@ -36,7 +36,7 @@ function App() {
         <Route path='/services'element={<ShopCat banner = {services_banner} category = "services"/>}/>
         <Route path='/supplies'element={<ShopCat banner = {supplies_banner} category = "supplies"/>}/>
         <Route path="/listing" element={<Listing />} />
-        <Route path="/user/:username/listing" element={<Listing />} />
+        <Route path="/user/:username" element={<Listing />} />
         <Route path="/listing/:slug" element={<ListingDetail />} />
         <Route path='/cart' element={<cart/>}/>
         <Route path='/login' element={<Login/>}/>
