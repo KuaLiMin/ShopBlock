@@ -41,6 +41,12 @@ Use the swagger-ui to test. Ensure that your model and views reflect here proper
 go to http://localhost:8000/api/schema/swagger-ui/
 ```
 
+## Unit tests
+
+```
+python -m pytest .
+```
+
 ### Developer Notes
 
 - models.py is the ORM models corresponding to the database.
