@@ -230,6 +230,15 @@ class OfferCreateSerializer(serializers.Serializer):
     offered_by = serializers.StringRelatedField()
     listing_id = serializers.IntegerField()
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    scheduled_start = serializers.DateTimeField()
+    scheduled_end = serializers.DateTimeField()
+    time_unit = serializers.ChoiceField(choices=TimeUnit.choices)
+    time_delta = serializers.IntegerField(min_value=1)
+
+    def validate(self, data):
+        if data['scheduled_end'] <= data['scheduled_start']:
+            raise serializers.ValidationError("End time must be after start time")
+        return data
 
     # Check that they are not submitting junk listings
     def validate_listing_id(self, value):
@@ -246,6 +255,10 @@ class OfferCreateSerializer(serializers.Serializer):
             offered_by=user,
             listing=listing,
             price=validated_data["price"],
+            scheduled_start=validated_data["scheduled_start"],
+            scheduled_end=validated_data["scheduled_end"],
+            time_unit=validated_data["time_unit"],
+            time_delta=validated_data["time_delta"],
         )
 
 

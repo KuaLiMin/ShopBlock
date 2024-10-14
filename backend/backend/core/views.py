@@ -283,9 +283,29 @@ class OfferController(GenericAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
 
+    # @extend_schema(
+    #     request=OfferCreateSerializer,
+    #     responses={201: OfferCreateSerializer},
+    # )
     @extend_schema(
         request=OfferCreateSerializer,
-        responses={201: OfferCreateSerializer},
+        responses={201: OfferSerializer, 400: {"description": "Bad Request"}},
+        examples=[
+            OpenApiExample(
+                "Offer Creation",
+                summary="Create a new offer with scheduling",
+                description="Create a new offer for a listing with details about the scheduled time",
+                value={
+                    "listing_id": 1,
+                    "price": 100.00,
+                    "scheduled_start": "2023-06-01T10:00:00Z",
+                    "scheduled_end": "2023-06-01T12:00:00Z",
+                    "time_unit": "H",
+                    "time_delta": 2,
+                },
+                request_only=True,
+            ),
+        ],
     )
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
@@ -296,11 +316,37 @@ class OfferController(GenericAPIView):
                 "offered_by": request.user,
                 "listing_id": request.data.get("listing_id"),
                 "price": request.data.get("price"),
+                "scheduled_start": request.data.get("scheduled_start"),
+                "scheduled_end": request.data.get("scheduled_end"),
+                "time_unit": request.data.get("time_unit"),
+                "time_delta": request.data.get("time_delta"),
             },
             context={"request": request},
         )
 
         if serializer.is_valid():
+            # Before we save the model into the database, this should check for collision
+            listing_id = serializer.validated_data["listing_id"]
+            scheduled_start = serializer.validated_data["scheduled_start"]
+            scheduled_end = serializer.validated_data["scheduled_end"]
+
+            conflicting_offers = Offer.objects.filter(
+                listing_id=listing_id,
+                # TODO : This also means that when they post the request
+                # any pending offers will be counted as a collision
+                # this technically isn't a bug, just something to take note.
+                status__in=[Offer.PENDING, Offer.ACCEPTED, Offer.PAID],
+                scheduled_start__lt=scheduled_end,
+                scheduled_end__gt=scheduled_start
+            )
+
+            if conflicting_offers.exists():
+                return Response(
+                    {"error": "Schedule collision detected. Please choose a different time."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # if there are no errors, then we will save this into the model
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
