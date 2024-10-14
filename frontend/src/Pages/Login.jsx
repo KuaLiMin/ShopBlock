@@ -5,6 +5,7 @@ import 'react-phone-input-2/lib/style.css'
 import './CSS/Modal.css'
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { Button, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
 export const Login = () => {
@@ -19,7 +20,7 @@ export const Login = () => {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
   const [contactno, setContactNo] = useState('');
   const [countryCode, setCountryCode] = useState('');
-  const [modal, setModal] = useState(false);
+  const [loading, setLoading] = useState(false); // Tracks if the login is loading
   const formData = new FormData();
 
   // Regular expression for email validation
@@ -27,14 +28,6 @@ export const Login = () => {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const navigate = useNavigate();
-
-  const toggleModal = () => {
-    setModal(!modal)
-  }
-
-  const nextPage = () => {
-    navigate('/signup');
-  }
 
   const handlePhoneChange = (e, value, name) => {
     if (name === "contactno") {
@@ -50,9 +43,9 @@ export const Login = () => {
     setContactNo(value) // set contactNo : value is the dict
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Basic validation checks
+    setLoading(true); // Show the loading spinner when login is in progress
 
     if (!username || !email || !password || !phone) {
       setErrorMessage('All fields are required.');
@@ -68,7 +61,7 @@ export const Login = () => {
       return;
     }
 
-    if (regex.test(password) ===  false) {
+    if (regex.test(password) === false) {
       setPasswordErrorMessage('Password does not meet the password requirements.');
       return;
     } else setPasswordErrorMessage('');
@@ -80,52 +73,58 @@ export const Login = () => {
 
     // If validation passes, clear the error message and submit the form
     setErrorMessage('');
-    console.log("contact no", contactno)
-    console.log("phone ===== ", phone)
     // Append form fields to FormData
     formData.append('email', email);
     formData.append('username', username);
     formData.append('password', password);
     formData.append('phone_number', phone);
 
-    // POST request method here
-    axios.post('/register/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+    // POST request
+    try {
+      const response = await axios.post('/register/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      navigate('/signup');
+      console.log("START");
+      if (response.status === 200) {
+        console.log('Response data:', response.data); // Handle success
+        // Navigate to the signup page
+        console.log("INSIDE");
+        navigate('/signup');
+      } else {
+        console.log("Unexpected status code:", response.status);
       }
-    })
-    .then(response => {
-      console.log('Response data:', response.data); // Handle success
-      // Call toggleModal function here
-      toggleModal(); // Assuming toggleModal is your modal function
-    })
-    .catch(error => {
+    } catch (error) {
       console.error('There was an error!', error); // Handle error
-    });
-    // Call toggleModal function here
-    //toggleModal();
+    } finally {
+      setLoading(false); // Hide the loading spinner after the request completes
+    }
   };
 
-  
+
   return (
     <div className='loginsignup'>
       <div className='loginsignup-container'>
         <h1>Create Account</h1>
         <form onSubmit={handleSubmit}>
           <div className='loginsignup-fields'>
-            <input type='text' placeholder='Enter Username' value={username} onChange={(e) => setUsername(e.target.value)}/>
+            <input type='text' placeholder='Enter Username' value={username} onChange={(e) => setUsername(e.target.value)} />
             {usernameErrorMessage && <p style={{ color: 'red' }}>{usernameErrorMessage}</p>}
             <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
             <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
             {passwordErrorMessage && <p style={{ color: 'red' }}>{passwordErrorMessage}</p>}
-            <PhoneInput 
+            <PhoneInput
               country={"sg"}
               value={`${countryCode}${contactno}`}
               onChange={(e, phone) => handlePhoneChange(e, phone, "contactno")}
-              inputStyle={{height: "72px", width: "100%", paddingLeft: "48px", border: "1px solid #c9c9c9", outline: "none", color: "#5c5c5c", fontSize: "18px", borderRadius: "0px" }} />
-              {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
+              inputStyle={{ height: "72px", width: "100%", paddingLeft: "48px", border: "1px solid #c9c9c9", outline: "none", color: "#5c5c5c", fontSize: "18px", borderRadius: "0px" }} />
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
           </div>
-          <button type='submit'>Register</button>
+          <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '50px' }}>
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'}
+          </Button>
           <div className="loginsignup-agree">
             <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
             <p>By continuing, I agree to the terms of use & privacy policy.</p>
@@ -133,19 +132,6 @@ export const Login = () => {
         </form>
         <p className="loginsignup-login">Already have an account? <Link to='/signup' style={{ textDecoration: 'none' }}><span>Login here</span></Link></p>
       </div>
-      {modal && (
-      <div className="modal">
-        <div className="overlay" onClick={nextPage}>
-          <div className="modal-content">
-            <h2>Account Registration</h2>
-            <p>
-              Your account has been registered successfully.
-            </p>
-            <button className='close-modal' onClick={nextPage}>CLOSE</button>
-          </div>
-        </div>
-      </div>
-      )}
     </div>
   );
 }
