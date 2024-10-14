@@ -80,27 +80,47 @@ export const Login = () => {
     formData.append('phone_number', phone);
 
     // POST request
-    try {
-      const response = await axios.post('/register/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      navigate('/signup');
-      console.log("START");
-      if (response.status === 200) {
-        console.log('Response data:', response.data); // Handle success
-        // Navigate to the signup page
-        console.log("INSIDE");
-        navigate('/signup');
-      } else {
-        console.log("Unexpected status code:", response.status);
+    // try {
+    //   const response = await axios.post('/register/', formData, {
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data'
+    //     }
+    //   });
+
+    //   console.log("START");
+    //   if (response.status === 200) {
+    //     console.log('Response data:', response.data); // Handle success
+    //     // Navigate to the signup page
+    //     console.log("INSIDE");
+    //     navigate('/signup');
+    //   } else {
+    //     console.log("Unexpected status code:", response.status);
+    //   }
+    // } catch (error) {
+    //   console.error('There was an error!', error); // Handle error
+    // } finally {
+    //   setLoading(false); // Hide the loading spinner after the request completes
+    //   console.log("END");
+    // }
+
+    // POST request method here
+    axios.post('/register/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
       }
-    } catch (error) {
-      console.error('There was an error!', error); // Handle error
-    } finally {
-      setLoading(false); // Hide the loading spinner after the request completes
-    }
+    })
+      .then(response => {
+        console.log('Response data:', response.data); // Handle success
+        // Call toggleModal function here
+        navigate('/signup');
+      })
+      .catch(error => {
+        console.error('There was an error!', error); // Handle error
+      })
+      // .finally(() => {
+      //   setLoading(false); // Hide loading spinner when done
+      // });
+
   };
 
 
@@ -123,7 +143,8 @@ export const Login = () => {
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
           </div>
           <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '50px' }}>
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'}
+            {/* {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'} */}
+            Register
           </Button>
           <div className="loginsignup-agree">
             <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
