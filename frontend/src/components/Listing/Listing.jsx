@@ -72,7 +72,6 @@ const ListingCard = ({id, time, title, rate, image = [] }) => {
     }
     
   };
-  // const imagesToDisplay = image.length > 0 ? image : ["https://placehold.co/140x100"];
 
   return (
     <div className="listing-card">

@@ -75,6 +75,25 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const requiredFields = ['title', 'price', 'unit', 'category', 'description', 'locationAddress', 'listing_type'];
+    let isValid = true;
+  
+    requiredFields.forEach((field) => {
+      if (!formData[field]) {
+        isValid = false;
+        alert(`The field ${field} is required.`); // You can replace this with custom UI error messages
+      }
+    });
+  
+    if (!formData.photos.length) {
+      isValid = false;
+      alert('At least one photo is required.');
+    }
+  
+    if (!isValid) return;
+
+    
     const formPayload = new FormData();
     formPayload.append('created_by', username); // Append username from URL
     formPayload.append('title', formData.title);
