@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './CSS/LoginSignup.css'
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Button, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
 
@@ -16,6 +16,7 @@ export const SignUp = () => {
   const [lock, setLock] = useState(false); // Tracks whether the account is locked
   const [lockMessage, setLockMessage] = useState(''); // Stores lock message
   const [unlockTime, setUnlockTime] = useState(null); // Tracks the unlock time
+  const [loading, setLoading] = useState(false); // Tracks if the login is loading
 
   useEffect(() => {
     // If the account is locked, set a timer for 5 minutes
@@ -38,7 +39,7 @@ export const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Basic validation checks
+    setLoading(true); // Show the loading spinner when login is in progress
 
     const url = '/api/login/';
     const data = {
@@ -69,8 +70,8 @@ export const SignUp = () => {
         console.log('Success:', response.data);
 
         // Set cookies with access and refresh tokens
-        document.cookie = `access=${response.data.access}; path=/; Secure; HttpOnly`;
-        document.cookie = `refresh=${response.data.refresh}; path=/; Secure; HttpOnly`;
+        document.cookie = `access=${response.data.access}; path=/;`;
+        document.cookie = `refresh=${response.data.refresh}; path=/;`;
 
         // Redirect to the listing page
         window.location.href = '/';
@@ -104,8 +105,9 @@ export const SignUp = () => {
 
       // Display an error message (you can customize this to show in the UI)
       //alert('Login failed. Please check your email and password and try again.');
+    } finally {
+      setLoading(false); // Hide the loading spinner after the request completes
     }
-
 
     setErrorMessage('');
   };
@@ -123,11 +125,18 @@ export const SignUp = () => {
               {passwordErrorMessage && !lock && <p style={{ color: 'red' }}>{passwordErrorMessage}</p>}
               {!lock && <Link to='/resetpassword' style={{ textDecoration: 'none' }}><p className="loginsignup-signup">Forget Password?</p></Link>}
               {lockMessage && <p style={{ color: 'red', fontWeight: 'bold', textAlign: 'center' }}>{lockMessage}
-                <Link to='/resetpassword' style={{ textDecoration: 'none' }}><span style={{ fontWeight: 'bold', textDecoration: 'underline', color: 'red' }}>reset your password</span></Link></p>}
+              <Link to='/resetpassword' style={{ textDecoration: 'none' }}><span style={{ fontWeight: 'bold', textDecoration: 'underline', color: 'red' }}>reset your password</span></Link></p>}
+              {/* Show unlock time */}
+              <br></br>
+              {unlockTime && lock && (
+                <p style={{ color: 'red', fontWeight: 'bold', textAlign: 'center' }}>Account will unlock at: {unlockTime.toLocaleTimeString()}</p>
+              )}
             </div>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
           </div>
-          <button type='submit'>Log in</button>
+          <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '50px' }}>
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Log in'}
+          </Button>
         </form>
       </div>
     </div>
