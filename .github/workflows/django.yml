@@ -6,9 +6,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
+defaults:
+  run:
+    working-directory: backend
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
