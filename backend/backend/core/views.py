@@ -16,7 +16,17 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes, action
 
-from backend.core.models import User, Listing, ListingPhoto, Offer, Review, Transaction
+from backend.core.models import (
+    User,
+    Listing,
+    ListingPhoto,
+    Offer,
+    Review,
+    Transaction,
+    Category,
+    ListingType,
+    TimeUnit,
+)
 from backend.core.serializers import (
     UserSerializer,
     UserCreateSerializer,
@@ -97,17 +107,79 @@ class ListingController(GenericAPIView):
                 required=False,
                 type=str,
             ),
+            OpenApiParameter(
+                name="category",
+                description="Filter listings by category",
+                required=False,
+                type=str,
+                enum=[choice[0] for choice in Category.choices],
+            ),
+            OpenApiParameter(
+                name="listing_type",
+                description="Filter listings by listing type",
+                required=False,
+                type=str,
+                enum=[choice[0] for choice in ListingType.choices],
+            ),
+            OpenApiParameter(
+                name="time_unit",
+                description="Filter listings by time unit (required for price sorting)",
+                required=False,
+                type=str,
+                enum=[choice[0] for choice in TimeUnit.choices],
+            ),
+            OpenApiParameter(
+                name="sort_by",
+                description="Sort listings by price (asc or desc)",
+                required=False,
+                type=str,
+                enum=["price_asc", "price_desc"],
+            ),
         ],
     )
     def get(self, request: Request):
         queryset = self.get_queryset()
         search_query = request.query_params.get("search", None)
-        # if a search query param was passed in
+        category = request.query_params.get("category", None)
+        listing_type = request.query_params.get("listing_type", None)
+        time_unit = request.query_params.get("time_unit", None)
+        sort_by = request.query_params.get("sort_by", None)
+
+        # filter by search query
         if search_query:
             queryset = queryset.filter(
                 Q(title__icontains=search_query)
                 | Q(description__icontains=search_query)
             )
+
+        # filter by category
+        if category:
+            queryset = queryset.filter(category=category)
+
+        # filter by listing type filter
+        if listing_type:
+            queryset = queryset.filter(listing_type=listing_type)
+
+        if time_unit:
+            queryset = queryset.filter(rates__time_unit=time_unit)
+
+            if sort_by:
+                # If sort_by is specified, sort by price
+                if sort_by == "price_asc":
+                    queryset = queryset.order_by("rates__rate")
+                elif sort_by == "price_desc":
+                    queryset = queryset.order_by("-rates__rate")
+            else:
+                queryset = queryset.order_by("-created_at")
+        elif sort_by:
+            # cannot have sort by without a time_unit
+            return Response(
+                {"error": "Time unit must be specified when sorting by price"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        else:
+            # if neither time_unit nor sort_by are specified, use default sorting
+            queryset = queryset.order_by("-created_at")
 
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
@@ -349,8 +421,7 @@ class TransactionController(GenericAPIView):
                     "status": {
                         "type": "string",
                         "enum": [
-                            choice[0]
-                            for choice in Transaction.TRANSACTION_STATUS
+                            choice[0] for choice in Transaction.TRANSACTION_STATUS
                         ],
                     },
                     "payment_id": {
