@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useNavigate } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Link, useParams } from 'react-router-dom';
-// import { Card, CardContent, Typography, CardMedia, CircularProgress, Box } from '@mui/material';
 import './Listing.css'; 
-import EditListing from './EditListing.jsx'; 
+import EditListing from './EditListing'; 
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import CustomSlider from "./Slider";
+import "./Slider.css";
 
 const formatRate = (rates) => {
   if (rates.length > 0) {
@@ -31,9 +34,10 @@ const getCookie = (name) => {
 };
 
 
-const ListingCard = ({id, time, title, rate, image }) => {
+const ListingCard = ({id, time, title, rate, image = [] }) => {
   const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
   const [isModalOpen, setModalOpen] = useState(false);
+  
   const handleEditClick = (e) => {
     e.preventDefault(); // Prevent default link behavior
     setModalOpen(true); // Open the modal when edit button is clicked
@@ -43,17 +47,50 @@ const ListingCard = ({id, time, title, rate, image }) => {
     setModalOpen(!isModalOpen); // Function to toggle modal visibility
   };
 
-  const handleDeleteClick = (e) => {
+  const handleDeleteClick = async (e) => {
+    const token = getCookie('access'); 
     e.preventDefault();
     // call an API to delete the listing
-    console.log(`Listing with ID ${id} deleted.`);
+    const confirmed = window.confirm(`Are you sure you want to delete the listing "${title}"?`);
+    
+    if (!confirmed) {
+      return; 
+    }
+    try {
+      // Call the delete API
+      await axios.delete(`/listing/?id=${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      console.log(`Listing with ID ${id} deleted.`);
+      // window.location.reload();
+
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+    }
+    
   };
 
   return (
     <div className="listing-card">
       {/* Link wrapping only the image and title */}
       <Link to={`/listing/${title}-${formattedTime}-${id}`}> {/* CREATED BY HAYES */}
-        <img src={image} alt={title} className="listing-image" />
+        {/* <img src={image} alt={title} className="listing-image" /> */}
+        <CustomSlider>
+          {/* {imagesToDisplay.map((image, index) => {
+            return <img key={index} src={image} alt={''} />;
+          })} */}
+          {image.length > 0 ? (
+            image.map((img, index) => (
+              <img key={index} src={img} alt={title} className="listing-image" />
+            ))
+          ) : (
+            <img src="https://placehold.co/140x100" alt="No image available" className="listing-image" />
+          )}
+         
+        </CustomSlider>
         <div className="listing-info">
           <h4>{title}</h4>
           <p>{rate}</p>
@@ -71,7 +108,7 @@ const ListingCard = ({id, time, title, rate, image }) => {
       </div>
 
       {/* Render the EditListing modal */}
-      <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal} />
+      <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal} listingId={id}/>
     </div>
   );
 }
@@ -83,9 +120,11 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
   const [error, setError] = useState(null);
 
   const { username } = useParams();
+  
 
   useEffect(() => {
     const token = getCookie('access'); 
+    console.log(token)
 
     if (!token) {
       setError(new Error('User not logged in'));
@@ -93,6 +132,18 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
       return;
     }
 
+    let decodedToken;
+    try {
+      decodedToken = jwtDecode(token);
+    } catch (error) {
+      setError(new Error('Invalid token'));
+      setLoading(false);
+      return;
+    }
+
+    const loggedInUserId = decodedToken.user_id; 
+    // console.log("Logged in user ID:", loggedInUserId);
+    
     // Fetch the data from the backend with Authorization header
     fetch('/listing/', {
       method: 'GET',
@@ -118,7 +169,9 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
           title: listing.title,
           description: listing.description,
           rate: formatRate(listing.rates), 
-          image: listing.photos.length > 0 ? listing.photos[0].image_url : 'https://placehold.co/140x100',
+          // image: listing.photos.length > 0 ? listing.photos[0].image_url : 'https://placehold.co/140x100',
+          image: listing.photos ? listing.photos.map(photo => photo.image_url) : [],
+          
         }));
 
         setListingsData(formattedData);
