@@ -49,12 +49,11 @@
     margin-left: 20px;
     margin-top: 20px;
     width: 30px;
-
 }
 
 .nav-menu hr{
     border: none;
-    width: 80%;
+    width: 60%;
     height: 3px;
     border-radius: 10px;
     background-color: #009EB6;
@@ -206,6 +205,15 @@
     padding: 0 16px;
     border-radius: 4px;
 }
+
+.side-menu-user {
+    color: #f5f5f5;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
   
 .nav-text a:hover {
     background-color: #1a73e8;
@@ -230,4 +238,17 @@
 
 .side-menu-title {
     margin-left: 16px;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: Add a transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it appears on top of everything */
 }
