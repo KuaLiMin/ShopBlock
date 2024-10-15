@@ -10,6 +10,7 @@ import ShopCat from './Pages/ShopCat';
 import Listing from './Pages/Listing';
 import TransactionHistory from './Payment/TransactionHistory';
 import FAQ from './Pages/FAQ';
+import Support from './Pages/Support';
 import geo from './Pages/geo';
 import user from './Pages/user';
 import Search from './Pages/Search';
