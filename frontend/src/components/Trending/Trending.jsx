@@ -89,7 +89,6 @@ const TrendingCard = ({ id, time, title, rate, image }) => {
   );
 };
 
-
 // Export all components inside one constant called Trending
 const Trending = {
   TrendingCounter,
