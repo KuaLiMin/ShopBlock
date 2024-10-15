@@ -102,6 +102,12 @@ class ListingController(GenericAPIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(
+                name="id",
+                description="Get a specific listing by ID",
+                required=False,
+                type=int,
+            ),
+            OpenApiParameter(
                 name="search",
                 description="Search listings by name",
                 required=False,
@@ -139,11 +145,23 @@ class ListingController(GenericAPIView):
     )
     def get(self, request: Request):
         queryset = self.get_queryset()
+        listing_id = request.query_params.get("id", None)
         search_query = request.query_params.get("search", None)
         category = request.query_params.get("category", None)
         listing_type = request.query_params.get("listing_type", None)
         time_unit = request.query_params.get("time_unit", None)
         sort_by = request.query_params.get("sort_by", None)
+
+        # If a listing id was provided, we try to retrieve it
+        # If the listing does not exist in the databse, then we need to error out
+        # If the listing id was not provided, this will be skipped
+        if listing_id:
+            try:
+                listing = Listing.objects.get(id=listing_id)
+                serializer = self.get_serializer(listing)
+                return JsonResponse(serializer.data)
+            except Listing.DoesNotExist:
+                return JsonResponse({"error": "Listing not found"}, status=404)
 
         # filter by search query
         if search_query:
