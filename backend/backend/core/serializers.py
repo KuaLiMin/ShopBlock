@@ -203,10 +203,22 @@ class OfferSerializer(serializers.ModelSerializer):
     listing = serializers.SerializerMethodField()
     status = serializers.ChoiceField(choices=Offer.STATUS_CHOICES, read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
+    time_unit = serializers.ChoiceField(choices=TimeUnit.choices, read_only=True)
 
     class Meta:
         model = Offer
-        fields = ["id", "offered_by", "listing", "price", "status", "created_at"]
+        fields = [
+            "id",
+            "offered_by",
+            "listing",
+            "price",
+            "status",
+            "created_at",
+            "scheduled_start",
+            "scheduled_end",
+            "time_unit",
+            "time_delta",
+        ]
 
     # For all offered_by, show the user detail that is offering
     def get_offered_by(self, obj):
@@ -236,7 +248,7 @@ class OfferCreateSerializer(serializers.Serializer):
     time_delta = serializers.IntegerField(min_value=1)
 
     def validate(self, data):
-        if data['scheduled_end'] <= data['scheduled_start']:
+        if data["scheduled_end"] <= data["scheduled_start"]:
             raise serializers.ValidationError("End time must be after start time")
         return data
 
@@ -272,12 +284,21 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ["id", "reviewer", "user", "rating", "description", "created_at", "user_id", "reviewer_id"]
+        fields = [
+            "id",
+            "reviewer",
+            "user",
+            "rating",
+            "description",
+            "created_at",
+            "user_id",
+            "reviewer_id",
+        ]
         read_only_fields = ["created_at"]
 
     def create(self, validated_data):
-        reviewer_id = validated_data.pop('reviewer_id')
-        user_id = validated_data.pop('user_id')
+        reviewer_id = validated_data.pop("reviewer_id")
+        user_id = validated_data.pop("user_id")
 
         reviewer = User.objects.get(id=reviewer_id)
         user = User.objects.get(id=user_id)
