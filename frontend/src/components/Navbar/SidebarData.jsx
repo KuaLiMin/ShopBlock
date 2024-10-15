@@ -53,8 +53,9 @@ export const SidebarData = [
     },
     {
         title: 'Logout',
-        path: '/',
+        path: '#',
         icon: <LogoutIcon />,
-        cName: 'nav-text'
+        cName: 'nav-text',
+        action: 'logout'
     },
 ]

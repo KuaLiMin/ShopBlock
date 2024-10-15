@@ -51,7 +51,7 @@ const UserProfile = () => {
         <div className="left-section">
           {/* User Info and Image */}
           <div className="user-info">
-            <img src={profile.profilePicture} alt="User" className="user-image" />
+            <img src={profile.avatar} alt="User" className="user-image" />
             <div className="user-details">
               <h2>@{profile.username}</h2>
               <p className="user-rating">5.0 <span className="stars">★★★★★</span> <span className="review-count">(234)</span></p>
@@ -72,8 +72,8 @@ const UserProfile = () => {
               </div>
             </div>
             <p><strong>Username</strong> {profile.username}</p>
-            <p><strong>Mobile</strong> {profile.phone_number}</p>
-            <p><strong>Location</strong> {profile.location}</p>
+            <p><strong>Mobile</strong> +65 {profile.phone_number}</p>
+            <p><strong>Email</strong> {profile.email}</p>
           </div>
         </div>
 
@@ -94,18 +94,30 @@ const UserProfile = () => {
           <div className="reviews">
             <h3>Reviews</h3>
 
-            {profile.reviews.map((review, index) => (
-              <div className="review" key={index}>
-                <div className="review-header">
-                  <img src={review.reviewerProfile} alt="Reviewer" className="reviewer-image" />
-                  <div className="reviewer-details">
-                    <h4>{review.reviewer}</h4>
-                    <p className="review-rating">★★★★★ <span>Review from rentee {review.date}</span></p>
-                  </div>
+            {/* First Review */}
+            <div className="review">
+              <div className="review-header">
+                <img src="https://via.placeholder.com/50" alt="Reviewer" className="reviewer-image" />
+                <div className="reviewer-details">
+                  <h4>Hazard23</h4>
+                  <p className="review-rating">★★★★★ <span>Review from rentee 1mo</span></p>
                 </div>
-                <p className="review-text">{review.text}</p>
               </div>
-            ))}
+              <p className="review-text">Great renter to deal with! Punctual! Pleasant transaction! Very nice and friendly renter to deal with, thanks for the product.</p>
+            </div>
+
+            {/* Second Review */}
+            <div className="review">
+              <div className="review-header">
+                <img src="https://via.placeholder.com/50" alt="Reviewer" className="reviewer-image" />
+                <div className="reviewer-details">
+                  <h4>AntoineGriezmannnn</h4>
+                  <p className="review-rating">★★★★★ <span>Review from rentee 2mo</span></p>
+                </div>
+              </div>
+              <p className="review-text">Fantastic renter to work with! Punctual and friendly, making for a very pleasant transaction. Thank you for the great product!</p>
+            </div>
+
           </div>
         </div>
       </div>
