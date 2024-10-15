@@ -66,7 +66,7 @@ const Navbar = () => {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-          setUsername(response.data.username); // Store the profile data in state
+          setUsername('Welcome ' + response.data.username); // Store the profile data in state
         } catch (error) {
           console.error('Error fetching profile data', error);
         }
@@ -149,7 +149,7 @@ const Navbar = () => {
           <li className="navbar-toggle">
             <Link to='#' className='menu-bars'><ClearIcon sx={{ color: 'white' }} /></Link>
           </li>
-          <div className="side-menu-user">Welcome {username}</div>
+          <div className="side-menu-user">{username}</div>
           {SidebarData.map((item, index) => {
             return (
               <li key={index} className={item.cName} onClick={item.action === 'logout' ? handleLogout : null}>
