@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CSS/UserProfile.css';
+import listings from '../components/Images/listings.png';
+import rentals from '../components/Images/rentals.png';
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null); // State to hold user profile data
@@ -85,11 +87,11 @@ const UserProfile = () => {
             <h3>About me</h3>
             <div className="about-me-details">
               <div className="info-block">
-                <img src="https://via.placeholder.com/20" alt="Listings icon" />
+                <img src={listings} alt="Listings icon" />
                 <p>{profile.listings} Listings</p>
               </div>
               <div className="info-block">
-                <img src="https://via.placeholder.com/20" alt="Rentals icon" />
+                <img src={rentals} alt="Rentals icon" />
                 <p>{profile.rentals} Rentals</p>
               </div>
             </div>
