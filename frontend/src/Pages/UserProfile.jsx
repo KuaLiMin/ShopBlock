@@ -35,11 +35,33 @@ const UserProfile = () => {
     fetchProfile();
   }, []);
 
-  // If profile data is not yet loaded, show a loading message
+  // If profile data is not yet loaded, show a loading or sign-in message
   if (!profile) {
-    return <div>Loading profile...</div>;
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh', // Full viewport height for vertical centering
+        textAlign: 'center',
+        flexDirection: 'column'
+      }}>
+        <h1 style={{
+          fontSize: '2.5rem', // Bigger font size for the main message
+          marginBottom: '20px'
+        }}>
+          Please sign in to view your profile
+        </h1>
+        <p style={{
+          fontSize: '1.5rem', // Smaller font for secondary message
+          color: 'gray'
+        }}>
+          You need to be logged in to access this page.
+        </p>
+      </div>
+    );
   }
-
+  
   // Profile component JSX
   return (
     <div className="profile-container">
