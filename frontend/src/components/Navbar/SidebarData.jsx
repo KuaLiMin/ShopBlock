@@ -47,7 +47,7 @@ export const SidebarData = [
     },
     {
         title: 'Support',
-        path: '/',
+        path: '/support',
         icon: <HelpIcon />,
         cName: 'nav-text'
     },

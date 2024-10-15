@@ -10,6 +10,7 @@ import ShopCat from './Pages/ShopCat';
 import Listing from './Pages/Listing';
 import TransactionHistory from './Payment/TransactionHistory';
 import FAQ from './Pages/FAQ';
+import Support from './Pages/Support';
 import geo from './Pages/geo';
 import user from './Pages/user';
 import search from './Pages/search';
@@ -41,6 +42,7 @@ function App() {
           <Route path='/resetpassword' element={<ResetPassword />} />
           <Route path='/changepassword' element={<ChangePassword />} />
           <Route path='/FAQ' element={<FAQ />} />
+          <Route path='/support' element={<Support />} />
           <Route path='/geo' element={<geo />} />
           <Route path='/user' element={<user />} />
           <Route path='/userprofile' element={<UserProfile />} />
