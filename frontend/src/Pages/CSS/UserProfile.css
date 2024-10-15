@@ -61,7 +61,9 @@
   }
   
   .stars {
-    color: gold;
+    display: inline-block;   /* Ensures stars appear in a row */
+    font-size: 24px;         /* Adjust the size of the stars */
+    margin-right: 5px;       /* Adds spacing between stars */
   }
   
   .review-count {

@@ -93,9 +93,9 @@ const UserProfile = () => {
                 <p>{profile.rentals} Rentals</p>
               </div>
             </div>
-            <p><strong>Username</strong> {profile.username}</p>
-            <p><strong>Mobile</strong> +65 {profile.phone_number}</p>
-            <p><strong>Email</strong> {profile.email}</p>
+            <p><strong>Username:</strong> {profile.username}</p>
+            <p><strong>Mobile:</strong> +65 {profile.phone_number}</p>
+            <p><strong>Email:</strong> {profile.email}</p>
           </div>
         </div>
 
