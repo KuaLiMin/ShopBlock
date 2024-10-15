@@ -16,7 +16,7 @@ export const SidebarData = [
         cName: 'nav-text'
     },
     {
-        title: 'UserProfile',
+        title: 'User Profile',
         path: '/userprofile',
         icon: <AccountCircleIcon />,
         cName: 'nav-text'
@@ -53,8 +53,9 @@ export const SidebarData = [
     },
     {
         title: 'Logout',
-        path: '/',
+        path: '#',
         icon: <LogoutIcon />,
-        cName: 'nav-text'
+        cName: 'nav-text',
+        action: 'logout'
     },
 ]
