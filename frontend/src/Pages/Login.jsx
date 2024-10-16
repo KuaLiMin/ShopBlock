@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import PhoneInput from 'react-phone-input-2'
 import './CSS/LoginSignup.css'
 import 'react-phone-input-2/lib/style.css'
-import './CSS/Modal.css'
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Button, CircularProgress } from '@mui/material';
@@ -17,7 +16,9 @@ export const Login = () => {
   const [agree, setAgree] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+  const [phoneErrorMessage, setPhoneErrorMessage] = useState('');
   const [contactno, setContactNo] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [loading, setLoading] = useState(false); // Tracks if the login is loading
@@ -54,12 +55,12 @@ export const Login = () => {
     if (username.length < 4) {
       setUsernameErrorMessage('Username must be at least 4 characters long.');
       return;
-    } else setUsernameErrorMessage("")
+    } else setUsernameErrorMessage('')
 
     if (!emailPattern.test(email)) {
-      setErrorMessage('Please enter a valid email address.');
+      setEmailErrorMessage('Please enter a valid email address.');
       return;
-    }
+    } else setEmailErrorMessage('')
 
     if (regex.test(password) === false) {
       setPasswordErrorMessage('Password does not meet the password requirements.');
@@ -74,53 +75,85 @@ export const Login = () => {
     // If validation passes, clear the error message and submit the form
     setErrorMessage('');
     // Append form fields to FormData
-    formData.append('email', email);
-    formData.append('username', username);
-    formData.append('password', password);
-    formData.append('phone_number', phone);
+    // formData.append('email', email);
+    // formData.append('username', username);
+    // formData.append('password', password);
+    // formData.append('phone_number', phone);
 
-    // POST request
-    // try {
-    //   const response = await axios.post('/register/', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data'
-    //     }
-    //   });
-
-    //   console.log("START");
-    //   if (response.status === 200) {
-    //     console.log('Response data:', response.data); // Handle success
-    //     // Navigate to the signup page
-    //     console.log("INSIDE");
-    //     navigate('/signup');
-    //   } else {
-    //     console.log("Unexpected status code:", response.status);
+    // // POST request method here
+    // axios.post('/register/', formData, {
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data'
     //   }
-    // } catch (error) {
-    //   console.error('There was an error!', error); // Handle error
-    // } finally {
-    //   setLoading(false); // Hide the loading spinner after the request completes
-    //   console.log("END");
-    // }
+    // })
+    //   .then(response => {
+    //     console.log('Response data:', response.data); // Handle success
+    //     // Call toggleModal function here
+    //     navigate('/signup');
+    //   })
+    //   .catch(error => {
+    //     console.error('There was an error!', error); // Handle error
+    //   })
+    // .finally(() => {
+    //   setLoading(false); // Hide loading spinner when done
+    // });
 
-    // POST request method here
-    axios.post('/register/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-      .then(response => {
-        console.log('Response data:', response.data); // Handle success
-        // Call toggleModal function here
-        navigate('/signup');
-      })
-      .catch(error => {
-        console.error('There was an error!', error); // Handle error
-      })
-      // .finally(() => {
-      //   setLoading(false); // Hide loading spinner when done
-      // });
+    // Fetch existing user data to check for duplicates
+    try {
+      const userResponse = await axios.get('/debug/user'); // API call to fetch all users
+      const users = userResponse.data; // Assuming this contains an array of users
 
+      // Check if the username, email, or phone already exists
+      const isUsernameTaken = users.some((user) => user.username === username);
+      const isEmailTaken = users.some((user) => user.email === email);
+      const isPhoneTaken = users.some((user) => user.phone_number === phone);
+
+      // Handle individual error messages
+      let errorFound = false;
+
+      if (isUsernameTaken) {
+        setUsernameErrorMessage('Username already exists.');
+        errorFound = true;
+      } else setUsernameErrorMessage('')
+
+      if (isEmailTaken) {
+        setEmailErrorMessage('Email already exists.');
+        errorFound = true;
+      } else setEmailErrorMessage('')
+
+      if (isPhoneTaken) {
+        setPhoneErrorMessage('Phone number already exists.');
+        errorFound = true;
+      } else setPhoneErrorMessage('')
+
+      // If any error is found, stop the registration process
+      // if (errorFound) {
+      //   setLoading(false); // Stop loading spinner
+      //   return;
+      // }
+
+      // If no duplicates, proceed to registration
+      setErrorMessage(''); // Clear error message if any
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('username', username);
+      formData.append('password', password);
+      formData.append('phone_number', phone);
+
+      // POST request to register the user
+      const response = await axios.post('/register/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Response data:', response.data); // Handle success
+      navigate('/signup'); // Redirect to another page after successful registration
+    } catch (error) {
+      console.error('There was an error fetching user data or registering:', error);
+      setErrorMessage('An error occurred during registration.');
+    } finally {
+      setLoading(false); // Stop loading spinner after completion
+    }
   };
 
 
@@ -131,18 +164,20 @@ export const Login = () => {
         <form onSubmit={handleSubmit}>
           <div className='loginsignup-fields'>
             <input type='text' placeholder='Enter Username' value={username} onChange={(e) => setUsername(e.target.value)} />
-            {usernameErrorMessage && <p style={{ color: 'red' }}>{usernameErrorMessage}</p>}
+            {usernameErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{usernameErrorMessage}</p>}
             <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
+            {emailErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{emailErrorMessage}</p>}
             <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
-            {passwordErrorMessage && <p style={{ color: 'red' }}>{passwordErrorMessage}</p>}
+            {passwordErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{passwordErrorMessage}</p>}
             <PhoneInput
               country={"sg"}
               value={`${countryCode}${contactno}`}
               onChange={(e, phone) => handlePhoneChange(e, phone, "contactno")}
               inputStyle={{ height: "72px", width: "100%", paddingLeft: "48px", border: "1px solid #c9c9c9", outline: "none", color: "#5c5c5c", fontSize: "18px", borderRadius: "0px" }} />
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+            {phoneErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{phoneErrorMessage}</p>}
           </div>
-          <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '50px' }}>
+          {errorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{errorMessage}</p>}
+          <Button variant="contained" type="submit" style={{ width: '100%', height: '50px' }}>
             {/* {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'} */}
             Register
           </Button>
