@@ -58,6 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     avatar = models.ImageField(upload_to="avatars/", null=True)
     # 8 for singapore only
     phone_number = models.CharField(max_length=8, unique=True)
+    biography = models.TextField()
 
     objects = UserManager()
 
