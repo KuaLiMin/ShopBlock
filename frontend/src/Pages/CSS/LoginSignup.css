@@ -69,14 +69,6 @@
     font-weight: 500;
 }
 
-/* .loginsignup-agree input{
-    align-items: flex-start;
-}
-
-.loginsignup-agree p{
-    align-items: flex-end;
-} */
-
 .error-container {
     display: flex;
     justify-content: space-between; /* Pushes items to opposite ends */
@@ -94,4 +86,3 @@
 .loginsignup-signup:hover {
     text-decoration: underline;
 }
-
