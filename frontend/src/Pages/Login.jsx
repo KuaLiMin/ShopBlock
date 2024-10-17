@@ -22,7 +22,6 @@ export const Login = () => {
   const [contactno, setContactNo] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [loading, setLoading] = useState(false); // Tracks if the login is loading
-  const formData = new FormData();
 
   // Regular expression for email validation
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -74,88 +73,53 @@ export const Login = () => {
 
     // If validation passes, clear the error message and submit the form
     setErrorMessage('');
-    // Append form fields to FormData
-    // formData.append('email', email);
-    // formData.append('username', username);
-    // formData.append('password', password);
-    // formData.append('phone_number', phone);
 
-    // // POST request method here
-    // axios.post('/register/', formData, {
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data'
-    //   }
-    // })
-    //   .then(response => {
-    //     console.log('Response data:', response.data); // Handle success
-    //     // Call toggleModal function here
-    //     navigate('/signup');
-    //   })
-    //   .catch(error => {
-    //     console.error('There was an error!', error); // Handle error
-    //   })
-    // .finally(() => {
-    //   setLoading(false); // Hide loading spinner when done
-    // });
-
-    // Fetch existing user data to check for duplicates
     try {
-      const userResponse = await axios.get('/debug/user'); // API call to fetch all users
-      const users = userResponse.data; // Assuming this contains an array of users
-
-      // Check if the username, email, or phone already exists
-      const isUsernameTaken = users.some((user) => user.username === username);
-      const isEmailTaken = users.some((user) => user.email === email);
-      const isPhoneTaken = users.some((user) => user.phone_number === phone);
-
-      // Handle individual error messages
-      let errorFound = false;
-
-      if (isUsernameTaken) {
-        setUsernameErrorMessage('Username already exists.');
-        errorFound = true;
-      } else setUsernameErrorMessage('')
-
-      if (isEmailTaken) {
-        setEmailErrorMessage('Email already exists.');
-        errorFound = true;
-      } else setEmailErrorMessage('')
-
-      if (isPhoneTaken) {
-        setPhoneErrorMessage('Phone number already exists.');
-        errorFound = true;
-      } else setPhoneErrorMessage('')
-
-      // If any error is found, stop the registration process
-      // if (errorFound) {
-      //   setLoading(false); // Stop loading spinner
-      //   return;
-      // }
-
-      // If no duplicates, proceed to registration
-      setErrorMessage(''); // Clear error message if any
+      // Prepare form data
       const formData = new FormData();
       formData.append('email', email);
       formData.append('username', username);
       formData.append('password', password);
       formData.append('phone_number', phone);
 
-      // POST request to register the user
+      // Perform POST request using async/await inside try-catch
       const response = await axios.post('/register/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log('Response data:', response.data); // Handle success
-      navigate('/signup'); // Redirect to another page after successful registration
+
+      // If registration is successful, navigate to the signup page
+      console.log('Response data:', response.data);
+      navigate('/signup'); // Redirect to signup or another page after successful registration
+
     } catch (error) {
-      console.error('There was an error fetching user data or registering:', error);
-      setErrorMessage('An error occurred during registration.');
-    } finally {
-      setLoading(false); // Stop loading spinner after completion
+      // Handle error responses
+      console.error('There was an error!', error);
+
+      // Check for a 400 error and specific response messages
+      if (error.response && error.response.status === 400) {
+        // Assuming the backend sends a response with a specific error message
+        console.log("error.response.data === ", error.response.data)
+        if (error.response.data) {
+          setEmailErrorMessage('Email already exists.');
+        }
+
+        // You can also handle username and phone errors if your backend sends those
+        // if (error.response.data && error.response.data.username) {
+        //   setUsernameErrorMessage('Username already exists.');
+        // }
+
+        // if (error.response.data && error.response.data.phone_number) {
+        //   setPhoneErrorMessage('Phone number already exists.');
+        // }
+
+      } else {
+        // General error message for non-400 status codes
+        setErrorMessage('An error occurred during registration.');
+      }
     }
   };
-
 
   return (
     <div className='loginsignup'>
@@ -176,7 +140,7 @@ export const Login = () => {
               inputStyle={{ height: "72px", width: "100%", paddingLeft: "48px", border: "1px solid #c9c9c9", outline: "none", color: "#5c5c5c", fontSize: "18px", borderRadius: "0px" }} />
             {phoneErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{phoneErrorMessage}</p>}
           </div>
-          {errorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{errorMessage}</p>}
+          {errorMessage && <p className='loginsignup-fields' style={{ color: 'red', paddingLeft: '10px' }}>{errorMessage}</p>}
           <Button variant="contained" type="submit" style={{ width: '100%', height: '50px' }}>
             {/* {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'} */}
             Register
