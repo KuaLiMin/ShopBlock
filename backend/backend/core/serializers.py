@@ -198,6 +198,58 @@ class ListingCreateSerializer(ListingSerializer):
         return listing
 
 
+class ListingUpdateSerializer(ListingCreateSerializer):
+    id = serializers.IntegerField(required=True)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get("title", instance.title)
+        instance.description = validated_data.get("description", instance.description)
+        instance.category = validated_data.get("category", instance.category)
+        instance.listing_type = validated_data.get("listing_type", instance.listing_type)
+        instance.save()
+
+        # Update the photos
+        photos_data = validated_data.get("photos", [])
+        if photos_data:
+            # Delete old photos
+            instance.listingphoto_set.all().delete()
+            # Add new photos
+            for photo in photos_data:
+                ListingPhoto.objects.create(listing=instance, image_url=photo)
+
+        # Update the rates
+        rates_data = validated_data.get("rates", [])
+        if rates_data:
+            # Delete old rates
+            instance.rates.all().delete()
+            # Add new rates
+            for rate_data in rates_data:
+                ListingRate.objects.create(
+                    listing=instance,
+                    time_unit=rate_data["time_unit"],
+                    rate=rate_data["rate"],
+                )
+
+
+        # Update the locations
+        location_data = validated_data.get("locations", [])
+        if location_data:
+            # Delete old rates
+            instance.locations.all().delete()
+            # Add new rates
+            for location in location_data:
+                ListingLocation.objects.create(
+                    listing=instance,
+                    latitude=location["latitude"],
+                    longitude=location["longitude"],
+                    query=location["query"],
+                    notes=location["notes"],
+                )
+
+        return instance
+
+
+
 # Serializer for get request
 class OfferSerializer(serializers.ModelSerializer):
     offered_by = serializers.SerializerMethodField()

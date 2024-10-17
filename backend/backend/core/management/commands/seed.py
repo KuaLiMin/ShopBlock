@@ -212,3 +212,13 @@ class Command(BaseCommand):
             status=Transaction.COMPLETED,
         )
         print("Seeded transaction 1 for user2, offer1")
+
+        transaction2 = Transaction.objects.create(
+            user=user3,
+            offer=offer3,
+            amount=8.0,
+            status=Transaction.PENDING,
+        )
+        print("Seeded transaction 2 for user3, offer3")
+
+

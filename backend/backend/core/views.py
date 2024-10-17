@@ -28,6 +28,7 @@ from backend.core.models import (
     TimeUnit,
 )
 from backend.core.serializers import (
+    ListingUpdateSerializer,
     UserSerializer,
     UserCreateSerializer,
     ListingSerializer,
@@ -99,6 +100,7 @@ class ListingController(GenericAPIView):
     serializer_class = ListingSerializer
     parser_classes = (MultiPartParser, FormParser)
 
+    # user gets a listing
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -226,6 +228,42 @@ class ListingController(GenericAPIView):
         # Otherwise, the input was not correct
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # user updates a listing
+    @extend_schema(
+        request=ListingUpdateSerializer,
+        responses={200: ListingSerializer},
+    )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def put(self, request: Request):
+        listing_id = request.data.get("id")
+        try:
+            listing = Listing.objects.get(id=listing_id)
+        except Listing.DoesNotExist:
+            return Response(
+                {"error": "Listing not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if listing.uploaded_by != request.user:
+            return Response(
+                {"error": "You don't have permission to update this listing"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        request_copy = request.data.copy()
+        if "rates" in request_copy and isinstance(request_copy["rates"], str):
+            request_copy["rates"] = json.loads(request_copy["rates"])
+        if "locations" in request_copy and isinstance(request_copy["locations"], str):
+            request_copy["locations"] = json.loads(request_copy["locations"])
+
+        serializer = ListingUpdateSerializer(listing, data=request_copy)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # user deletes a listing
     @extend_schema(
         parameters=[
             OpenApiParameter(name="id", type=int, location=OpenApiParameter.QUERY)
