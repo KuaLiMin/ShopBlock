@@ -49,12 +49,39 @@ class UserController(GenericAPIView):
     User endpoint for GET
     """
 
+    queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                description="User ID for unauthenticated requests",
+                required=False,
+            )
+        ],
+        responses={200: UserSerializer},
+        description="Get user details. Returns authenticated user if JWT is provided, otherwise returns user based on query parameter 'id'.",
+    )
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
-        user = request.user
+        if request.user.is_authenticated:
+            user = request.user
+            serializer = self.get_serializer(user)
+            return Response(serializer.data)
+        else:
+            # Unauthenticated request, try to get param
+            user_id = request.query_params.get("id")
+            if not user_id:
+                return Response(
+                    {"error": "User ID is required for unauthenticated requests"},
+                    status=400,
+                )
+            user = get_object_or_404(self.queryset, id=user_id)
+
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
@@ -525,12 +552,15 @@ class ReviewsController(GenericAPIView):
             )
 
         # Add the reviewer (current user) to the request data
-        request.data['reviewer_id'] = request.user.id
-        
+        request.data["reviewer_id"] = request.user.id
+
         from pprint import pprint
+
         pprint(request.data)
 
-        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer = self.get_serializer(
+            data=request.data, context={"request": request}
+        )
 
         if serializer.is_valid():
             serializer.save()

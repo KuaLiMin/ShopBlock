@@ -108,7 +108,6 @@ class ListingSerializer(serializers.ModelSerializer):
     )
     category = serializers.ChoiceField(choices=Category.choices)
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
-    created_by = serializers.SerializerMethodField()
     rates = ListingRateSerializer(many=True, read_only=True)
     # Optionally required only
     locations = ListingLocationSerializer(many=True, required=False)
@@ -119,7 +118,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "id",
             "created_at",
             "updated_at",
-            "created_by",
+            "uploaded_by",
             "title",
             "description",
             "category",
@@ -205,7 +204,9 @@ class ListingUpdateSerializer(ListingCreateSerializer):
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get("description", instance.description)
         instance.category = validated_data.get("category", instance.category)
-        instance.listing_type = validated_data.get("listing_type", instance.listing_type)
+        instance.listing_type = validated_data.get(
+            "listing_type", instance.listing_type
+        )
         instance.save()
 
         # Update the photos
@@ -230,7 +231,6 @@ class ListingUpdateSerializer(ListingCreateSerializer):
                     rate=rate_data["rate"],
                 )
 
-
         # Update the locations
         location_data = validated_data.get("locations", [])
         if location_data:
@@ -247,7 +247,6 @@ class ListingUpdateSerializer(ListingCreateSerializer):
                 )
 
         return instance
-
 
 
 # Serializer for get request
