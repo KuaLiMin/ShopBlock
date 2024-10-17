@@ -15,6 +15,7 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes, action
+from django.contrib.auth.hashers import check_password
 
 from backend.core.models import User, Listing, ListingPhoto, Offer, Review, Transaction
 from backend.core.serializers import (
@@ -27,6 +28,7 @@ from backend.core.serializers import (
     OfferCreateSerializer,
     ReviewSerializer,
     TransactionSerializer,
+    UserUpdateSerializer,
 )
 
 # The views here will be mapped to a url in urls.py
@@ -47,6 +49,28 @@ class UserController(GenericAPIView):
         user = request.user
         serializer = self.get_serializer(user)
         return Response(serializer.data)
+    
+    # user updates their profile
+    @extend_schema(
+        request=UserUpdateSerializer,
+        responses={200: UserSerializer},
+    )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def put(self, request: Request):
+        user = request.user
+        
+        if not check_password(request.data.get("password"), user.password):
+            return Response(
+                {"error": "Password does not match"},
+                status=status.HTTP_400_BAD_REQUEST, 
+            )
+
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegisterController(APIView):

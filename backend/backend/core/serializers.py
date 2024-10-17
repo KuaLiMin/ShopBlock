@@ -1,6 +1,7 @@
 import json
 from rest_framework import serializers
 from django.db.models import Avg
+from django.contrib.auth.hashers import make_password
 from backend.core.models import (
     User,
     Category,
@@ -21,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = (
+        fields = [
             "id",
             "email",
             "username",
@@ -29,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             "phone_number",
             "avatar",
             "average_rating",
-        )
+        ]
         extra_kwargs = {"password": {"write_only": True}}
 
     def get_average_rating(self, obj):
@@ -64,6 +65,20 @@ class UserCreateSerializer(UserSerializer):
         return user
 
 
+class UserUpdateSerializer(UserCreateSerializer):
+    new_password = serializers.CharField(write_only=True, required=True)
+
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ["new_password"]
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get("username", instance.username)
+        instance.phone_number = validated_data.get("phone_number", instance.phone_number)
+        instance.password = make_password(validated_data["new_password"]) if validated_data.get("new_password") else instance.password
+        instance.avatar = validated_data.get("avatar", instance.avatar)
+        instance.save()
+        return instance
+    
 class ListingPhotoSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
 
