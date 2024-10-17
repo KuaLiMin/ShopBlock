@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useParams} from 'react-router-dom';
 import axios from 'axios';
 import {
   Dialog,
@@ -47,7 +46,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
   useEffect(() => {
     if (isModalOpen && listingId) {
       // Fetch the specific listing by id
-      axios.get(`/listing/${listingId}/`)
+      axios.get(`http://152.42.253.110:8000/listing/?id=${listingId}`)
         .then(response => {
           const listing = response.data;
           
@@ -57,7 +56,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
             description: listing.description,
             category: listing.category,
             listing_type: listing.listing_type,
-            photos: listing.photos.map(photo => photo.image_url),
+            photos: listing.photos ? listing.photos.map(photo => photo.image_url) : [], 
             locationAddress: listing.locations[0]?.query || '',
             locationNotes: listing.locations[0]?.notes || '',
             longitude: listing.locations[0]?.longitude || '',
@@ -93,7 +92,25 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const requiredFields = ['title', 'price', 'unit', 'category', 'description', 'locationAddress', 'listing_type'];
+    let isValid = true;
+  
+    requiredFields.forEach((field) => {
+      if (!formData[field]) {
+        isValid = false;
+        alert(`The field ${field} is required.`); // You can replace this with custom UI error messages
+      }
+    });
+  
+    if (!formData.photos.length) {
+      isValid = false;
+      alert('At least one photo is required.');
+    }
+  
+    if (!isValid) return;
+
     const formPayload = new FormData();
+    formPayload.append('listing_id', listingId);
     formPayload.append('title', formData.title);
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
@@ -118,17 +135,16 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     });
 
 
-    fetch(`/listing/${listingId}/`, {
+    fetch(`http://152.42.253.110:8000/listing/`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formPayload),
+      body: formPayload,
     })
       .then((response) => {
         if (response.ok) {
-          toggleModal(); // Close modal after successful update
+          toggleModal(); 
         } else {
           throw new Error('Failed to update listing');
         }

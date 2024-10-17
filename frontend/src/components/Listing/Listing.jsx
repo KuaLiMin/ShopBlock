@@ -87,7 +87,7 @@ const ListingCard = ({id, time, title, rate, image = [] }) => {
               <img key={index} src={img} alt={title} className="listing-image" />
             ))
           ) : (
-            <img src="https://placehold.co/140x100" alt="No image available" className="listing-image" />
+            <img src="https://placehold.co/140x100" className="listing-image" />
           )}
          
         </CustomSlider>

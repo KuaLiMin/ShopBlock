@@ -62,7 +62,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       photos: [...formData.photos, ...files], 
     });
 
-    const newFileNames = files.map(file => file.name); // Extract file names from the selected files
+    const newFileNames = files.map(file => file.name); 
     setFileNames([...fileNames, ...newFileNames]); 
   };
 
