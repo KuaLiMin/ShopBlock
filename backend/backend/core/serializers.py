@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = [
+        fields = (
             "id",
             "email",
             "username",
@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             "phone_number",
             "avatar",
             "average_rating",
-        ]
+        )
         extra_kwargs = {"password": {"write_only": True}}
 
     def get_average_rating(self, obj):
@@ -69,7 +69,7 @@ class UserUpdateSerializer(UserCreateSerializer):
     new_password = serializers.CharField(write_only=True, required=True)
 
     class Meta(UserSerializer.Meta):
-        fields = UserSerializer.Meta.fields + ["new_password"]
+        fields = (*UserSerializer.Meta.fields, "new_password")
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get("username", instance.username)
