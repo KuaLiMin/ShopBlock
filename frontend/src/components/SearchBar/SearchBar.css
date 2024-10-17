@@ -22,9 +22,11 @@
   }
   
   input:focus {
-    outline: none;
+    border-color: #009eb6;
+    box-shadow: 0 0 5px rgba(0, 158, 182, 0.5);
   }
   
   #search-icon {
     color: royalblue;
   }
+

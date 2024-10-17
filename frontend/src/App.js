@@ -13,7 +13,6 @@ import FAQ from './Pages/FAQ';
 import Support from './Pages/Support';
 import geo from './Pages/geo';
 import user from './Pages/user';
-import Search from './Pages/Search';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Footer from './components/Footer/Footer';
 import electronics_banner from './components/Images/banner_mens.png'
@@ -45,7 +44,6 @@ function App() {
           <Route path='/geo' element={<geo />} />
           <Route path='/user' element={<user />} />
           <Route path='/userprofile' element={<UserProfile />} />
-          <Route path='/search' element={<Search />} />
           <Route path='/history' element={<TransactionHistory />} />
           <Route path='/offers' element={<ListOfOffers />} />
         </Routes>
