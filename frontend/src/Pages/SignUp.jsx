@@ -134,7 +134,7 @@ export const SignUp = () => {
             </div>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
           </div>
-          <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '50px' }}>
+          <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '60px' }}>
             {loading ? <CircularProgress size={24} color="inherit" /> : 'Log in'}
           </Button>
         </form>

@@ -141,7 +141,7 @@ export const Login = () => {
             {phoneErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{phoneErrorMessage}</p>}
           </div>
           {errorMessage && <p className='loginsignup-fields' style={{ color: 'red', paddingLeft: '10px' }}>{errorMessage}</p>}
-          <Button variant="contained" type="submit" style={{ width: '100%', height: '50px' }}>
+          <Button variant="contained" type="submit" style={{ width: '100%', height: '60px' }}>
             {/* {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'} */}
             Register
           </Button>

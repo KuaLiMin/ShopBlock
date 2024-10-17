@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './CSS/LoginSignup.css'
 import './CSS/Modal.css'
 import { useNavigate } from 'react-router-dom';
+import { Button, CircularProgress } from '@mui/material';
 
 export const ChangePassword = () => {
   // State for form fields
@@ -13,6 +14,7 @@ export const ChangePassword = () => {
   const [newPasswordMessage, setNewPasswordMessage] = useState('');
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState('');
   const [modal, setModal] = useState(false);
+  const [loading, setLoading] = useState(false); // Tracks if the login is loading
 
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const navigate = useNavigate();
@@ -27,7 +29,8 @@ export const ChangePassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Basic validation checks
+    setLoading(true); // Show the loading spinner when login is in progress
+
     console.log("over here ==== ", regex.test(newPassword))
     console.log(confirmPassword)
 
@@ -56,7 +59,7 @@ export const ChangePassword = () => {
     setErrorMessage('');
 
     // Call toggleModal function here
-    toggleModal();
+    //toggleModal();
   };
 
   
@@ -74,7 +77,9 @@ export const ChangePassword = () => {
             {confirmPasswordMessage && <p style={{ color: 'red' }}>{confirmPasswordMessage}</p>}
             {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
           </div>
-          <button type='submit'>Change Password</button>
+          <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '60px' }}>
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Change Password'}
+          </Button>
         </form>
       </div>
       {modal && (
