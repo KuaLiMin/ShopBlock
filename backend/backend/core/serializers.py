@@ -372,3 +372,15 @@ class TransactionSerializer(serializers.ModelSerializer):
         offer.paid()
 
         return transaction
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    phone_number = serializers.CharField(max_length=15)
+    new_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        email = data.get('email')
+        phone_number = data.get('phone_number')
+        if not User.objects.filter(email=email, phone_number=phone_number).exists():
+            raise serializers.ValidationError("The user is not found.")
+        return data

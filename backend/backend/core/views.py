@@ -16,10 +16,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes, action
 from django.contrib.auth.hashers import check_password
+from rest_framework import status
+from django.contrib.auth.hashers import make_password
 
 from backend.core.models import User, Listing, ListingPhoto, Offer, Review, Transaction
 from backend.core.serializers import (
     ListingUpdateSerializer,
+    ResetPasswordSerializer,
     UserSerializer,
     UserCreateSerializer,
     ListingSerializer,
@@ -223,7 +226,6 @@ class ListingController(GenericAPIView):
 
         listing.delete()
         return Response(status=status.HTTP_200_OK)
-
 
 class OfferController(GenericAPIView):
     """
@@ -475,3 +477,28 @@ class DebugListingController(GenericAPIView):
         listings = Listing.objects.all()
         serializer = self.serializer_class(listings, many=True)
         return Response(serializer.data)
+
+class ResetPasswordController(APIView):
+    """
+    Reset password endpoint, [PUT]
+
+    The put method is used to reset the password of the user if both email and number match in the database
+    """
+
+    serializer_class = ResetPasswordSerializer
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
+
+    def put(self, request):
+        #test against both email and phone number, if both match, then reset the password
+        serializer = ResetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data.get("email")
+            phone_number = serializer.validated_data.get("phone_number")
+            new_password = serializer.validated_data.get("new_password")
+            user = User.objects.get(email=email, phone_number=phone_number)
+            user.password = make_password(new_password)
+            user.save()
+            return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    

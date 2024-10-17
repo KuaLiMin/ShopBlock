@@ -51,6 +51,8 @@ urlpatterns = [
     path("reviews/", views.ReviewsController.as_view()),
     # review routes, [GET, POST]
     path("transactions/", views.TransactionController.as_view()),
+    # reset password route, [PUT]
+    path("reset-password/", views.ResetPasswordController.as_view()),
     # authentication jwt tokens
     path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
