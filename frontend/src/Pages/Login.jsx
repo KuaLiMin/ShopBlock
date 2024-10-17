@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import PhoneInput from 'react-phone-input-2'
 import './CSS/LoginSignup.css'
 import 'react-phone-input-2/lib/style.css'
-import './CSS/Modal.css'
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Button, CircularProgress } from '@mui/material';
@@ -17,11 +16,12 @@ export const Login = () => {
   const [agree, setAgree] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+  const [phoneErrorMessage, setPhoneErrorMessage] = useState('');
   const [contactno, setContactNo] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [loading, setLoading] = useState(false); // Tracks if the login is loading
-  const formData = new FormData();
 
   // Regular expression for email validation
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,12 +54,12 @@ export const Login = () => {
     if (username.length < 4) {
       setUsernameErrorMessage('Username must be at least 4 characters long.');
       return;
-    } else setUsernameErrorMessage("")
+    } else setUsernameErrorMessage('')
 
     if (!emailPattern.test(email)) {
-      setErrorMessage('Please enter a valid email address.');
+      setEmailErrorMessage('Please enter a valid email address.');
       return;
-    }
+    } else setEmailErrorMessage('')
 
     if (regex.test(password) === false) {
       setPasswordErrorMessage('Password does not meet the password requirements.');
@@ -73,56 +73,53 @@ export const Login = () => {
 
     // If validation passes, clear the error message and submit the form
     setErrorMessage('');
-    // Append form fields to FormData
-    formData.append('email', email);
-    formData.append('username', username);
-    formData.append('password', password);
-    formData.append('phone_number', phone);
 
-    // POST request
-    // try {
-    //   const response = await axios.post('/register/', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data'
-    //     }
-    //   });
+    try {
+      // Prepare form data
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('username', username);
+      formData.append('password', password);
+      formData.append('phone_number', phone);
 
-    //   console.log("START");
-    //   if (response.status === 200) {
-    //     console.log('Response data:', response.data); // Handle success
-    //     // Navigate to the signup page
-    //     console.log("INSIDE");
-    //     navigate('/signup');
-    //   } else {
-    //     console.log("Unexpected status code:", response.status);
-    //   }
-    // } catch (error) {
-    //   console.error('There was an error!', error); // Handle error
-    // } finally {
-    //   setLoading(false); // Hide the loading spinner after the request completes
-    //   console.log("END");
-    // }
+      // Perform POST request using async/await inside try-catch
+      const response = await axios.post('/register/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-    // POST request method here
-    axios.post('/register/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+      // If registration is successful, navigate to the signup page
+      console.log('Response data:', response.data);
+      navigate('/signup'); // Redirect to signup or another page after successful registration
+
+    } catch (error) {
+      // Handle error responses
+      console.error('There was an error!', error);
+
+      // Check for a 400 error and specific response messages
+      if (error.response && error.response.status === 400) {
+        // Assuming the backend sends a response with a specific error message
+        console.log("error.response.data === ", error.response.data)
+        if (error.response.data) {
+          setEmailErrorMessage('Email already exists.');
+        }
+
+        // You can also handle username and phone errors if your backend sends those
+        // if (error.response.data && error.response.data.username) {
+        //   setUsernameErrorMessage('Username already exists.');
+        // }
+
+        // if (error.response.data && error.response.data.phone_number) {
+        //   setPhoneErrorMessage('Phone number already exists.');
+        // }
+
+      } else {
+        // General error message for non-400 status codes
+        setErrorMessage('An error occurred during registration.');
       }
-    })
-      .then(response => {
-        console.log('Response data:', response.data); // Handle success
-        // Call toggleModal function here
-        navigate('/signup');
-      })
-      .catch(error => {
-        console.error('There was an error!', error); // Handle error
-      })
-      // .finally(() => {
-      //   setLoading(false); // Hide loading spinner when done
-      // });
-
+    }
   };
-
 
   return (
     <div className='loginsignup'>
@@ -131,18 +128,20 @@ export const Login = () => {
         <form onSubmit={handleSubmit}>
           <div className='loginsignup-fields'>
             <input type='text' placeholder='Enter Username' value={username} onChange={(e) => setUsername(e.target.value)} />
-            {usernameErrorMessage && <p style={{ color: 'red' }}>{usernameErrorMessage}</p>}
+            {usernameErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{usernameErrorMessage}</p>}
             <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
+            {emailErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{emailErrorMessage}</p>}
             <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
-            {passwordErrorMessage && <p style={{ color: 'red' }}>{passwordErrorMessage}</p>}
+            {passwordErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{passwordErrorMessage}</p>}
             <PhoneInput
               country={"sg"}
               value={`${countryCode}${contactno}`}
               onChange={(e, phone) => handlePhoneChange(e, phone, "contactno")}
               inputStyle={{ height: "72px", width: "100%", paddingLeft: "48px", border: "1px solid #c9c9c9", outline: "none", color: "#5c5c5c", fontSize: "18px", borderRadius: "0px" }} />
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+            {phoneErrorMessage && <p style={{ color: 'red', paddingLeft: '10px' }}>{phoneErrorMessage}</p>}
           </div>
-          <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '50px' }}>
+          {errorMessage && <p className='loginsignup-fields' style={{ color: 'red', paddingLeft: '10px' }}>{errorMessage}</p>}
+          <Button variant="contained" type="submit" style={{ width: '100%', height: '60px' }}>
             {/* {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'} */}
             Register
           </Button>

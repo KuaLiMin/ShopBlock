@@ -4,26 +4,23 @@ import './CSS/Modal.css'
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { Button, CircularProgress } from '@mui/material';
 
 export const ResetPassword = () => {
   // State for form fields
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [phoneErrorMessage, setPhoneErrorMessage] = useState('');
   const [contactno, setContactNo] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordMessage, setNewPasswordMessage] = useState('');
-  const [modal, setModal] = useState(false);
+  const [loading, setLoading] = useState(false); // Tracks if the login is loading
 
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const navigate = useNavigate();
-
-  const toggleModal = () => {
-    setModal(!modal)
-  }
 
   const nextPage = () => {
     navigate('/signup');
@@ -44,17 +41,17 @@ export const ResetPassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Basic validation checks
+    setLoading(true); // Show the loading spinner when login is in progress
 
-    if (!username || !phone || !newPassword) {
+    if (!email || !phone || !newPassword) {
       setErrorMessage('All fields are required.');
       return;
     }
 
-    if (username !== "oooo") {
-      setUsernameErrorMessage('Username not found!');
+    if (email !== "o@gmail.com") {
+      setEmailErrorMessage('Email not found!');
       return;
-    } else setUsernameErrorMessage('');
+    } else setEmailErrorMessage('');
 
     if (phone !== 99999999) {
         setPhoneErrorMessage('Phone number does not match!');
@@ -69,8 +66,6 @@ export const ResetPassword = () => {
     // If validation passes, clear the error message and submit the form
     setErrorMessage('');
 
-    // Call toggleModal function here
-    toggleModal();
   };
 
   
@@ -80,8 +75,8 @@ export const ResetPassword = () => {
         <h1>Reset Password</h1>
         <form onSubmit={handleSubmit}>
           <div className='loginsignup-fields'>
-            <input type='text' placeholder='Enter Username' value={username} onChange={(e) => setUsername(e.target.value)}/>
-            {usernameErrorMessage && <p style={{ color: 'red' }}>{usernameErrorMessage}</p>}
+            <input type='email' placeholder='Enter email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+            {emailErrorMessage && <p style={{ color: 'red' }}>{emailErrorMessage}</p>}
             <PhoneInput 
               country={"sg"}
               value={`${countryCode}${contactno}`}
@@ -92,23 +87,11 @@ export const ResetPassword = () => {
             {newPasswordMessage && <p style={{ color: 'red' }}>{newPasswordMessage}</p>}
             {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
           </div>
-          <button type='submit'>Reset Password</button>
+          <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '60px' }}>
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Reset Password'}
+          </Button>
         </form>
       </div>
-
-      {modal && (
-      <div className="modal">
-        <div className="overlay" onClick={nextPage}>
-          <div className="modal-content">
-            <h2>Reset Password</h2>
-            <p>
-              Password has been resetted successfully.
-            </p>
-            <button className='close-modal' onClick={nextPage}>CLOSE</button>
-          </div>
-        </div>
-      </div>
-      )}
     </div>
   );
 }

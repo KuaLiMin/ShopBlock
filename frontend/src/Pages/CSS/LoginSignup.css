@@ -33,6 +33,7 @@
     outline: none;
     color: #5c5c5c;
     font-size: 18px;
+    margin-left: 0px;
 }
 
 .loginsignup-container button {
@@ -86,4 +87,3 @@
 .loginsignup-signup:hover {
     text-decoration: underline;
 }
-
