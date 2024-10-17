@@ -367,6 +367,13 @@ class OfferController(GenericAPIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(
+                name="listing_id",
+                type=int,
+                location=OpenApiParameter.QUERY,
+                description="ID of the specific listing to retrieve offers for",
+                required=False,
+            ),
+            OpenApiParameter(
                 name="type",
                 type=str,
                 location=OpenApiParameter.QUERY,
@@ -380,8 +387,12 @@ class OfferController(GenericAPIView):
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
+        listing_id = request.query_params.get("listing_id")
         offer_type = request.query_params.get("type", "received")
 
+        if listing_id:
+            listing = get_object_or_404(Listing, id=listing_id)
+            queryset = Offer.objects.filter(listing=listing)
         if offer_type == "received":
             # Get offers for listings uploaded by the current user
             queryset = Offer.objects.filter(listing__uploaded_by=request.user)
