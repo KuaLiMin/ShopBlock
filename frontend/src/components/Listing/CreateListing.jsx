@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useParams} from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import './Listing.css'; 
 
 import {
@@ -24,9 +25,13 @@ const getCookie = (name) => {
 };
 
 const CreateListing = ({ isModalOpen, toggleModal }) => {
-  const { username } = useParams();
-  const token = getCookie('access'); 
+//   const { username } = useParams();
+  const token = getCookie('access');
+  let decodedToken;
+  decodedToken = jwtDecode(token);
+  const loggedInUserId = decodedToken.user_id;  
   const [formData, setFormData] = useState({
+    uploaded_by: '',
     title: '',
     price: '', 
     unit: '', 
@@ -95,17 +100,11 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
     
     const formPayload = new FormData();
-    formPayload.append('created_by', username); // Append username from URL
+    formPayload.append('uploaded_by', loggedInUserId); // Append username from URL
     formPayload.append('title', formData.title);
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
     formPayload.append('listing_type', formData.listing_type);
-    
-    // const photosArray = [formData.image_url]; 
-    // photosArray.forEach((photo, index) => {
-    //   formPayload.append(`photos[${index}]`, photo); // Append each photo in an array format
-    // });
-
     formData.photos.forEach((photo, index) => {
       formPayload.append(`photos[${index}]`, photo);
     });
@@ -141,11 +140,11 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
         return response.json();
       })
       .then((data) => {
-        console.log('Success:', data); // Handle success
+        console.log('Success:', data); 
         toggleModal(); // Close the modal after successful submission
       })
       .catch((error) => {
-        console.error('Error:', error); // Handle errors
+        console.error('Error:', error); 
       });      
   };
 

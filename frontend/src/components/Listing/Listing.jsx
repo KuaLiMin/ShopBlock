@@ -119,12 +119,12 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { username } = useParams();
+  // const { username } = useParams();
   
 
   useEffect(() => {
     const token = getCookie('access'); 
-    console.log(token)
+    // console.log(token)
 
     if (!token) {
       setError(new Error('User not logged in'));
@@ -142,7 +142,7 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
     }
 
     const loggedInUserId = decodedToken.user_id; 
-    // console.log("Logged in user ID:", loggedInUserId);
+    console.log("Logged in user ID:", loggedInUserId);
     
     // Fetch the data from the backend with Authorization header
     fetch('/listing/', {
@@ -160,7 +160,7 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
       })
       .then(data => {
 
-        const userSpecificListings = data.filter(listing => listing.created_by === username);
+        const userSpecificListings = data.filter(listing => listing.uploaded_by === loggedInUserId);
 
         // Format the data for display
         const formattedData = userSpecificListings.map(listing => ({
