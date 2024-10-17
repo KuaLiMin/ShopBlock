@@ -81,6 +81,7 @@ export const Login = () => {
       formData.append('username', username);
       formData.append('password', password);
       formData.append('phone_number', phone);
+      formData.append('biography', 'Hey there! Nice to meet you!');
 
       // Perform POST request using async/await inside try-catch
       const response = await axios.post('/register/', formData, {
