@@ -393,6 +393,9 @@ class OfferController(GenericAPIView):
         if listing_id:
             listing = get_object_or_404(Listing, id=listing_id)
             queryset = Offer.objects.filter(listing=listing)
+            serializer = self.get_serializer(queryset, many=True)
+            return JsonResponse(serializer.data, safe=False)
+
         if offer_type == "received":
             # Get offers for listings uploaded by the current user
             queryset = Offer.objects.filter(listing__uploaded_by=request.user)
