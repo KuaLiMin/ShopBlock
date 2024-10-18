@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Calendar from '../components/Calendar';
 import { useParams, Link } from 'react-router-dom';
 import StarIcon from '@mui/icons-material/Star'; 
 import StarHalfIcon from '@mui/icons-material/StarHalf'; // Import a half star icon
@@ -52,6 +53,7 @@ const ListingDetail = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [scheduledStart, setScheduledStart] = useState(null); // New state for scheduled start
   const [scheduledEnd, setScheduledEnd] = useState(null);     // New state for scheduled end
+  const [calendarDate, setCalendarDate] = useState([]);
 
   const getCookie = (name) => {
     const value = document.cookie; // Get all cookies
@@ -338,6 +340,8 @@ const token = getCookie('access'); // Get the 'access' cookie value
       });
   }, [id, titleFromSlug]); // Remove categoryMap from dependencies
 
+
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (listingData?.user) {
@@ -377,6 +381,40 @@ const token = getCookie('access'); // Get the 'access' cookie value
     fetchUserData();
   }, [listingData]);
 
+  useEffect(() => {
+    const fetchDatesByListingId = async () => {
+      try {
+          const response = await fetch(`/offers/?listing_id=${id}`, {
+              method: 'GET',
+              headers: {
+                  'Accept': 'application/json',
+              },
+          });
+  
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+  
+          const offersData = await response.json();
+          console.log("Fetched offers data for listing ID:", id, offersData);
+          
+          // Map through offers and extract only scheduled_start and scheduled_end
+          const extractedSchedules = offersData.map(offer => ({
+              scheduled_start: offer.scheduled_start,
+              scheduled_end: offer.scheduled_end,
+              status: offer.status
+          }));
+
+          console.log(extractedSchedules);
+          setCalendarDate(extractedSchedules); // Return only the scheduled start and end times
+      } catch (error) {
+          console.error(`Error fetching offers for listing ID ${id}:`, error);
+          return null; // Return null or handle the error as needed
+      }
+  };
+    fetchDatesByListingId();
+  }, [listingData]);
+  
 
   // Render loading state, error message, or listing details
   if (loading) return <p>Loading...</p>;
@@ -414,6 +452,8 @@ const token = getCookie('access'); // Get the 'access' cookie value
           <hr />
           <div className="description">
             <h3>Description</h3>
+            <div>
+        </div>
             <p>{listingData.description}</p>
           </div>
         </div>
@@ -563,6 +603,9 @@ const token = getCookie('access'); // Get the 'access' cookie value
               )}
             </div>
           </DialogContent>
+          <div className='calender-container'>
+            <Calendar offers={calendarDate} />
+          </div>
           <DialogActions>
             <Button onClick={handleCloseDate}>Close</Button>
             <Button onClick={handleConfirmAvailability} color="primary">Submit Availability</Button>

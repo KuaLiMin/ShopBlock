@@ -232,3 +232,11 @@ width: 100%; /* Make sure it takes the full width */
     font-size: 14px;
     color: #555;
   }
+
+  .calender-container{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+  
