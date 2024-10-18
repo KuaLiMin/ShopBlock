@@ -16,46 +16,59 @@ import SearchResultsList from '../SearchBar/SearchResultsList'; // Import Search
 import './Navbar.css';
 
 const Navbar = () => {
-  const [menu, setMenu] = useState('Categories');
-  const [sidebar, setSideBar] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState(null);
-  const [results, setResults] = useState([]); // State for search results
 
+  const [menu, setMenu] = useState("Categories");
+  const [sidebar, setSideBar] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
+  const [loading, setLoading] = useState(false); // Track loading state
+  const [username, setUsername] = useState(null); // State to hold user profile data
+  const [results, setResults] = useState([]);
+  
   const showSidebar = () => setSideBar(!sidebar);
+
   const navigate = useNavigate();
 
-  const simulateLoading = (duration) => new Promise((resolve) => setTimeout(resolve, duration));
-
-  const handleLogout = async () => {
-    setLoading(true);
-    await simulateLoading(2000);
-    Cookies.remove('access');
-    Cookies.remove('refresh');
-    setIsLoggedIn(false);
-    setLoading(false);
-    navigate('/');
+  // Function to simulate a delay for the loading animation
+  const simulateLoading = (duration) => {
+    return new Promise((resolve) => setTimeout(resolve, duration));
   };
 
-  const getCookie = (name) => {
+  // Handle logout function
+  const handleLogout = async () => {
+    setLoading(true); // Start the loading animation
+
+    // Simulate the loading process with a delay
+    await simulateLoading(2000); // 2 seconds delay
+
+    Cookies.remove('access');   // Remove access token
+    Cookies.remove('refresh');  // Remove refresh token if any
+    setIsLoggedIn(false);
+    setLoading(false);
+    navigate('/');  // Redirect to login page after logout
+  };
+
+  // Utility function to get a specific cookie by name
+  function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
-  };
+  }
 
+  // Example usage: Get accessToken from cookies
   const accessToken = getCookie('access');
-
+  // Set logged-in state based on the presence of accessToken
   useEffect(() => {
     if (accessToken) {
-      setIsLoggedIn(true);
+      setIsLoggedIn(true); // User is logged in
 
       const fetchProfile = async () => {
         try {
           const response = await axios.get('/user', {
-            headers: { Authorization: `Bearer ${accessToken}` },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           });
-          setUsername('Welcome ' + response.data.username);
+          setUsername('Welcome ' + response.data.username); // Store the profile data in state
         } catch (error) {
           console.error('Error fetching profile data', error);
         }
@@ -63,8 +76,8 @@ const Navbar = () => {
 
       fetchProfile();
     } else {
-      setIsLoggedIn(false);
-      setUsername(null);
+      setIsLoggedIn(false); // User is logged out
+      setUsername(null);     // Clear the profile data if any
     }
   }, [accessToken]);
 
