@@ -1,10 +1,13 @@
+.navbar-bg{
+    background-image: linear-gradient(to bottom, #a3d5e8,#e0f4f9); 
+    box-shadow: 0 1px 3px -2px black;
+
+}
 .navbar {
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding: 10px 20px;
-    background-image: linear-gradient(to bottom, #a3d5e8,#e0f4f9); 
-    box-shadow: 0 1px 3px -2px black;
 }
 
 .nav-logo {
@@ -252,3 +255,14 @@
     align-items: center;
     z-index: 9999; /* Ensure it appears on top of everything */
 }
+
+.search-bar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    gap: 10px; /* Add spacing between the search bar and results */
+  }
+  
