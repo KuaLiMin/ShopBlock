@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import {
   Dialog,
@@ -25,6 +26,7 @@ const getCookie = (name) => {
 const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
   
   const [formData, setFormData] = useState({
+    uploaded_by: '',
     title: '',
     price: '', 
     unit: '', 
@@ -39,6 +41,9 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     photos: [],
   });
   const token = getCookie('access');
+  let decodedToken;
+  decodedToken = jwtDecode(token);
+  const loggedInUserId = decodedToken.user_id;  
   const [fileNames, setFileNames] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [mapUrl, setMapUrl] = useState('');
@@ -46,7 +51,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
   useEffect(() => {
     if (isModalOpen && listingId) {
       // Fetch the specific listing by id
-      axios.get(`http://152.42.253.110:8000/listing/?id=${listingId}`)
+      axios.get(`/listing/?id=${listingId}`)
         .then(response => {
           const listing = response.data;
           
@@ -110,7 +115,8 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     if (!isValid) return;
 
     const formPayload = new FormData();
-    formPayload.append('listing_id', listingId);
+    formPayload.append('uploaded_by', loggedInUserId);
+    formPayload.append('id', listingId);
     formPayload.append('title', formData.title);
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
@@ -131,28 +137,57 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     formPayload.append('rates', JSON.stringify(rates));
 
     formData.photos.forEach((photo, index) => {
-      formPayload.append(`photos[${index}]`, photo);
+      if (photo instanceof File) {  // Only append if it's a new file
+        formPayload.append(`photos`, photo);
+      }
     });
+    for (let pair of formPayload.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
 
-
-    fetch(`http://152.42.253.110:8000/listing/`, {
+    fetch('/listing/', {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
+        // 'Content-Type': 'multipart/form-data',
+        'X-CSRFTOKEN': 'fI88VaY33cKgvstJKowK3cKoMGtV4M4JbjVIXSRhexRtK7KMgunHt5FDvpXVQTpY'
       },
       body: formPayload,
     })
-      .then((response) => {
-        if (response.ok) {
-          toggleModal(); 
-        } else {
-          throw new Error('Failed to update listing');
-        }
-      })
-      .catch((error) => {
-        console.error('Error updating listing:', error);
-      });
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then(error => { 
+          throw new Error(JSON.stringify(error));
+        });
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log('Success:', data);
+      toggleModal();
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+    
+
+    // axios.put('/listing/', formPayload,{
+    //   headers: {
+    //     'Authorization': `Bearer ${token}`,
+    //     'Content-Type': 'multipart/form-data',  
+    //   },
+    // })
+    //   .then((response) => {
+    //     // Successful update
+    //     toggleModal();
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error updating listing:', error);
+    //   });
+
+
   };
+
   const searchLocation = () => {
     const input = formData.locationAddress.replace(/ /g, '+');
     fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${input}&returnGeom=Y&getAddrDetails=Y&pageNum=1`, {
