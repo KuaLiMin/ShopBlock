@@ -4,7 +4,7 @@ import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 
 import Checkout from './Checkout';
 
-const Paypal = ({ className, price, offerID, accessToken, onTransactionSuccess}) => {
+const Paypal = ({price, offerID, accessToken, onTransactionSuccess}) => {
 
     const initialOptions = {
         "client-id": "AYLr9pu2Lu9RXGdzSo1-xgnZ7AAWtia-jyyYvPzxlEVr3SxWTqBGoV7n86MbV8IaH5O-y2kCTkbw2gum",
@@ -15,7 +15,7 @@ const Paypal = ({ className, price, offerID, accessToken, onTransactionSuccess})
 
 
     return (
-    <PayPalScriptProvider options={initialOptions} className={className}>
+    <PayPalScriptProvider options={initialOptions}>
             <Checkout price={price} offerID={offerID} accessToken={accessToken} onTransactionSuccess={onTransactionSuccess}/>
     </PayPalScriptProvider>
     );
