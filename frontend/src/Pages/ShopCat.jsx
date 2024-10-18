@@ -18,15 +18,23 @@ const ShopCatCard = ({ updateCount, categoryCode }) => {
         return response.json();
       })
       .then((data) => {
+        console.log("API Response:", data);
         const filteredData = data.filter((listing) => listing.category === categoryCode);
-        const formattedData = filteredData.map((listing) => ({
-          id: listing.id,
-          time: listing.created_at,
-          title: listing.title,
-          description: listing.description,
-          rate: `$${1}/Day`,
-          image: listing.photos.length > 0 ? listing.photos[0].image_url : '',
-        }));
+        const formattedData = filteredData.map((listing) => {
+          // **Extract rate and time_unit from the 'rates' array**
+          const rateObj = listing.rates.length > 0 ? listing.rates[0] : null;
+          const rate = rateObj ? `$${rateObj.rate}/${rateObj.time_unit}` : 'Rate unavailable';
+          
+          return {
+            id: listing.id,
+            time: listing.created_at,
+            title: listing.title,
+            description: listing.description,
+            // **Use extracted 'rate' here**
+            rate: rate,
+            image: listing.photos.length > 0 ? listing.photos[0].image_url : '',
+          };
+        });
 
         setListingsData(formattedData);
         setLoading(false);
