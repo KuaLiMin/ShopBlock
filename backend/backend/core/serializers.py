@@ -1,6 +1,7 @@
 import json
 from rest_framework import serializers
 from django.db.models import Avg
+from django.contrib.auth.hashers import make_password
 from backend.core.models import (
     User,
     Category,
@@ -29,6 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             "phone_number",
             "avatar",
             "average_rating",
+            "biography",
         )
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -64,6 +66,20 @@ class UserCreateSerializer(UserSerializer):
         return user
 
 
+class UserUpdateSerializer(UserCreateSerializer):
+    new_password = serializers.CharField(write_only=True, required=True)
+
+    class Meta(UserSerializer.Meta):
+        fields = (*UserSerializer.Meta.fields, "new_password")
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get("username", instance.username)
+        instance.phone_number = validated_data.get("phone_number", instance.phone_number)
+        instance.password = make_password(validated_data["new_password"]) if validated_data.get("new_password") else instance.password
+        instance.avatar = validated_data.get("avatar", instance.avatar)
+        instance.save()
+        return instance
+    
 class ListingPhotoSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
 
@@ -107,7 +123,6 @@ class ListingSerializer(serializers.ModelSerializer):
     )
     category = serializers.ChoiceField(choices=Category.choices)
     listing_type = serializers.ChoiceField(choices=ListingType.choices)
-    created_by = serializers.SerializerMethodField()
     rates = ListingRateSerializer(many=True, read_only=True)
     # Optionally required only
     locations = ListingLocationSerializer(many=True, required=False)
@@ -118,7 +133,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "id",
             "created_at",
             "updated_at",
-            "created_by",
+            "uploaded_by",
             "title",
             "description",
             "category",
@@ -195,6 +210,58 @@ class ListingCreateSerializer(ListingSerializer):
             )
 
         return listing
+
+
+class ListingUpdateSerializer(ListingCreateSerializer):
+    id = serializers.IntegerField(required=True)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get("title", instance.title)
+        instance.description = validated_data.get("description", instance.description)
+        instance.category = validated_data.get("category", instance.category)
+        instance.listing_type = validated_data.get(
+            "listing_type", instance.listing_type
+        )
+        instance.save()
+
+        # Update the photos
+        photos_data = validated_data.get("photos", [])
+        if photos_data:
+            # Delete old photos
+            instance.listingphoto_set.all().delete()
+            # Add new photos
+            for photo in photos_data:
+                ListingPhoto.objects.create(listing=instance, image_url=photo)
+
+        # Update the rates
+        rates_data = validated_data.get("rates", [])
+        if rates_data:
+            # Delete old rates
+            instance.rates.all().delete()
+            # Add new rates
+            for rate_data in rates_data:
+                ListingRate.objects.create(
+                    listing=instance,
+                    time_unit=rate_data["time_unit"],
+                    rate=rate_data["rate"],
+                )
+
+        # Update the locations
+        location_data = validated_data.get("locations", [])
+        if location_data:
+            # Delete old rates
+            instance.locations.all().delete()
+            # Add new rates
+            for location in location_data:
+                ListingLocation.objects.create(
+                    listing=instance,
+                    latitude=location["latitude"],
+                    longitude=location["longitude"],
+                    query=location["query"],
+                    notes=location["notes"],
+                )
+
+        return instance
 
 
 # Serializer for get request
@@ -347,3 +414,15 @@ class TransactionSerializer(serializers.ModelSerializer):
         offer.paid()
 
         return transaction
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    phone_number = serializers.CharField(max_length=15)
+    new_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        email = data.get('email')
+        phone_number = data.get('phone_number')
+        if not User.objects.filter(email=email, phone_number=phone_number).exists():
+            raise serializers.ValidationError("The user is not found.")
+        return data

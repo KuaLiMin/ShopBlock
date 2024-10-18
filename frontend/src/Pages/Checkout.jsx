@@ -22,7 +22,7 @@ const Checkout = ({price, offerID, accessToken, onTransactionSuccess}) => {
 
     const onApproveOrder = async (data, actions) => {
         return actions.order.capture().then(async (details) => {
-            alert(`Transaction of ${price} completed by ${userData?.username}`);
+            alert(`Transaction of $ ${price} successful`);
 
             // If we need Date/Time
             // const capture = details.purchase_units[0].payments.captures[0];
@@ -67,34 +67,6 @@ const Checkout = ({price, offerID, accessToken, onTransactionSuccess}) => {
             console.error('Error creating transaction:', error);
         }
     };
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch('/user/', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`, // Include the access token if needed
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const data = await response.json();
-                setUserData(data); // Set the user data
-                setLoading(false); // Set loading to false after data is fetched
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-                setError(error.message); // Set error message
-                setLoading(false); // Set loading to false in case of error
-            }
-        };
-
-        fetchUserData(); // Call the function to fetch user data
-    }, [accessToken]); // Dependency array to re-run effect if accessToken changes
-
 
     return (
         <div className="checkout-container">

@@ -36,14 +36,14 @@ class UserManager(BaseUserManager):
     # Do some validation here before creating a new user
     # if validation goes through, then create the new user
     def create_user(
-        self, email, username, password=None, phone_number=None, avatar=None
+        self, email, username, password=None, phone_number=None, avatar=None, biography=""
     ):
         if not email:
             raise ValueError("Users must have an email")
 
         email = self.normalize_email(email)
         user = self.model(
-            email=email, username=username, phone_number=phone_number, avatar=avatar
+            email=email, username=username, phone_number=phone_number, avatar=avatar, biography=biography
         )
 
         user.set_password(password)
@@ -58,6 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     avatar = models.ImageField(upload_to="avatars/", null=True)
     # 8 for singapore only
     phone_number = models.CharField(max_length=8, unique=True)
+    biography = models.TextField()
 
     objects = UserManager()
 

@@ -140,6 +140,11 @@ hr {
     justify-content: flex-end;
     height: 40px;
 }
+.offer-button p{
+    display: flex;
+    align-items: flex-end; /* Align the input box and button vertically */
+    justify-content: flex-end;
+}
 
 .button-column {
     display: flex;
@@ -211,3 +216,27 @@ width: 100%; /* Make sure it takes the full width */
     margin-right: 10px;         /* Space between icon and text */
     COLOR: #FF0000;
 }
+
+.custom-textfield-date {
+    display:flex;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .custom-textfield input {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .custom-textfield label {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .calender-container{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+  

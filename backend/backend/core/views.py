@@ -15,6 +15,9 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes, action
+from django.contrib.auth.hashers import check_password
+from rest_framework import status
+from django.contrib.auth.hashers import make_password
 
 from backend.core.models import (
     User,
@@ -28,6 +31,8 @@ from backend.core.models import (
     TimeUnit,
 )
 from backend.core.serializers import (
+    ListingUpdateSerializer,
+    ResetPasswordSerializer,
     UserSerializer,
     UserCreateSerializer,
     ListingSerializer,
@@ -36,6 +41,7 @@ from backend.core.serializers import (
     OfferCreateSerializer,
     ReviewSerializer,
     TransactionSerializer,
+    UserUpdateSerializer,
 )
 
 # The views here will be mapped to a url in urls.py
@@ -48,14 +54,63 @@ class UserController(GenericAPIView):
     User endpoint for GET
     """
 
+    queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                description="User ID for unauthenticated requests",
+                required=False,
+            )
+        ],
+        responses={200: UserSerializer},
+        description="Get user details. Returns authenticated user if JWT is provided, otherwise returns user based on query parameter 'id'.",
+    )
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
-        user = request.user
+        if request.user.is_authenticated:
+            user = request.user
+            serializer = self.get_serializer(user)
+            return Response(serializer.data)
+        else:
+            # Unauthenticated request, try to get param
+            user_id = request.query_params.get("id")
+            if not user_id:
+                return Response(
+                    {"error": "User ID is required for unauthenticated requests"},
+                    status=400,
+                )
+            user = get_object_or_404(self.queryset, id=user_id)
+
         serializer = self.get_serializer(user)
         return Response(serializer.data)
+    
+    # user updates their profile
+    @extend_schema(
+        request=UserUpdateSerializer,
+        responses={200: UserSerializer},
+    )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def put(self, request: Request):
+        user = request.user
+        
+        if not check_password(request.data.get("password"), user.password):
+            return Response(
+                {"error": "Password does not match"},
+                status=status.HTTP_400_BAD_REQUEST, 
+            )
+
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegisterController(APIView):
@@ -99,6 +154,7 @@ class ListingController(GenericAPIView):
     serializer_class = ListingSerializer
     parser_classes = (MultiPartParser, FormParser)
 
+    # user gets a listing
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -226,6 +282,42 @@ class ListingController(GenericAPIView):
         # Otherwise, the input was not correct
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # user updates a listing
+    @extend_schema(
+        request=ListingUpdateSerializer,
+        responses={200: ListingSerializer},
+    )
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def put(self, request: Request):
+        listing_id = request.data.get("id")
+        try:
+            listing = Listing.objects.get(id=listing_id)
+        except Listing.DoesNotExist:
+            return Response(
+                {"error": "Listing not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if listing.uploaded_by != request.user:
+            return Response(
+                {"error": "You don't have permission to update this listing"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        request_copy = request.data.copy()
+        if "rates" in request_copy and isinstance(request_copy["rates"], str):
+            request_copy["rates"] = json.loads(request_copy["rates"])
+        if "locations" in request_copy and isinstance(request_copy["locations"], str):
+            request_copy["locations"] = json.loads(request_copy["locations"])
+
+        serializer = ListingUpdateSerializer(listing, data=request_copy)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # user deletes a listing
     @extend_schema(
         parameters=[
             OpenApiParameter(name="id", type=int, location=OpenApiParameter.QUERY)
@@ -252,7 +344,6 @@ class ListingController(GenericAPIView):
         listing.delete()
         return Response(status=status.HTTP_200_OK)
 
-
 class OfferController(GenericAPIView):
     """
     Offers endpoint, [GET, POST, PUT]
@@ -276,6 +367,13 @@ class OfferController(GenericAPIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(
+                name="listing_id",
+                type=int,
+                location=OpenApiParameter.QUERY,
+                description="ID of the specific listing to retrieve offers for",
+                required=False,
+            ),
+            OpenApiParameter(
                 name="type",
                 type=str,
                 location=OpenApiParameter.QUERY,
@@ -289,7 +387,14 @@ class OfferController(GenericAPIView):
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
+        listing_id = request.query_params.get("listing_id")
         offer_type = request.query_params.get("type", "received")
+
+        if listing_id:
+            listing = get_object_or_404(Listing, id=listing_id)
+            queryset = Offer.objects.filter(listing=listing)
+            serializer = self.get_serializer(queryset, many=True)
+            return JsonResponse(serializer.data, safe=False)
 
         if offer_type == "received":
             # Get offers for listings uploaded by the current user
@@ -487,12 +592,15 @@ class ReviewsController(GenericAPIView):
             )
 
         # Add the reviewer (current user) to the request data
-        request.data['reviewer_id'] = request.user.id
-        
+        request.data["reviewer_id"] = request.user.id
+
         from pprint import pprint
+
         pprint(request.data)
 
-        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer = self.get_serializer(
+            data=request.data, context={"request": request}
+        )
 
         if serializer.is_valid():
             serializer.save()
@@ -599,3 +707,28 @@ class DebugListingController(GenericAPIView):
         listings = Listing.objects.all()
         serializer = self.serializer_class(listings, many=True)
         return Response(serializer.data)
+
+class ResetPasswordController(APIView):
+    """
+    Reset password endpoint, [PUT]
+
+    The put method is used to reset the password of the user if both email and number match in the database
+    """
+
+    serializer_class = ResetPasswordSerializer
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
+
+    def put(self, request):
+        #test against both email and phone number, if both match, then reset the password
+        serializer = ResetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data.get("email")
+            phone_number = serializer.validated_data.get("phone_number")
+            new_password = serializer.validated_data.get("new_password")
+            user = User.objects.get(email=email, phone_number=phone_number)
+            user.password = make_password(new_password)
+            user.save()
+            return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
