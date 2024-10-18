@@ -1,7 +1,7 @@
 .ternary-operator-container{
     display: flex;
     margin: 20px 0; /* Margin top and bottom */
-    padding-left: 20%;
+    padding-left: 15%;
 }
 
 .list-of-offers-container{
@@ -9,7 +9,7 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-start;
-    padding: 0 10% 0 20%;
+    padding: 0 10% 0 15%;
     width: 80%;
     max-width: 1536px;
     height: auto;/* Set height to fill the viewport */
@@ -101,13 +101,14 @@
 .filtered-listing-card-received{
     border: 1px solid #ccc;
     padding: 10px 10px 10px 20px;
-    width: 65%;
+    width: 90%;
     height: 60px;
     margin: 10px 0 5px 0;
     border-radius: 5px;
     align-items: center;
     display:flex;
     gap: 10px;
+    overflow: hidden; /* Hide overflow */
     transition: background-color 0.3s, box-shadow 0.3s; /* Include box-shadow in transition */
     box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
 }
@@ -115,20 +116,18 @@
 .filtered-listing-card-made{
     border: 1px solid #ccc;
     padding: 10px 10px 10px 20px;
-    width: 60%;
+    width: 100%;
     height: 60px;
     margin: 10px 0 5px 0;
     border-radius: 5px;
     align-items: center;
     display:flex;
     gap: 10px;
+    overflow: hidden; /* Hide overflow */
     transition: background-color 0.3s, box-shadow 0.3s; /* Include box-shadow in transition */
     box-shadow: 3px 3px 5px #ccc; /* 3D shadow effect */
 }
 
-.user-rating > h1 {
-    margin-right: 10px; /* Space between username and rating */
-}
 
 .filtered-listing-card-received p {
     flex: 1; /* Make both paragraphs take equal space */
@@ -162,12 +161,43 @@
     flex-direction: column;
 }
 
+.user-rating > h1 {
+    font-size: 20px;
+    margin: 0; /* Remove default margin */
+    margin-left: 5px;
+    align-items: center;
+}
+
 .accept-button-position{
     position: absolute; /* Allows positioning outside the parent */
-    right: 150px;
+    right: -125px;
 }
 
 .reject-button-position{
     position: absolute; /* Allows positioning outside the parent */
-    right: 70px;
+    right: -210px;
+}
+
+.paypal-button-position{
+    position: absolute; /* Allows positioning outside the parent */
+    right: -130px;
+}
+
+.offer-details-description {
+    display: flex;
+    flex-direction: row; /* Keep items in a row */
+    align-items: center;
+    justify-content: space-between; /* Space items evenly */
+    width: 100%; /* Ensure it takes the full width of the parent */
+}
+
+.detail-item {
+    margin: 0 10px; /* Space between detail items */
+    text-align: left; /* Left align text */
+    flex: 1; /* Allow items to grow and fill space */
+}
+
+.detail-title {
+    font-weight: bold; /* Make titles bold */
+    margin-bottom: 3px; /* Space between title and value */
 }
