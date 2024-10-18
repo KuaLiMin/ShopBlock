@@ -17,6 +17,8 @@ export const ListOfOffers = () => {
     const [clickedCardId, setClickedCardId] = useState(null); // State to track which card is clicked
     const [selectedTitle, setSelectedTitle] = useState(null); // State for the selected listing title
     const [isListingReceived, setIsListingReceived] = useState(true);
+    const [offerDetails, setOfferDetails] = useState([]); // State to store offer details
+    const [userDetailsMap, setUserDetailsMap] = useState({}); // To store user details by offeredByID
 
     const getCookie = (name) => {
         const value = document.cookie; // Get all cookies
@@ -34,7 +36,8 @@ export const ListOfOffers = () => {
     const handleToggle = () => {
         setIsListingReceived(prevState => !prevState);
         setClickedCardId(null); // Reset clicked card ID
-    };
+        setOfferDetails([]);
+    }
 
     useEffect(() => {
         setClickedCardId(null);
@@ -51,6 +54,7 @@ export const ListOfOffers = () => {
     const filteredListings = selectedTitle
     ? allListings.filter(listing => listing.title === selectedTitle)
     : []; // Show nothing if no title is selected
+
 
     // Check if there are no listings available
     const hasListings = allListings.length > 0;
@@ -93,7 +97,7 @@ export const ListOfOffers = () => {
 
                     setUniqueListings(uniqueTitles);
                     setAllListings(allListingsData);
-                    await fetchAllUserData();
+                    // await fetchUserData();
                     await fetchListingsDetails(uniqueTitles); // Ensure unique listings are passed to this function
                 } else {
                     console.error("Expected an array but got:", offersData);
@@ -108,29 +112,112 @@ export const ListOfOffers = () => {
         fetchData();
     }, [token, isListingReceived]);
 
-    //Get all user information
-    const fetchAllUserData = async () => {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    useEffect(() => {
+        const fetchOfferDetailsPerListing = async (clickedCardId) => {
+            try {
+                const response = await fetch(`/offers/?listing_id=${clickedCardId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`, // Use your token here
+                    },
+                });
+        
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+        
+                const offerDetails = await response.json();
+
+                const extractedDetails = offerDetails.map(offer => {
+                    if (!offer || !offer.offered_by) {
+                        console.warn('Offer object is missing:', offer);
+                        return null; // Skip if offer is invalid
+                    }
+                
+                    const offeredByID = offer.offered_by.id; // Safe to access now
+                    if (!offeredByID) {
+                        console.warn(`Offer with ID ${offer.id} is missing offered_by.id. Full offer object:`, offer);
+                        return null; // Skip if offered_by.id is missing
+                    }
+                
+                    return {
+                        id: offer.id,
+                        offeredByID: offeredByID,
+                        price: offer.price,
+                        status: offer.status,
+                        scheduledStart: offer.scheduled_start,
+                        scheduledEnd: offer.scheduled_end,
+                        timeUnit: offer.time_unit,
+                        timeDelta: offer.time_delta,
+                    };
+                }).filter(detail => detail !== null);
+
+                console.log(clickedCardId);
+                console.log("Extracted offer details:", extractedDetails); // Log the extracted details
+                setOfferDetails(extractedDetails); // Return the fetched offer details
+            } catch (error) {
+                console.error('Error fetching offer details:', error);
+                throw error; // Rethrow the error for further handling if needed
+            }
+        };
+
+        if (clickedCardId) {
+            const fetchData = async () => {
+                await fetchOfferDetailsPerListing(clickedCardId);
+            };
+    
+            fetchData();
+        }
+
+    }, [clickedCardId]); // Add dependencies here
+
+    // Fetch user details for each offeredByID
+    const fetchUserDetails = async (userId) => {
         try {
-            const response = await fetch(`debug/user/`); // Fetch all users
+            const response = await fetch(`/user/?id=${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-    
-            const usersData = await response.json();
-            console.log("Fetched all users data:", usersData); // Log all users data
-    
-            const filteredUserData = usersData.map(user => ({
-                id: user.id,
-                avatar: user.avatar,
-                username: user.username,
-                averageRating: user.average_rating,
-            }));
-            // Update the user data state
-            setUserData(filteredUserData);
+
+            const userDetails = await response.json();
+            console.log("This is the user id i'm fetching",userId)
+            return userDetails; // Return user details
         } catch (error) {
-            console.error('Error fetching all user data:', error);
+            console.error(`Error fetching user details for user ID ${userId}:`, error);
         }
     };
+
+    useEffect(() => {
+        const fetchAllUserDetails = async () => {
+            const newUserDetailsMap = {};
+    
+            for (let offer of offerDetails) {
+                // Only fetch user details if they haven't been fetched before
+                if (!newUserDetailsMap[offer.offeredByID]) {
+                    const userDetails = await fetchUserDetails(offer.offeredByID);
+                    if (userDetails) {
+                        newUserDetailsMap[offer.offeredByID] = userDetails; // Store user details in the map
+                    }
+                }
+            }
+            console.log("This is the user detail map",newUserDetailsMap)
+            setUserDetailsMap(newUserDetailsMap); // Set the map of user details
+        };
+    
+        if (offerDetails.length > 0) {
+            fetchAllUserDetails(); // Fetch user details when offerDetails are available
+        }
+    }, [offerDetails]);
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // This is to get the indivdiual listing details.
     const fetchListingsDetails = async (uniqueListings) => {
@@ -176,6 +263,10 @@ export const ListOfOffers = () => {
     // Handle Reject Button
     const handleReject = async (offerId) => {
         try {
+            const offer = allListings.find(listing => listing.offer_id === offerId); // Use offer_id here
+            if (!offer || offer.status !== 'P') {
+                throw new Error("Offer not found or not pending");
+            }
             const response = await fetch(`/offers/`, {
                 method: 'PUT',
                 headers: {
@@ -199,6 +290,13 @@ export const ListOfOffers = () => {
             setAllListings((prevListings) =>
                 prevListings.filter((listing) => listing.offer_id !== offerId) // Use offer_id here
             );
+            
+            // Optionally, filter out the accepted offer from offerDetails if needed
+            setOfferDetails(prevOffers =>
+                prevOffers.filter(offer => offer.id !== offerId)
+            );
+
+
         } catch (error) {
             console.error('Error rejecting offer:', error);
         }
@@ -206,6 +304,7 @@ export const ListOfOffers = () => {
 
 // Handle Accept Button
     const handleAccept = async (offerId) => {
+        console.log(offerId);
         try {
             const offer = allListings.find(listing => listing.offer_id === offerId); // Use offer_id here
             if (!offer || offer.status !== 'P') {
@@ -236,8 +335,13 @@ export const ListOfOffers = () => {
             setAllListings((prevListings) =>
                 prevListings.map((listing) => 
                     listing.offer_id === offerId ? { ...listing, status: 'A' } : listing // Use offer_id here
-                )
+            ));
+            
+            // Optionally, filter out the accepted offer from offerDetails if needed
+            setOfferDetails(prevOffers =>
+                prevOffers.filter(offer => offer.id !== offerId)
             );
+                
 
         } catch (error) {
             console.error('Error accepting offer:', error.message);
@@ -249,6 +353,11 @@ export const ListOfOffers = () => {
     const handleTransactionSuccess = (offerId) => {
         setAllListings((prevListings) =>
             prevListings.filter((listing) => listing.offer_id !== offerId)
+        );
+        
+        // Optionally, filter out the accepted offer from offerDetails if needed
+        setOfferDetails(prevOffers =>
+            prevOffers.filter(offer => offer.id !== offerId)
         );
     }
 
@@ -293,104 +402,138 @@ export const ListOfOffers = () => {
                             </div>
                             <div className="vertical-line"></div>
                             <div className="filtered-listing-container">
-                                <h2>{selectedTitle}</h2>
-                                {filteredListings.length > 0 ? (
-                                    <>
-                                        {/* Section for listings with status 'P' */}
-                                        {filteredListings
-                                            .filter(listing => listing.status === 'P')
-                                            .map((listing, index) => {
-                                                const user = userData.find(user => user.id === listing.offeredByID);
-                                                return (
-                                                    <div key={index} className="filtered-listing-card-received">
-                                                        {user ? (
-                                                            <>
-                                                                <Avatar
-                                                                    src={user.avatar || "/api/placeholder/40/40"} 
-                                                                    alt={user.username || "User Avatar"} 
-                                                                    sx={{ width: 45, height: 45 }}
-                                                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }}
-                                                                />
-                                                                <div className="user-rating">
-                                                                    <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                                                        {user.username}
-                                                                    </Typography>
-                                                                    <Rating 
-                                                                        name="user-rating" 
-                                                                        value={parseFloat(user.average_rating)} 
-                                                                        precision={0.5} 
-                                                                        readOnly 
-                                                                    />
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            <p>User data not found.</p>
-                                                        )}
-                                                        <p>
-                                                            <strong>Price:</strong> <br />$
-                                                            {listing.price}
-                                                        </p>
-                                                        <p>
-                                                            <strong>Status:</strong> <br /> 
-                                                            Pending
-                                                        </p>
-                                                        <AcceptButton 
-                                                            className="accept-button-position" 
-                                                            onClick={() => handleAccept(listing.offer_id)} 
-                                                        />
-                                                        <RejectButton 
-                                                            className="reject-button-position" 
-                                                            onClick={() => handleReject(listing.offer_id)} 
-                                                        />
-                                                    </div>
-                                                );
-                                            })}
-                                        <h3>Accepted Offers</h3>
-                                        {filteredListings
-                                            .filter(listing => listing.status === 'A')
-                                            .map((listing, index) => {
-                                                const user = userData.find(user => user.id === listing.offeredByID);
-                                                return (
-                                                    <div key={index} className="filtered-listing-card-received">
-                                                        {user ? (
-                                                            <>
-                                                                <Avatar
-                                                                    src={user.avatar || "/api/placeholder/40/40"} 
-                                                                    alt={user.username || "User Avatar"} 
-                                                                    sx={{ width: 45, height: 45 }}
-                                                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} 
-                                                                />
-                                                                <div className="user-rating">
-                                                                    <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                                                        {user.username}
-                                                                    </Typography>
-                                                                    <Rating 
-                                                                        name="user-rating" 
-                                                                        value={parseFloat(user.average_rating)} 
-                                                                        precision={0.5} 
-                                                                        readOnly 
-                                                                    />
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            <p>User data not found.</p>
-                                                        )}
-                                                        <p>
-                                                            <strong>Price:</strong> <br />$ 
-                                                            {listing.price}
-                                                        </p>
-                                                        <p>
-                                                            <strong>Status:</strong> <br /> 
-                                                            Accepted
-                                                        </p>
-                                                    </div>
-                                                );
-                                            })}
-                                    </>
-                                ) : (
+                                <h2>{selectedTitle}</h2> 
+                                {offerDetails.length === 0 ? (
                                     <div>
                                         <h2 style={{ color: 'red' }}>Select a Listing!</h2>
                                     </div>
+                                ) : (
+                                    <>
+                                        {/* Render offers with status "P" */}
+                                        <h1 style={{ marginTop: '10px', marginBottom: '10px', fontSize: '20px' }}>Pending Offers</h1>
+                                        {offerDetails.filter(offer => offer.status === 'P').map((offer) => {
+                                            if (!offer || !offer.offeredByID) {
+                                                return <div key={offer.id || 'unknown'}>Invalid offer details.</div>; // Handle invalid offer
+                                            }
+                                            const user = userDetailsMap[offer.offeredByID];
+
+                                            return (
+                                                <div key={offer.id} className="filtered-listing-card-received">
+                                                    {/* If user data is available, render it */}
+                                                    {user ? (
+                                                        <>
+                                                            <Avatar
+                                                                src={user.avatar || "/api/placeholder/40/40"} 
+                                                                alt={user.username || "User Avatar"} 
+                                                                sx={{ width: 45, height: 45 }}
+                                                                onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }}
+                                                            />
+                                                            <div className="user-rating">
+                                                                <h1>{user.username}</h1>
+                                                                <Rating 
+                                                                    name="user-rating" 
+                                                                    value={parseFloat(user.average_rating)} 
+                                                                    precision={0.5} 
+                                                                    size="small"
+                                                                    readOnly 
+                                                                />
+                                                            </div>
+                                                        </>
+                                                        ) : (
+                                                            <p>Loading user details...</p> // Show loading state while fetching user details
+                                                        )}
+
+                                                        <div className="offer-details-description"> {/* Renamed class */}
+                                                            <div className="detail-item">
+                                                                <p className="detail-title">Offered Price:</p>
+                                                                <p>${offer.price} / {offer.timeUnit}</p>
+                                                            </div>
+                                                            <div className="detail-item">
+                                                                <p className="detail-title">Start:</p>
+                                                                <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                                <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            </div>
+                                                            <div className="detail-item">
+                                                                <p className="detail-title">End:</p>
+                                                                <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                                <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            </div>
+                                                            <div className="detail-item">
+                                                                <p className="detail-title">Total Price:</p>
+                                                                <p>${offer.price * offer.timeDelta}</p>
+                                                            </div>
+                                                        </div>
+                                                <AcceptButton 
+                                                    className="accept-button-position" 
+                                                    onClick={() => handleAccept(offer.id)} 
+                                                />
+                                                <RejectButton                              
+                                                    className="reject-button-position" 
+                                                    onClick={() => handleReject(offer.id)} 
+                                                />
+                                                </div>
+                                            );
+                                        })}
+
+                                        {/* Render offers with status "A" */}
+                                        <h1 style={{ marginTop: '50px', marginBottom: '10px', fontSize: '20px' }}>Accepted Offers</h1>
+                                        {offerDetails.filter(offer => offer.status === 'A').map((offer) => {
+                                            if (!offer || !offer.offeredByID) {
+                                                return <div key={offer.id || 'unknown'}>Invalid offer details.</div>; // Handle invalid offer
+                                            }
+
+                                            const user = userDetailsMap[offer.offeredByID];
+
+                                            return (
+                                                <div key={offer.id} className="filtered-listing-card-received">
+                                                    {/* If user data is available, render it */}
+                                                    {user ? (
+                                                        <>
+                                                            <Avatar
+                                                                src={user.avatar || "/api/placeholder/40/40"} 
+                                                                alt={user.username || "User Avatar"} 
+                                                                sx={{ width: 45, height: 45 }}
+                                                                onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }}
+                                                            />
+                                                            <div className="user-rating">
+                                                                <h1>{user.username}</h1>
+                                                                <Rating 
+                                                                    name="user-rating" 
+                                                                    value={parseFloat(user.average_rating)} 
+                                                                    precision={0.5} 
+                                                                    size="small"
+                                                                    readOnly 
+                                                                />
+                                                            </div>
+                                                        </>
+                                                        ) : (
+                                                            <p>Loading user details...</p> // Show loading state while fetching user details
+                                                        )}
+
+                                                        <div className="offer-details-description"> {/* Renamed class */}
+                                                            <div className="detail-item">
+                                                                <p className="detail-title">Offered Price:</p>
+                                                                <p>${offer.price} / {offer.timeUnit}</p>
+                                                            </div>
+                                                            <div className="detail-item">
+                                                                <p className="detail-title">Start:</p>
+                                                                <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                                <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            </div>
+                                                            <div className="detail-item">
+                                                                <p className="detail-title">End:</p>
+                                                                <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                                <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            </div>
+                                                            <div className="detail-item">
+                                                                <p className="detail-title">Total Price:</p>
+                                                                <p>${offer.price * offer.timeDelta}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            );
+                                        })}
+                                    </>
                                 )}
                             </div>
                         </>
@@ -436,46 +579,72 @@ export const ListOfOffers = () => {
                                 <h2>{selectedTitle}</h2>
                                 {filteredListings.length > 0 ? (
                                     <>
-                                        {/* Section for listings with status 'P' */}
-                                        {filteredListings
-                                            .filter(listing => listing.status === 'A')
-                                            .map((listing, index) => {
-                                                return (
-                                                    <div key={index} className="filtered-listing-card-made">
-                                                        <div style = {{marginRight: "20px"}}> 
-                                                            <strong>Price:</strong> <br />$
-                                                            {listing.price}
+                                        {/* Section for listings with status 'A' */}
+                                        <h1 style={{ marginTop: '10px', marginBottom: '10px', fontSize: '20px' }}>Offers Pending Payment</h1>
+                                        {offerDetails.filter(offer => offer.status === 'A').map((offer) => {
+                                            return (
+                                                <div key={offer.id} className="filtered-listing-card-received">
+
+                                                    <div className="offer-details-description"> {/* Renamed class */}
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Offered Price:</p>
+                                                            <p>${offer.price} / {offer.timeUnit}</p>
                                                         </div>
-                                                        <p>
-                                                            <strong>Status:</strong> <br /> 
-                                                            Pending Payment
-                                                        </p>
-                                                        <Paypal 
-                                                            price={listing.price}
-                                                            offerID={listing.offer_id}
-                                                            accessToken={token}
-                                                            onTransactionSuccess={() => handleTransactionSuccess(listing.offer_id)}
-                                                        />
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Start:</p>
+                                                            <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                            <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">End:</p>
+                                                            <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                            <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Total Price:</p>
+                                                            <p>${offer.price * offer.timeDelta}</p>
+                                                        </div>
                                                     </div>
-                                                );
-                                            })}
-                                        <h3>Rejected Offers</h3>
-                                        {filteredListings
-                                            .filter(listing => listing.status === 'R')
-                                            .map((listing, index) => {
-                                                return (
-                                                    <div key={index} className="filtered-listing-card-made">
-                                                        <p>
-                                                            <strong>Price:</strong> <br />$
-                                                            {listing.price}
-                                                        </p>
-                                                        <p>
-                                                            <strong>Status:</strong> <br /> 
-                                                            Rejected
-                                                        </p>
+                                                    <div className='paypal-button-position'>
+                                                    <Paypal 
+                                                        price={offer.price * offer.timeDelta}
+                                                        offerID={offer.id}
+                                                        accessToken={token}
+                                                        onTransactionSuccess={() => handleTransactionSuccess(offer.id)}
+                                                    />
                                                     </div>
-                                                );
-                                            })}
+                                                </div>
+                                            );
+                                        })}
+                                        {/* Render offers with status "R" */}
+                                        <h1 style={{ marginTop: '50px', marginBottom: '10px', fontSize: '20px' }}>Rejected Offers</h1>
+                                        {offerDetails.filter(offer => offer.status === 'R').map((offer) => {
+                                            return (
+                                                <div key={offer.id} className="filtered-listing-card-received">
+
+                                                <div className="offer-details-description"> {/* Renamed class */}
+                                                    <div className="detail-item">
+                                                        <p className="detail-title">Offered Price:</p>
+                                                        <p>${offer.price} / {offer.timeUnit}</p>
+                                                    </div>
+                                                    <div className="detail-item">
+                                                        <p className="detail-title">Start:</p>
+                                                        <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                        <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                    </div>
+                                                    <div className="detail-item">
+                                                        <p className="detail-title">End:</p>
+                                                        <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                        <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                    </div>
+                                                    <div className="detail-item">
+                                                        <p className="detail-title">Total Price:</p>
+                                                        <p>${offer.price * offer.timeDelta}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            );
+                                        })}
                                     </>
                                 ) : (
                                     <div>
@@ -498,4 +667,104 @@ export const ListOfOffers = () => {
     
     
 export default ListOfOffers;
-    
+
+
+     
+// {filteredListings.length > 0 ? (
+//     <>
+//         {/* Section for listings with status 'P' */}
+//         {filteredListings
+//             .filter(listing => listing.status === 'P')
+//             .map((listing, index) => {
+//                 const user = userData.find(user => user.id === listing.offeredByID);
+//                 return (
+//                     <div key={index} className="filtered-listing-card-received">
+//                         {user ? (
+//                             <>
+//                                 <Avatar
+//                                     src={user.avatar || "/api/placeholder/40/40"} 
+//                                     alt={user.username || "User Avatar"} 
+//                                     sx={{ width: 45, height: 45 }}
+//                                     onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }}
+//                                 />
+//                                 <div className="user-rating">
+//                                     <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+//                                         {user.username}
+//                                     </Typography>
+//                                     <Rating 
+//                                         name="user-rating" 
+//                                         value={parseFloat(user.average_rating)} 
+//                                         precision={0.5} 
+//                                         readOnly 
+//                                     />
+//                                 </div>
+//                             </>
+//                         ) : (
+//                             <p>User data not found.</p>
+//                         )}
+//                         <p>
+//                             <strong>Price:</strong> <br />$
+//                             {listing.price}
+//                         </p>
+//                         <p>
+//                             <strong>Status:</strong> <br /> 
+//                             Pending
+//                         </p>
+//                         <AcceptButton 
+//                             className="accept-button-position" 
+//                             onClick={() => handleAccept(listing.offer_id)} 
+//                         />
+//                         <RejectButton 
+//                             className="reject-button-position" 
+//                             onClick={() => handleReject(listing.offer_id)} 
+//                         />
+//                     </div>
+//                 );
+//             })}
+//         <h3>Accepted Offers</h3>
+//         {filteredListings
+//             .filter(listing => listing.status === 'A')
+//             .map((listing, index) => {
+//                 const user = userData.find(user => user.id === listing.offeredByID);
+//                 return (
+//                     <div key={index} className="filtered-listing-card-received">
+//                         {user ? (
+//                             <>
+//                                 <Avatar
+//                                     src={user.avatar || "/api/placeholder/40/40"} 
+//                                     alt={user.username || "User Avatar"} 
+//                                     sx={{ width: 45, height: 45 }}
+//                                     onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }} 
+//                                 />
+//                                 <div className="user-rating">
+//                                     <Typography variant="h1" sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+//                                         {user.username}
+//                                     </Typography>
+//                                     <Rating 
+//                                         name="user-rating" 
+//                                         value={parseFloat(user.average_rating)} 
+//                                         precision={0.5} 
+//                                         readOnly 
+//                                     />
+//                                 </div>
+//                             </>
+//                         ) : (
+//                             <p>User data not found.</p>
+//                         )}
+//                         <p>
+//                             <strong>Price:</strong> <br />$ 
+//                             {listing.price}
+//                         </p>
+//                         <p>
+//                             <strong>Status:</strong> <br /> 
+//                             Accepted
+//                         </p>
+//                     </div>
+//                 );
+//             })}
+//     </>
+// ) : (
+//     <div>
+//         <h2 style={{ color: 'red' }}>Select a Listing!</h2>
+//     </div>
+// )}
