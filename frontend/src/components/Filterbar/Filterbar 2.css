@@ -1,0 +1,102 @@
+.filterbar {
+    width: 250px; /* Adjust width of the filter bar */
+    background-color: white; 
+    padding: 20px;
+    box-sizing: border-box;
+    flex: 0 0 250px;
+    height: 100vh;
+  }
+  
+  .filterbar h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333; /* Dark grey text */
+    border-bottom: 2px solid #ccc;  
+    padding-bottom: 5px;  
+    padding-top: 20px;
+  }
+  
+  .filterbar .price-range {
+    display: flex;
+    flex-direction: column;  
+    align-items: flex-start; 
+    margin-top: 10px;
+    width: 100%;   
+  }
+  
+  .filterbar .price-range input[type="range"] {
+    flex-grow: 1; /* Let the range input grow to fill available space */
+    margin: 15px 0px; /* Adjusted margin for range input */
+  }
+  
+  .filterbar .price-range button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #63abbf; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .filterbar .price-range button:hover {
+    background-color: #1a426c; /* Darker blue on hover */
+  }
+  
+  .filterbar .checkbox-container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none;
+  }
+  
+  .filterbar .checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  .filterbar .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #e6e6e6;
+    border-radius: 4px;
+  }
+  
+  .filterbar .checkbox-container:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+  
+  .filterbar .checkbox-container input:checked ~ .checkmark {
+    background-color: #007bff;
+  }
+  
+  .filterbar .checkbox-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  .filterbar .checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  .filterbar .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 7px;
+    height: 15px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
+  
