@@ -624,9 +624,6 @@ const token = getCookie('access'); // Get the 'access' cookie value
           <Button variant="contained" color="success" className="view-button" onClick={() => handleViewUserRatings(listingData.user)}>
             View User Ratings
           </Button>
-          <Button variant="contained" color="info" className="view-button">
-            View renter offers
-          </Button>
         </div>
       </div>
     </div>
