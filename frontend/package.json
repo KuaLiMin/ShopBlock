@@ -4,7 +4,7 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.2",
     "@mui/material": "^6.1.1",
-    "@mui/x-date-pickers": "^7.20.0",
+    "@mui/x-date-pickers": "^7.21.0",
     "@paypal/react-paypal-js": "^8.7.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",

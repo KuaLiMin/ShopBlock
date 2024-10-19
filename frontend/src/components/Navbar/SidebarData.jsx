@@ -7,6 +7,9 @@ import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
 import CheckCircleSharpIcon from '@mui/icons-material/CheckCircleSharp';
 import HelpIcon from '@mui/icons-material/Help';
 import LogoutIcon from '@mui/icons-material/Logout';
+import Cookies from 'js-cookie';
+
+const userId = Cookies.get('user_id'); 
 
 export const SidebarData = [
     {
@@ -23,7 +26,7 @@ export const SidebarData = [
     },
     {
         title: 'Listings',
-        path: '/listing',
+        path: '/user/${userId}',
         icon: <TocRoundedIcon />,
         cName: 'nav-text'
     },

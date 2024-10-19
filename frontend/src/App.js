@@ -32,7 +32,7 @@ function App() {
           <Route path='/supplies' element={<ShopCat.SU banner={supplies_banner} />} />
           <Route path='/services' element={<ShopCat.SE banner={services_banner} />} />
           <Route path="/listing" element={<Listing />} />
-          <Route path="/user/:username/listing" element={<Listing />} />
+          <Route path="/user/:user_id" element={<Listing />} />
           <Route path="/listing/:slug" element={<ListingDetail />} />
           <Route path='/cart' element={<cart />} />
           <Route path='/login' element={<Login />} />
