@@ -3,6 +3,26 @@ import './Listing.css';  // Importing the CSS for styling
 
 const SideNav = () => {
   const [price, setPrice] = useState(0); 
+  const [selectedCategory, setSelectedCategory] = useState('All categories');
+  const [selectedRates, setSelectedRates] = useState({
+    Hourly: false,
+    Daily: false,
+    Weekly: false,
+  });
+
+  // const handleCategoryClick = (category) => {
+  //   setSelectedCategory(category);
+  //   onFilterChange({ category, rates: selectedRates, price }); // Apply filters on category change
+  // };
+
+  // const handleRateChange = (event) => {
+  //   const { name, checked } = event.target;
+  //   setSelectedRates((prevRates) => ({
+  //     ...prevRates,
+  //     [name]: checked,
+  //   }));
+  //   onFilterChange({ category: selectedCategory, rates: { ...selectedRates, [name]: checked }, price }); // Apply filters on rate change
+  // };
 
   const handleSliderChange = (event) => {
     setPrice(event.target.value);  // Update the state with the slider value
@@ -10,6 +30,7 @@ const SideNav = () => {
   const handleInputChange = (event) => {
     setPrice(event.target.value);  // Update the state with the input value
   };
+
 
 
   return (
@@ -38,8 +59,8 @@ const SideNav = () => {
           Weekly
           <span className="checkmark"></span>
         </label>
-      
       </div>
+
       <h3>Price Range</h3>
       <div className="price-range">
         <input 
@@ -54,25 +75,6 @@ const SideNav = () => {
         <button>Enter</button>
       </div>
 
-      {/* <div className="price-range">
-        <input 
-          type="range" 
-          min="0" 
-          max="5000" 
-          value={price} 
-          onChange={handleSliderChange}
-        />
-        <input 
-          type="number" 
-          value={price} 
-          onChange={handleInputChange}
-          min="0"
-          max="5000"
-          className="price-input"
-        />
-        <span className="price-value">Selected price: ${price}</span>
-        <button>Enter</button>
-      </div> */}
     </div>
   );
 };

@@ -107,11 +107,6 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
       }
     });
   
-    if (!formData.photos.length) {
-      isValid = false;
-      alert('At least one photo is required.');
-    }
-  
     if (!isValid) return;
 
     const formPayload = new FormData();
@@ -165,6 +160,8 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     .then((data) => {
       console.log('Success:', data);
       toggleModal();
+      window.location.reload();
+      // onUpdate();
     })
     .catch((error) => {
       console.error('Error:', error);
