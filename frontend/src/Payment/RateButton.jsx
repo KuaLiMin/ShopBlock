@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import {
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   TextField,
@@ -12,41 +11,93 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-
-const RateButton = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to manage dialog visibility
-  const [inputValue, setInputValue] = useState(''); // State to store text input value
-  const [starValue, setStarValue] = useState(0); // State to store star rating value
+const RateButton = (id) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [starValue, setStarValue] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarColor, setSnackbarColor] = useState('green'); // State for snackbar color
 
-  // Function to toggle the dialog visibility
+  const getCookie = (name) => {
+    const value = document.cookie; // Get all cookies
+    const parts = value.split(`; `).find((cookie) => cookie.startsWith(`${name}=`)); // Find the cookie by name
+    if (parts) {
+      return parts.split('=')[1]; // Return the value after the "="
+    }
+    return null; // Return null if the cookie isn't found
+    };
+    
+  const token = getCookie('access'); // Get the 'access' cookie value
+  
+
   const toggleDialog = () => {
-    setIsDialogOpen(true); // Always set to true to open the dialog
+    setIsDialogOpen(true);
   };
 
-  // Function to handle input value change
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
-
-  // Function to handle dialog close
   const handleDialogClose = () => {
     setIsDialogOpen(false);
-    setInputValue(''); // Clear the text input on close
-    setStarValue(0); // Reset the star rating
+    setInputValue('');
+    setStarValue(0);
   };
 
-  // Function to handle submission
-  const handleSubmit = () => {
-    // Here you can handle the submission logic, e.g., sending data to the server
-    setOpenSnackbar(true);
-    handleDialogClose();
+  const handleSubmit = async () => {
+    if (starValue === 0) {
+      setSnackbarMessage("Please input a star rating.");
+      setSnackbarColor('red'); // Set color to red for error
+      setOpenSnackbar(true);
+      return; // Prevent closing the dialog
+    }
+
+    if (inputValue.trim() === "") {
+      setSnackbarMessage("Please input a review!");
+      setSnackbarColor('red'); // Set color to red for error
+      setOpenSnackbar(true);
+      return; // Prevent closing the dialog
+    }
+
+    const postData = {
+      user_id: id.id, // Use the user ID passed as prop
+      rating: starValue,
+      description: inputValue,
+    };
+
+    try {
+      const response = await fetch('/reviews/', { // Replace with your API endpoint
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Include the Bearer token
+        },
+        body: JSON.stringify(postData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      setSnackbarMessage("Review submitted.");
+      setSnackbarColor('green');
+      setOpenSnackbar(true);
+      handleDialogClose();
+    } catch (error) {
+      setSnackbarMessage("An error occurred while submitting the review.");
+      setSnackbarColor('red');
+      setOpenSnackbar(true);
+      console.error("Error submitting review:", error);
+    }
   };
 
-  const handleCloseSnackbar = () => {
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
     setOpenSnackbar(false);
-};
+  };
 
   return (
     <div>
@@ -54,7 +105,7 @@ const RateButton = () => {
         variant="contained"
         sx={{
           width: '100px',
-          height: '40px',
+          height: '35px',
           borderRadius: 2,
           backgroundColor: '#2297c9',
           fontWeight: 'bold',
@@ -64,21 +115,20 @@ const RateButton = () => {
             backgroundColor: 'primary.dark',
           },
         }}
-        onClick={toggleDialog} // Open the dialog on button click
+        onClick={toggleDialog}
       >
         Rate
       </Button>
 
-      {/* Dialog for input */}
       <Dialog
         open={isDialogOpen}
         onClose={handleDialogClose}
         PaperProps={{
           sx: {
-            backgroundColor: '#2297c9', // Set background color
-            width: '500px', // Set width
-            height: '370px', // Set height
-            color: 'white', // Set text color to contrast background
+            backgroundColor: '#2297c9',
+            width: '500px',
+            height: '370px',
+            color: 'white',
           },
         }}
       >
@@ -87,10 +137,9 @@ const RateButton = () => {
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            height: '100%', // Ensure the DialogContent takes full height
+            height: '100%',
           }}
         >
-          {/* Star Rating */}
           <Box mb={2}>
             <Rating
               name="simple-controlled"
@@ -98,11 +147,10 @@ const RateButton = () => {
               onChange={(event, newValue) => {
                 setStarValue(newValue);
               }}
-              precision={0.5} // Allow half-star ratings
+              precision={0.5}
             />
           </Box>
 
-          {/* Text Input for Rating Description */}
           <TextField
             autoFocus
             margin="dense"
@@ -111,52 +159,55 @@ const RateButton = () => {
             value={inputValue}
             onChange={handleInputChange}
             fullWidth
-            multiline // Allow multiline input
-            rows={6} // Set a default number of rows
+            multiline
+            rows={6}
             sx={{
-              input: { color: 'white' },
+              '& .MuiInputBase-input': { color: 'white' },
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: 'white', // Border color
+                  borderColor: 'white',
                 },
                 '&:hover fieldset': {
-                  borderColor: 'white', // Border color on hover
+                  borderColor: 'white',
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: 'white', // Border color when focused
+                  borderColor: 'white',
                 },
               },
             }}
             InputLabelProps={{ style: { color: 'white' } }}
           />
-            {/* Cancel and Submit Buttons */}
-            <Box display="flex" justifyContent="flex-end">
-              <Button onClick={handleDialogClose} color="white" sx={{ marginRight: 1 }}>
-                Cancel
-              </Button>
-              <Button onClick={handleSubmit} color="white">
-                Submit
-              </Button>
-            </Box>
+          <Box display="flex" justifyContent="flex-end" mt={2}>
+            <Button onClick={handleDialogClose} sx={{ color: 'white', marginRight: 1 }}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit} sx={{ color: 'white' }}>
+              Submit
+            </Button>
+          </Box>
         </DialogContent>
       </Dialog>
+      
       <Snackbar
-          open={openSnackbar}
-          autoHideDuration={3000} // Duration before it automatically closes
-          onClose={handleCloseSnackbar}
-          message={
-              <Box display="flex" alignItems="center">
-                  <CheckCircleIcon sx={{ color: 'white', marginRight: 1 }} />
-                  Review submitted
-              </Box>
-          }
-          ContentProps={{
-              sx: {
-                  backgroundColor: 'green', // Set the Snackbar background color to green
-                  color: 'white', // Set the text color to white
-              },
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: snackbarColor, // Use the snackbar color state
+            color: 'white',
+            padding: '12px 20px',
+            borderRadius: '4px',
+            minWidth: '200px',
           }}
-      />
+        >
+          <CheckCircleIcon sx={{ marginRight: 1 }} />
+          {snackbarMessage}
+        </Box>
+      </Snackbar>
     </div>
   );
 };
