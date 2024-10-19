@@ -215,6 +215,15 @@ class ListingCreateSerializer(ListingSerializer):
 class ListingUpdateSerializer(ListingCreateSerializer):
     id = serializers.IntegerField(required=True)
 
+    # Override the photo field to be optional
+    photos = serializers.ListField(
+        child=serializers.ImageField(
+            max_length=1000000, allow_empty_file=False, use_url=False
+        ),
+        write_only=True,
+        required=False,
+    )
+    
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get("description", instance.description)
@@ -224,7 +233,7 @@ class ListingUpdateSerializer(ListingCreateSerializer):
         )
         instance.save()
 
-        # Update the photos
+        # Update the photos but not required
         photos_data = validated_data.get("photos", [])
         if photos_data:
             # Delete old photos
