@@ -34,7 +34,7 @@ const getCookie = (name) => {
 };
 
 
-const ListingCard = ({id, time, title, rate, image = [] }) => {
+const ListingCard = ({id, time, title, rate, image = [], onDelete}) => {
   const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
   const [isModalOpen, setModalOpen] = useState(false);
   
@@ -66,6 +66,7 @@ const ListingCard = ({id, time, title, rate, image = [] }) => {
 
       console.log(`Listing with ID ${id} deleted.`);
       // window.location.reload();
+      onDelete(id);
 
     } catch (error) {
       console.error('Error deleting listing:', error);
@@ -108,7 +109,7 @@ const ListingCard = ({id, time, title, rate, image = [] }) => {
       </div>
 
       {/* Render the EditListing modal */}
-      <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal} listingId={id}/>
+      <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal} listingId={id} />
     </div>
   );
 }
@@ -118,8 +119,7 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
   const [listingsData, setListingsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // const { username } = useParams();
+  const { user_id } = useParams();
   
 
   useEffect(() => {
@@ -143,6 +143,14 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
 
     const loggedInUserId = decodedToken.user_id; 
     console.log("Logged in user ID:", loggedInUserId);
+    console.log("param user ID:", user_id);
+
+  
+    if (parseInt(loggedInUserId) !== parseInt(user_id)) {
+      setError(new Error('Wrong user login'));
+      setLoading(false);
+      return;
+    }
     
     // Fetch the data from the backend with Authorization header
     fetch('/listing/', {
@@ -160,7 +168,7 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
       })
       .then(data => {
 
-        const userSpecificListings = data.filter(listing => listing.uploaded_by === loggedInUserId);
+        const userSpecificListings = data.filter(listing => listing.uploaded_by === parseInt(user_id));
 
         // Format the data for display
         const formattedData = userSpecificListings.map(listing => ({
@@ -184,6 +192,10 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
         setLoading(false);
       });
   }, [updateCount]);
+  const handleDelete = (id) => {
+    // Remove the deleted listing from the state
+    setListingsData(prevListings => prevListings.filter(listing => listing.id !== id));
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading data: {error.message}</p>;
@@ -191,7 +203,7 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
   return (
     <div className="listings-grid">
       {listingsData.map((listing, index) => (
-        <ListingCard key={index} {...listing} />
+        <ListingCard key={index} {...listing} onDelete={handleDelete}/>
       ))}
     </div>
   );

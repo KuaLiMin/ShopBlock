@@ -94,6 +94,16 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     setFileNames([...fileNames, ...newFileNames]);
   };
 
+  const handleRemovePhoto = (index) => {
+    const updatedPhotos = formData.photos.filter((_, i) => i !== index);  
+    const updatedFileNames = fileNames.filter((_, i) => i !== index);  
+    setFormData({
+      ...formData,
+      photos: updatedPhotos,
+    });
+    setFileNames(updatedFileNames);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -106,11 +116,6 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
         alert(`The field ${field} is required.`); // You can replace this with custom UI error messages
       }
     });
-  
-    if (!formData.photos.length) {
-      isValid = false;
-      alert('At least one photo is required.');
-    }
   
     if (!isValid) return;
 
@@ -165,6 +170,8 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     .then((data) => {
       console.log('Success:', data);
       toggleModal();
+      window.location.reload();
+      // onUpdate();
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -337,10 +344,22 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 📷 Add photo
                 <input type="file" multiple hidden onChange={handleFileChange} />
               </Button>
-              {fileNames.length > 0 && (
+              {/* {fileNames.length > 0 && (
                 <ul>
                   {fileNames.map((name, index) => (
                     <li key={index}>{name}</li>
+                  ))}
+                </ul>
+              )} */}
+              {fileNames.length > 0 && (
+                <ul>
+                  {fileNames.map((name, index) => (
+                    <li key={index}>
+                      {name} 
+                      <Button onClick={() => handleRemovePhoto(index)} color="secondary">
+                        Remove
+                      </Button>
+                    </li>
                   ))}
                 </ul>
               )}
