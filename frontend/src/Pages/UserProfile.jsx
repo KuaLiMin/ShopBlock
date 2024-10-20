@@ -10,6 +10,9 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
 const UserProfile = () => {
+  const { userId } = useParams();
+  console.log("USER ID HERE =======", userId); // Logs '1'
+
   const [profile, setProfile] = useState(null); // State to hold user profile data
   const [reviews, setReviews] = useState([]);
   const [isEditingBio, setIsEditingBio] = useState(false); // State for biography edit mode
@@ -24,6 +27,15 @@ const UserProfile = () => {
 
   const navigate = useNavigate();
 
+  // Utility function to get a specific cookie by name
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  const accessToken = getCookie('access');
+
   // Fetch the user profile data when the component mounts
   useEffect(() => {
     const fetchProfile = async () => {
@@ -34,6 +46,7 @@ const UserProfile = () => {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
+            params: { id: userId },
           });
           setProfile(profileResponse.data); // Store the profile data in state
           setBiographyContent(profileResponse.data.biography);
@@ -44,8 +57,6 @@ const UserProfile = () => {
 
         // Try catch for retrieving user reviews
         try {
-          const userId = profile?.id; // Assuming `profile.id` contains the user ID
-
           const reviewResponse = await axios.get('/reviews', {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -66,21 +77,12 @@ const UserProfile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [userId, accessToken]);
 
   // Handle Snackbar close
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
-
-  // Utility function to get a specific cookie by name
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
-
-  const accessToken = getCookie('access');
 
   // Handle edit/save button click for biography
   const handleEditBioClick = () => {
