@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import './Listing.css'; 
+import './Listing.css';
 
 import {
   Dialog,
@@ -26,29 +26,29 @@ const getCookie = (name) => {
 
 const CreateListing = ({ isModalOpen, toggleModal }) => {
   const { username } = useParams();
-  const token = getCookie('access'); 
+  const token = getCookie('access');
   let decodedToken;
   decodedToken = jwtDecode(token);
-  const loggedInUserId = decodedToken.user_id;  
+  const loggedInUserId = decodedToken.user_id;
 
   const [formData, setFormData] = useState({
     title: '',
-    price: '', 
-    unit: '', 
-    category: '', 
-    description: '', 
-    locationAddress: '', 
-    locationNotes: '', 
-    image_url: '', 
-    listing_type: '', 
-    longitude: '', 
-    latitude: '', 
+    price: '',
+    unit: '',
+    category: '',
+    description: '',
+    locationAddress: '',
+    locationNotes: '',
+    image_url: '',
+    listing_type: '',
+    longitude: '',
+    latitude: '',
     // rates: [],
     photos: [],
   });
 
   const [searchResults, setSearchResults] = useState([]);
-  const [mapUrl, setMapUrl] = useState(''); 
+  const [mapUrl, setMapUrl] = useState('');
   // const [fileName, setFileName] = useState(''); 
   const [fileNames, setFileNames] = useState([]);
 
@@ -61,14 +61,14 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     //   });
     //   setFileName(file.name); 
     // }
-    const files = Array.from(e.target.files); 
+    const files = Array.from(e.target.files);
     setFormData({
       ...formData,
-      photos: [...formData.photos, ...files], 
+      photos: [...formData.photos, ...files],
     });
 
     const newFileNames = files.map(file => file.name); // Extract file names from the selected files
-    setFileNames([...fileNames, ...newFileNames]); 
+    setFileNames([...fileNames, ...newFileNames]);
   };
 
   const handleChange = (e) => {
@@ -83,29 +83,29 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
     const requiredFields = ['title', 'price', 'unit', 'category', 'description', 'locationAddress', 'listing_type'];
     let isValid = true;
-  
+
     requiredFields.forEach((field) => {
       if (!formData[field]) {
         isValid = false;
         alert(`The field ${field} is required.`); // You can replace this with custom UI error messages
       }
     });
-  
+
     if (!formData.photos.length) {
       isValid = false;
       alert('At least one photo is required.');
     }
-  
+
     if (!isValid) return;
 
-    
+
     const formPayload = new FormData();
     formPayload.append('uploaded_by', loggedInUserId); // Append username from URL
     formPayload.append('title', formData.title);
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
     formPayload.append('listing_type', formData.listing_type);
-    
+
     // const photosArray = [formData.image_url]; 
     // photosArray.forEach((photo, index) => {
     //   formPayload.append(`photos[${index}]`, photo); // Append each photo in an array format
@@ -135,7 +135,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     fetch('/listing/', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`, 
+        'Authorization': `Bearer ${token}`,
       },
       body: formPayload,
     })
@@ -151,7 +151,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       })
       .catch((error) => {
         console.error('Error:', error); // Handle errors
-      });      
+      });
   };
 
   const handleRemovePhoto = (index) => {
@@ -168,7 +168,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     const input = formData.locationAddress.replace(/ /g, '+');
     fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${input}&returnGeom=Y&getAddrDetails=Y&pageNum=1`, {
       headers: {
-        'Authorization': 'YOUR_API_KEY', 
+        'Authorization': 'YOUR_API_KEY',
       },
     })
       .then((response) => response.json())
@@ -180,15 +180,15 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
   const handleLocationSelect = (location) => {
     const { ADDRESS, LATITUDE, LONGITUDE } = location;
-  
+
     // Check if the location has latitude and longitude
     if (!LATITUDE || !LONGITUDE) {
       console.error('Invalid location data:', location);
       return;
     }
-  
+
     const formattedAddress = ADDRESS.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '+');
-  
+
     // Set the selected location details in the formData state, including longitude and latitude
     setMapUrl(`https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${formattedAddress}&t=&z=14&ie=UTF8&iwloc=B&output=embed`);
     setFormData({
@@ -218,8 +218,8 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
         toggleModal();
       }
     }}
-    maxWidth="md"
-    fullWidth>
+      maxWidth="md"
+      fullWidth>
       <DialogTitle>Create Listing</DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit}>
@@ -298,20 +298,20 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
               </FormControl>
 
               {/* Listing Type */}
-            <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
-              Listing Type
-            </Typography>
-            <FormControl fullWidth>
-              <Select
-                name="listing_type"
-                value={formData.listing_type}
-                onChange={handleChange}
-                required
-              >
-                <MenuItem value="RE">Rental</MenuItem>
-                <MenuItem value="SE">Service</MenuItem>
-              </Select>
-            </FormControl>
+              <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
+                Listing Type
+              </Typography>
+              <FormControl fullWidth>
+                <Select
+                  name="listing_type"
+                  value={formData.listing_type}
+                  onChange={handleChange}
+                  required
+                >
+                  <MenuItem value="RE">Rental</MenuItem>
+                  <MenuItem value="SE">Service</MenuItem>
+                </Select>
+              </FormControl>
 
             </Grid>
 
@@ -333,9 +333,9 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
               {/* Add Photo - Move it under the description */}
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
-                Add Photo 
+                Add Photo
               </Typography>
-              <Button variant="contained" component="label" style={{ }}>
+              <Button variant="contained" component="label" style={{}}>
                 📷 Add photo
                 <input type="file" multiple hidden onChange={handleFileChange} />
               </Button>
@@ -350,7 +350,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                 <ul>
                   {fileNames.map((name, index) => (
                     <li key={index}>
-                      {name} 
+                      {name}
                       <Button onClick={() => handleRemovePhoto(index)} color="secondary">
                         Remove
                       </Button>
@@ -358,7 +358,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                   ))}
                 </ul>
               )}
-              
+
             </Grid>
           </Grid>
 
@@ -377,7 +377,14 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                   onChange={handleChange}
                   placeholder="Search for a location"
                 />
-                <Button onClick={searchLocation} style={{ marginTop: '8px' }}>
+                <Button onClick={searchLocation} sx={{
+                  marginTop: 2, // theme-aware spacing (equivalent to 16px if spacing factor is 8)
+                  backgroundColor: 'primary.main', // theme color
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'primary.dark', // theme-aware hover color
+                  }
+                }}>
                   Search
                 </Button>
 
@@ -390,7 +397,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                     onClick={() => handleLocationSelect(result)}
                   >
                     {result.ADDRESS}
-          
+
                   </Button>
                 ))}
 
@@ -426,14 +433,26 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
       {/* Actions */}
       <DialogActions>
-        <Button onClick={toggleModal} color="secondary">
+        <Button onClick={toggleModal} color="secondary" sx={{
+          backgroundColor: '#e0e0e0',  // Light gray background for cancel
+          color: '#333',                // Darker gray text
+          '&:hover': {
+            backgroundColor: '#d5d5d5', // Darker gray on hover
+          }
+        }}>
           Cancel
         </Button>
-        <Button onClick={handleSubmit} color="primary" type="submit">
+        <Button onClick={handleSubmit} color="primary" type="submit" sx={{
+          backgroundColor: 'primary.main', // theme color
+          color: 'white',
+          '&:hover': {
+            backgroundColor: 'primary.dark', // theme-aware hover color
+          }
+        }}>
           Submit
         </Button>
       </DialogActions>
-      
+
     </Dialog>
   );
 
