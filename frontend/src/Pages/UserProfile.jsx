@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CSS/UserProfile.css';
+import { useNavigate } from 'react-router-dom';
 import listings from '../components/Images/listings.png';
 import rentals from '../components/Images/rentals.png';
 import default_icon from '../components/Images/default_icon.png';
 import camera_icon from '../components/Images/camera.png';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null); // State to hold user profile data
+  const [reviews, setReviews] = useState([]);
   const [isEditingBio, setIsEditingBio] = useState(false); // State for biography edit mode
   const [isEditingAbout, setIsEditingAbout] = useState(false); // State for about me edit mode
   const [biographyContent, setBiographyContent] = useState('');
@@ -15,25 +19,59 @@ const UserProfile = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar visibility
+  const [snackbarMessage, setSnackbarMessage] = useState(''); // State for Snackbar message
+
+  const navigate = useNavigate();
+
   // Fetch the user profile data when the component mounts
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('/user', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setProfile(response.data); // Store the profile data in state
-        setBiographyContent(response.data.biography);
-        console.log(response.data)
+        // Try catch for retrieving basic user info
+        try {
+          const profileResponse = await axios.get('/user', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setProfile(profileResponse.data); // Store the profile data in state
+          setBiographyContent(profileResponse.data.biography);
+          console.log(profileResponse.data)
+        } catch (error) {
+          console.error('Error fetching profile data', error);
+        }
+
+        // Try catch for retrieving user reviews
+        try {
+          const userId = profile?.id; // Assuming `profile.id` contains the user ID
+
+          const reviewResponse = await axios.get('/reviews', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            params: {
+              user_id: userId, // Pass user_id as a query parameter
+            },
+          });
+          setReviews(reviewResponse.data); // Store the reviews data in state
+          console.log("Review data: ", reviewResponse.data);
+        } catch (reviewError) {
+          console.error('Error fetching review data:', reviewError);
+        }
+
       } catch (error) {
-        console.error('Error fetching profile data', error);
+        console.error('General error occurred:', error);
       }
     };
 
     fetchProfile();
   }, []);
+
+  // Handle Snackbar close
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   // Utility function to get a specific cookie by name
   function getCookie(name) {
@@ -53,6 +91,8 @@ const UserProfile = () => {
   const handleSaveBioClick = () => {
     setIsEditingBio(false); // Exit edit mode
     console.log('Biography saved:', biographyContent);
+    setSnackbarMessage('Biography saved!'); // Set the Snackbar message
+    setSnackbarOpen(true); // Show Snackbar
     // You can add your API call here to save the updated biography
   };
 
@@ -76,6 +116,8 @@ const UserProfile = () => {
     setIsEditingAbout(false); // Exit edit mode
     console.log('Username saved:', username);
     console.log('Phone number saved:', phoneNumber);
+    setSnackbarMessage('Username and Phone Number saved!'); // Set the Snackbar message
+    setSnackbarOpen(true); // Show Snackbar
     // You can add your API call here to save the updated username and phone number
   };
 
@@ -106,7 +148,11 @@ const UserProfile = () => {
   const uploadAvatar = async (file) => {
     const formData = new FormData();
     formData.append('avatar', file); // Ensure 'avatar' is the correct field name expected by your backend
-  
+
+    // Trigger the snackbar on successful upload
+    setSnackbarMessage('Avatar updated successfully!');
+    setSnackbarOpen(true); // Show Snackbar
+
     // try {
     //   const response = await axios.put('/user/', formData, {
     //     headers: {
@@ -115,12 +161,19 @@ const UserProfile = () => {
     //     },
     //   });
     //   console.log('Avatar updated successfully:', response.data);
-  
+
     //   // Optionally, update the profile state with the new avatar URL returned from the server
     //   setProfile({ ...profile, avatar: response.data.avatar });
+    // // Trigger the snackbar on successful upload
+    // setSnackbarMessage('Avatar updated successfully!');
+    // setSnackbarOpen(true); // Show Snackbar
     // } catch (error) {
     //   console.error('Error uploading avatar:', error);
     // }
+  };
+
+  const handleChangePasswordClick = () => {
+    navigate('/changepassword');
   };
 
   // If profile data is not yet loaded, show a loading or sign-in message
@@ -236,6 +289,12 @@ const UserProfile = () => {
             <p>
               <strong>Email:</strong> {profile.email}
             </p>
+            {/* Change Password Button */}
+            <div className="change-password-container">
+              <button className="change-password-btn" onClick={handleChangePasswordClick}>
+                Change Password
+              </button>
+            </div>
           </div>
         </div>
 
@@ -270,50 +329,53 @@ const UserProfile = () => {
           <div className="reviews">
             <h3>Reviews</h3>
 
-            {/* First Review */}
-            <div className="review">
-              <div className="review-header">
-                <img
-                  src="https://via.placeholder.com/50"
-                  alt="Reviewer"
-                  className="reviewer-image"
-                />
-                <div className="reviewer-details">
-                  <h4>Hazard23</h4>
-                  <p className="review-rating">
-                    ★★★★★ <span>Review from rentee 1mo</span>
-                  </p>
-                </div>
-              </div>
-              <p className="review-text">
-                Great renter to deal with! Punctual! Pleasant transaction! Very
-                nice and friendly renter to deal with, thanks for the product.
-              </p>
-            </div>
-
-            {/* Second Review */}
-            <div className="review">
-              <div className="review-header">
-                <img
-                  src="https://via.placeholder.com/50"
-                  alt="Reviewer"
-                  className="reviewer-image"
-                />
-                <div className="reviewer-details">
-                  <h4>AntoineGriezmannnn</h4>
-                  <p className="review-rating">
-                    ★★★★★ <span>Review from rentee 2mo</span>
-                  </p>
-                </div>
-              </div>
-              <p className="review-text">
-                Fantastic renter to work with! Punctual and friendly, making for a
-                very pleasant transaction. Thank you for the great product!
-              </p>
+            <div className="reviews-scrollable">
+              {reviews.length > 0 ? (
+                reviews.map((review, index) => (
+                  <div className="review" key={index}>
+                    <div className="review-header">
+                      <img
+                        src={review.reviewer.avatar || default_icon}
+                        alt="Reviewer"
+                        className="reviewer-image"
+                      />
+                      <div className="reviewer-details">
+                        <h4>{review.reviewer.username}</h4>
+                        <p className="review-rating">
+                          {"★".repeat(review.rating)}{" "}
+                          <span>
+                            Review from {new Date(review.created_at).toLocaleDateString()}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <p className="review-text">{review.description}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No reviews available.</p>
+              )}
             </div>
           </div>
+
         </div>
       </div>
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleCloseSnackbar}
+          severity="success"
+        >
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 };

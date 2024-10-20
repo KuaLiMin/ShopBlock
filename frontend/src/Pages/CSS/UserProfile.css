@@ -177,6 +177,27 @@ h1 {
   gap: 5px;
 }
 
+/* Change Password Button */
+.change-password-container {
+  display: flex;
+  justify-content: flex-start; /* Align to the right */
+  margin-top: 20px;
+}
+
+.change-password-btn {
+  background-color: #f44336; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.change-password-btn:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}
+
 /* Right Section - Biography and Reviews */
 .right-section {
   flex: 2;
@@ -217,12 +238,20 @@ h1 {
   box-sizing: border-box; /* Include padding and border in the element's width and height */
 }
 
+/* Reviews Section */
+
 .reviews {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
   position: relative;
   min-height: 400px;
+}
+
+.reviews-scrollable {
+  max-height: 400px; /* Set a fixed height for the scrollable container */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 10px; /* Add some padding for better UX */
 }
 
 .review {
@@ -243,14 +272,16 @@ h1 {
   margin-right: 15px;
 }
 
-.review-rating {
-  color: gold;
-}
-
 .review-text {
   margin-top: 10px;
   color: #555;
 }
+
+.review-rating {
+  color: gold;
+}
+
+/* Input fields */
 
 .input-field {
   display: flex;
