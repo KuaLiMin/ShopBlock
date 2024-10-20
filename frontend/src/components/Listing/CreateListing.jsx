@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useParams} from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import './Listing.css'; 
 
 import {
@@ -26,6 +27,10 @@ const getCookie = (name) => {
 const CreateListing = ({ isModalOpen, toggleModal }) => {
   const { username } = useParams();
   const token = getCookie('access'); 
+  let decodedToken;
+  decodedToken = jwtDecode(token);
+  const loggedInUserId = decodedToken.user_id;  
+
   const [formData, setFormData] = useState({
     title: '',
     price: '', 
@@ -95,7 +100,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
     
     const formPayload = new FormData();
-    formPayload.append('created_by', username); // Append username from URL
+    formPayload.append('uploaded_by', loggedInUserId); // Append username from URL
     formPayload.append('title', formData.title);
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
@@ -147,6 +152,16 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       .catch((error) => {
         console.error('Error:', error); // Handle errors
       });      
+  };
+
+  const handleRemovePhoto = (index) => {
+    const updatedPhotos = formData.photos.filter((_, i) => i !== index);  // Remove the photo at the specified index
+    const updatedFileNames = fileNames.filter((_, i) => i !== index);  // Remove the corresponding file name
+    setFormData({
+      ...formData,
+      photos: updatedPhotos,
+    });
+    setFileNames(updatedFileNames);
   };
 
   const searchLocation = () => {
@@ -324,18 +339,26 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                 📷 Add photo
                 <input type="file" multiple hidden onChange={handleFileChange} />
               </Button>
-              {fileNames.length > 0 && (
+              {/* {fileNames.length > 0 && (
                 <ul>
                   {fileNames.map((name, index) => (
                     <li key={index}>{name}</li> // Display each selected file name in a list
                   ))}
                 </ul>
-              )}
-              {/* {fileName && (
-                <Typography variant="body2" style={{ marginTop: '8px' }}>
-                  Selected file: {fileName}
-                </Typography>
               )} */}
+              {fileNames.length > 0 && (
+                <ul>
+                  {fileNames.map((name, index) => (
+                    <li key={index}>
+                      {name} 
+                      <Button onClick={() => handleRemovePhoto(index)} color="secondary">
+                        Remove
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              
             </Grid>
           </Grid>
 
