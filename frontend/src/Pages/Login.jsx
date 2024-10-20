@@ -151,7 +151,10 @@ export const Login = () => {
             <p>By continuing, I agree to the terms of use & privacy policy.</p>
           </div>
         </form>
-        <p className="loginsignup-login">Already have an account? <Link to='/signup' style={{ textDecoration: 'none' }}><span>Login here</span></Link></p>
+        {/* Add the login prompt here */}
+        <div style={{ marginTop: '16px', textAlign: 'center' }}>
+          <p className="loginsignup-login">Already have an account? <Link to='/signup' style={{ color: '#ff4141', textDecoration: 'none', fontWeight: 'bold' }}>Login here</Link></p>
+        </div>
       </div>
     </div>
   );

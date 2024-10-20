@@ -125,7 +125,7 @@ export const SignUp = () => {
               {passwordErrorMessage && !lock && <p style={{ color: 'red' }}>{passwordErrorMessage}</p>}
               {!lock && <Link to='/resetpassword' style={{ textDecoration: 'none' }}><p className="loginsignup-signup">Forget Password?</p></Link>}
               {lockMessage && <p style={{ color: 'red', fontWeight: 'bold', textAlign: 'center' }}>{lockMessage}
-              <Link to='/resetpassword' style={{ textDecoration: 'none' }}><span style={{ fontWeight: 'bold', textDecoration: 'underline', color: 'red' }}>reset your password</span></Link></p>}
+                <Link to='/resetpassword' style={{ textDecoration: 'none' }}><span style={{ fontWeight: 'bold', textDecoration: 'underline', color: 'red' }}>reset your password</span></Link></p>}
               {/* Show unlock time */}
               <br></br>
               {unlockTime && lock && (
@@ -137,6 +137,10 @@ export const SignUp = () => {
           <Button variant="contained" type="submit" disabled={loading} style={{ width: '100%', height: '60px' }}>
             {loading ? <CircularProgress size={24} color="inherit" /> : 'Log in'}
           </Button>
+          {/* Add the signup prompt here */}
+          <div style={{ marginTop: '16px', textAlign: 'center' }}>
+            <p className='loginsignup-login'>Don't have an account? <Link to='/login' style={{ color: '#007BFF', textDecoration: 'none', fontWeight: 'bold' }}>Create a ShopBlock account</Link></p>
+          </div>
         </form>
       </div>
     </div>
