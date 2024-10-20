@@ -89,7 +89,7 @@ class UserController(GenericAPIView):
 
         serializer = self.get_serializer(user)
         return Response(serializer.data)
-    
+
     # user updates their profile
     @extend_schema(
         request=UserUpdateSerializer,
@@ -99,11 +99,11 @@ class UserController(GenericAPIView):
     @permission_classes([IsAuthenticated])
     def put(self, request: Request):
         user = request.user
-        
+
         if not check_password(request.data.get("password"), user.password):
             return Response(
                 {"error": "Password does not match"},
-                status=status.HTTP_400_BAD_REQUEST, 
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         serializer = UserUpdateSerializer(user, data=request.data, partial=True)
@@ -344,6 +344,7 @@ class ListingController(GenericAPIView):
         listing.delete()
         return Response(status=status.HTTP_200_OK)
 
+
 class OfferController(GenericAPIView):
     """
     Offers endpoint, [GET, POST, PUT]
@@ -549,12 +550,34 @@ class ReviewsController(GenericAPIView):
         # user_listings = Listing.objects.filter(uploaded_by=self.request.user)
         return user_reviews
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="user_id",
+                type=int,
+                location=OpenApiParameter.QUERY,
+                description="Get reviews for a specific user by ID",
+                required=False,
+            ),
+        ],
+        responses={200: OfferSerializer(many=True)},
+    )
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        user_id = request.query_params.get("user_id")
+        if request.user.is_authenticated:
+            if user_id:
+                queryset = Review.objects.filter(user=user_id)
+            else:
+                queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        else:
+            if user_id:
+                queryset = Review.objects.filter(user=user_id)
+            serializer = self.get_serializer(queryset, many=True)
+            return JsonResponse(serializer.data, safe=False)
 
     @extend_schema(
         request=ReviewSerializer,
@@ -708,6 +731,7 @@ class DebugListingController(GenericAPIView):
         serializer = self.serializer_class(listings, many=True)
         return Response(serializer.data)
 
+
 class ResetPasswordController(APIView):
     """
     Reset password endpoint, [PUT]
@@ -716,10 +740,10 @@ class ResetPasswordController(APIView):
     """
 
     serializer_class = ResetPasswordSerializer
-    parser_classes = (JSONParser,MultiPartParser, FormParser)
+    parser_classes = (JSONParser, MultiPartParser, FormParser)
 
     def put(self, request):
-        #test against both email and phone number, if both match, then reset the password
+        # test against both email and phone number, if both match, then reset the password
         serializer = ResetPasswordSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data.get("email")
@@ -728,7 +752,7 @@ class ResetPasswordController(APIView):
             user = User.objects.get(email=email, phone_number=phone_number)
             user.password = make_password(new_password)
             user.save()
-            return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Password reset successfully"}, status=status.HTTP_200_OK
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
