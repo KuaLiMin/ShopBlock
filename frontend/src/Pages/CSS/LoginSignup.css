@@ -1,17 +1,23 @@
 .loginsignup {
     width: 100%;
-    height: 80vh;
+    min-height: 100vh;
     background: linear-gradient(#2297c9, white);
     padding-top: 100px;
+    padding-bottom: 100px; /* Add padding to prevent footer overlap */
 }
 
 .loginsignup-container {
     width: 580px;
-    /* height: 65vh; */
-    height: 700px;
+    height: 700px; /* Adjust height based on content */
+    min-height: auto;
     background: white;
     margin: auto;
     padding: 40px 60px;
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.loginsignup-container p {
+    word-wrap: break-word; /* Break long words to prevent overflow */
 }
 
 .loginsignup-container h1 {
@@ -37,7 +43,7 @@
 }
 
 .loginsignup-container button {
-    width: 580px;
+    width: 100%;
     height: 72px;
     color: white;
     background-color: black;
