@@ -17,6 +17,7 @@ const UserProfile = () => {
 
   const [profile, setProfile] = useState(null); // State to hold user profile data
   const [reviews, setReviews] = useState([]);
+  const [userListings, setUserListings] = useState([]);
   const [isEditingBio, setIsEditingBio] = useState(false); // State for biography edit mode
   const [isEditingAbout, setIsEditingAbout] = useState(false); // State for about me edit mode
   const [biographyContent, setBiographyContent] = useState('');
@@ -49,7 +50,7 @@ const UserProfile = () => {
           });
           setProfile(profileResponse.data); // Store the profile data in state
           setBiographyContent(profileResponse.data.biography);
-          console.log(profileResponse.data)
+          //console.log(profileResponse.data)
         } catch (error) {
           console.error('Error fetching profile data', error);
         }
@@ -65,9 +66,25 @@ const UserProfile = () => {
             },
           });
           setReviews(reviewResponse.data); // Store the reviews data in state
-          console.log(reviewResponse.data.length)
         } catch (reviewError) {
           console.error('Error fetching review data:', reviewError);
+        }
+
+        // Try catch for retrieving total number of listings
+        try {
+          const response = await axios.get('/listing/', {
+            headers: {
+              accept: 'application/json',
+              Authorization: `Bearer ${accessToken}`, // Include the access token
+            },
+          });
+          const listingsData = response.data;
+          // Filter listings by uploaded_by
+          const filteredListings = listingsData.filter(listing => listing.uploaded_by === parseInt(userId));
+          setUserListings(filteredListings.length);
+        } catch (error) {
+          console.error('Error fetching listings:', error);
+          // Handle the error (e.g., display a notification)
         }
 
       } catch (error) {
@@ -268,7 +285,7 @@ const UserProfile = () => {
             <div className="about-me-details">
               <div className="info-block">
                 <img src={listings} alt="Listings icon" />
-                <p>{profile.listings} Listings</p>
+                <p>{userListings} Listings</p>
               </div>
               <div className="info-block">
                 <img src={rentals} alt="Rentals icon" />
