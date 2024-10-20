@@ -24,11 +24,11 @@ export const ListOfOffers = () => {
         const value = document.cookie; // Get all cookies
         const parts = value.split(`; `).find((cookie) => cookie.startsWith(`${name}=`)); // Find the cookie by name
         if (parts) {
-          return parts.split('=')[1]; // Return the value after the "="
+            return parts.split('=')[1]; // Return the value after the "="
         }
         return null; // Return null if the cookie isn't found
-      };
-      
+    };
+
     const token = getCookie('access'); // Get the 'access' cookie value
 
 
@@ -43,22 +43,22 @@ export const ListOfOffers = () => {
         setClickedCardId(null);
         handleUniqueListingClick(null);
     }, [isListingReceived]); // This will run every time `isListingReceived` changes
-    
+
 
     // Handler for clicking a unique listing card
     const handleUniqueListingClick = (title) => {
-    setSelectedTitle(title); // Set the selected title
+        setSelectedTitle(title); // Set the selected title
     };
 
     // Filter all listings based on the selected title
     const filteredListings = selectedTitle
-    ? allListings.filter(listing => listing.title === selectedTitle)
-    : []; // Show nothing if no title is selected
+        ? allListings.filter(listing => listing.title === selectedTitle)
+        : []; // Show nothing if no title is selected
 
 
     // Check if there are no listings available
     const hasListings = allListings.length > 0;
-    
+
     // To get all listings relating to logged in user
     useEffect(() => {
         const fetchData = async () => {
@@ -123,11 +123,11 @@ export const ListOfOffers = () => {
                         'Authorization': `Bearer ${token}`, // Use your token here
                     },
                 });
-        
+
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-        
+
                 const offerDetails = await response.json();
 
                 const extractedDetails = offerDetails.map(offer => {
@@ -135,13 +135,13 @@ export const ListOfOffers = () => {
                         console.warn('Offer object is missing:', offer);
                         return null; // Skip if offer is invalid
                     }
-                
+
                     const offeredByID = offer.offered_by.id; // Safe to access now
                     if (!offeredByID) {
                         console.warn(`Offer with ID ${offer.id} is missing offered_by.id. Full offer object:`, offer);
                         return null; // Skip if offered_by.id is missing
                     }
-                
+
                     return {
                         id: offer.id,
                         offeredByID: offeredByID,
@@ -167,7 +167,7 @@ export const ListOfOffers = () => {
             const fetchData = async () => {
                 await fetchOfferDetailsPerListing(clickedCardId);
             };
-    
+
             fetchData();
         }
 
@@ -188,7 +188,7 @@ export const ListOfOffers = () => {
             }
 
             const userDetails = await response.json();
-            console.log("This is the user id i'm fetching",userId)
+            console.log("This is the user id i'm fetching", userId)
             return userDetails; // Return user details
         } catch (error) {
             console.error(`Error fetching user details for user ID ${userId}:`, error);
@@ -198,7 +198,7 @@ export const ListOfOffers = () => {
     useEffect(() => {
         const fetchAllUserDetails = async () => {
             const newUserDetailsMap = {};
-    
+
             for (let offer of offerDetails) {
                 // Only fetch user details if they haven't been fetched before
                 if (!newUserDetailsMap[offer.offeredByID]) {
@@ -208,16 +208,16 @@ export const ListOfOffers = () => {
                     }
                 }
             }
-            console.log("This is the user detail map",newUserDetailsMap)
+            console.log("This is the user detail map", newUserDetailsMap)
             setUserDetailsMap(newUserDetailsMap); // Set the map of user details
         };
-    
+
         if (offerDetails.length > 0) {
             fetchAllUserDetails(); // Fetch user details when offerDetails are available
         }
     }, [offerDetails]);
-    
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // This is to get the indivdiual listing details.
     const fetchListingsDetails = async (uniqueListings) => {
@@ -275,7 +275,7 @@ export const ListOfOffers = () => {
                 },
                 body: JSON.stringify({
                     offer_id: offerId,  // Use offerId here
-                    action: "reject",     
+                    action: "reject",
                 }),
             });
 
@@ -290,7 +290,7 @@ export const ListOfOffers = () => {
             setAllListings((prevListings) =>
                 prevListings.filter((listing) => listing.offer_id !== offerId) // Use offer_id here
             );
-            
+
             // Optionally, filter out the accepted offer from offerDetails if needed
             setOfferDetails(prevOffers =>
                 prevOffers.filter(offer => offer.id !== offerId)
@@ -302,7 +302,7 @@ export const ListOfOffers = () => {
         }
     };
 
-// Handle Accept Button
+    // Handle Accept Button
     const handleAccept = async (offerId) => {
         console.log(offerId);
         try {
@@ -333,15 +333,15 @@ export const ListOfOffers = () => {
 
             // Update the UI
             setAllListings((prevListings) =>
-                prevListings.map((listing) => 
+                prevListings.map((listing) =>
                     listing.offer_id === offerId ? { ...listing, status: 'A' } : listing // Use offer_id here
-            ));
-            
+                ));
+
             // Optionally, filter out the accepted offer from offerDetails if needed
             setOfferDetails(prevOffers =>
                 prevOffers.filter(offer => offer.id !== offerId)
             );
-                
+
 
         } catch (error) {
             console.error('Error accepting offer:', error.message);
@@ -354,16 +354,40 @@ export const ListOfOffers = () => {
         setAllListings((prevListings) =>
             prevListings.filter((listing) => listing.offer_id !== offerId)
         );
-        
+
         // Optionally, filter out the accepted offer from offerDetails if needed
         setOfferDetails(prevOffers =>
             prevOffers.filter(offer => offer.id !== offerId)
         );
     }
 
+    if (!token) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh', // Full viewport height for vertical centering
+                textAlign: 'center',
+                flexDirection: 'column'
+            }}>
+                <h1 style={{
+                    fontSize: '2.5rem', // Bigger font size for the main message
+                    marginBottom: '20px'
+                }}>
+                    Please sign in to view your offers
+                </h1>
+                <p style={{
+                    fontSize: '1.5rem', // Smaller font for secondary message
+                    color: 'gray'
+                }}>
+                    You need to be logged in to access this page.
+                </p>
+            </div>
+        );
+    }
 
-
-      return (
+    return (
         <div>
             <div className="ternary-operator-container">
                 <ListingsToggle isReceived={isListingReceived} onToggle={handleToggle} />
@@ -378,8 +402,8 @@ export const ListOfOffers = () => {
                                     // Find the corresponding listing details using the unique title
                                     const matchedListing = listingDetails.find(listing => listing.id === unique.id);
                                     return (
-                                        <div 
-                                            key={index} 
+                                        <div
+                                            key={index}
                                             className={`unique-listing-card ${clickedCardId === unique.id ? 'clicked' : ''}`}
                                             onClick={() => {
                                                 handleUniqueListingClick(unique.title);
@@ -390,7 +414,7 @@ export const ListOfOffers = () => {
                                             <div className="listing-details">
                                                 <strong className="listing-title">{unique.title}</strong>
                                                 <p className="listing-price">
-                                                    {matchedListing?.prices 
+                                                    {matchedListing?.prices
                                                         ? matchedListing.prices.map(priceObj => `$${priceObj.price}/${priceObj.timeUnit}`).join(', ')
                                                         : 'No price available'
                                                     }
@@ -402,7 +426,7 @@ export const ListOfOffers = () => {
                             </div>
                             <div className="vertical-line"></div>
                             <div className="filtered-listing-container">
-                                <h2>{selectedTitle}</h2> 
+                                <h2>{selectedTitle}</h2>
                                 {offerDetails.length === 0 ? (
                                     <div>
                                         <h2 style={{ color: 'red' }}>Select a Listing!</h2>
@@ -423,54 +447,54 @@ export const ListOfOffers = () => {
                                                     {user ? (
                                                         <>
                                                             <Avatar
-                                                                src={user.avatar || "/api/placeholder/40/40"} 
-                                                                alt={user.username || "User Avatar"} 
+                                                                src={user.avatar || "/api/placeholder/40/40"}
+                                                                alt={user.username || "User Avatar"}
                                                                 sx={{ width: 45, height: 45 }}
                                                                 onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }}
                                                             />
                                                             <div className="user-rating">
                                                                 <h1>{user.username}</h1>
-                                                                <Rating 
-                                                                    name="user-rating" 
-                                                                    value={parseFloat(user.average_rating)} 
-                                                                    precision={0.5} 
+                                                                <Rating
+                                                                    name="user-rating"
+                                                                    value={parseFloat(user.average_rating)}
+                                                                    precision={0.5}
                                                                     size="small"
-                                                                    readOnly 
+                                                                    readOnly
                                                                 />
                                                             </div>
                                                         </>
-                                                        ) : (
-                                                            <p>Loading user details...</p> // Show loading state while fetching user details
-                                                        )}
+                                                    ) : (
+                                                        <p>Loading user details...</p> // Show loading state while fetching user details
+                                                    )}
 
-                                                        <div className="offer-details-description"> {/* Renamed class */}
-                                                            <div className="detail-item">
-                                                                <p className="detail-title">Offered Price:</p>
-                                                                <p>${offer.price} / {offer.timeUnit}</p>
-                                                            </div>
-                                                            <div className="detail-item">
-                                                                <p className="detail-title">Start:</p>
-                                                                <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                                <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
-                                                            </div>
-                                                            <div className="detail-item">
-                                                                <p className="detail-title">End:</p>
-                                                                <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                                <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
-                                                            </div>
-                                                            <div className="detail-item">
-                                                                <p className="detail-title">Total Price:</p>
-                                                                <p>${offer.price * offer.timeDelta}</p>
-                                                            </div>
+                                                    <div className="offer-details-description"> {/* Renamed class */}
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Offered Price:</p>
+                                                            <p>${offer.price} / {offer.timeUnit}</p>
                                                         </div>
-                                                <AcceptButton 
-                                                    className="accept-button-position" 
-                                                    onClick={() => handleAccept(offer.id)} 
-                                                />
-                                                <RejectButton                              
-                                                    className="reject-button-position" 
-                                                    onClick={() => handleReject(offer.id)} 
-                                                />
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Start:</p>
+                                                            <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                            <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">End:</p>
+                                                            <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                            <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Total Price:</p>
+                                                            <p>${offer.price * offer.timeDelta}</p>
+                                                        </div>
+                                                    </div>
+                                                    <AcceptButton
+                                                        className="accept-button-position"
+                                                        onClick={() => handleAccept(offer.id)}
+                                                    />
+                                                    <RejectButton
+                                                        className="reject-button-position"
+                                                        onClick={() => handleReject(offer.id)}
+                                                    />
                                                 </div>
                                             );
                                         })}
@@ -490,47 +514,47 @@ export const ListOfOffers = () => {
                                                     {user ? (
                                                         <>
                                                             <Avatar
-                                                                src={user.avatar || "/api/placeholder/40/40"} 
-                                                                alt={user.username || "User Avatar"} 
+                                                                src={user.avatar || "/api/placeholder/40/40"}
+                                                                alt={user.username || "User Avatar"}
                                                                 sx={{ width: 45, height: 45 }}
                                                                 onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/40"; }}
                                                             />
                                                             <div className="user-rating">
                                                                 <h1>{user.username}</h1>
-                                                                <Rating 
-                                                                    name="user-rating" 
-                                                                    value={parseFloat(user.average_rating)} 
-                                                                    precision={0.5} 
+                                                                <Rating
+                                                                    name="user-rating"
+                                                                    value={parseFloat(user.average_rating)}
+                                                                    precision={0.5}
                                                                     size="small"
-                                                                    readOnly 
+                                                                    readOnly
                                                                 />
                                                             </div>
                                                         </>
-                                                        ) : (
-                                                            <p>Loading user details...</p> // Show loading state while fetching user details
-                                                        )}
+                                                    ) : (
+                                                        <p>Loading user details...</p> // Show loading state while fetching user details
+                                                    )}
 
-                                                        <div className="offer-details-description"> {/* Renamed class */}
-                                                            <div className="detail-item">
-                                                                <p className="detail-title">Offered Price:</p>
-                                                                <p>${offer.price} / {offer.timeUnit}</p>
-                                                            </div>
-                                                            <div className="detail-item">
-                                                                <p className="detail-title">Start:</p>
-                                                                <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                                <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
-                                                            </div>
-                                                            <div className="detail-item">
-                                                                <p className="detail-title">End:</p>
-                                                                <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                                <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
-                                                            </div>
-                                                            <div className="detail-item">
-                                                                <p className="detail-title">Total Price:</p>
-                                                                <p>${offer.price * offer.timeDelta}</p>
-                                                            </div>
+                                                    <div className="offer-details-description"> {/* Renamed class */}
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Offered Price:</p>
+                                                            <p>${offer.price} / {offer.timeUnit}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Start:</p>
+                                                            <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                            <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">End:</p>
+                                                            <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                            <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Total Price:</p>
+                                                            <p>${offer.price * offer.timeDelta}</p>
                                                         </div>
                                                     </div>
+                                                </div>
                                             );
                                         })}
                                     </>
@@ -543,7 +567,7 @@ export const ListOfOffers = () => {
                         </div>
                     )
                 ) : (
-///////////////////////////////////////////// MADE LISTING//////////////////////////////////////////
+                    ///////////////////////////////////////////// MADE LISTING//////////////////////////////////////////
                     hasListings ? ( // Now this runs only if isReceived is true
                         <>
                             <div className="unique-listing-container">
@@ -552,8 +576,8 @@ export const ListOfOffers = () => {
                                     // Find the corresponding listing details using the unique title
                                     const matchedListing = listingDetails.find(listing => listing.id === unique.id);
                                     return (
-                                        <div 
-                                            key={index} 
+                                        <div
+                                            key={index}
                                             className={`unique-listing-card ${clickedCardId === unique.id ? 'clicked' : ''}`}
                                             onClick={() => {
                                                 handleUniqueListingClick(unique.title);
@@ -564,7 +588,7 @@ export const ListOfOffers = () => {
                                             <div className="listing-details">
                                                 <strong className="listing-title">{unique.title}</strong>
                                                 <p className="listing-price">
-                                                    {matchedListing?.prices 
+                                                    {matchedListing?.prices
                                                         ? matchedListing.prices.map(priceObj => `$${priceObj.price}/${priceObj.timeUnit}`).join(', ')
                                                         : 'No price available'
                                                     }
@@ -606,12 +630,12 @@ export const ListOfOffers = () => {
                                                         </div>
                                                     </div>
                                                     <div className='paypal-button-position'>
-                                                    <Paypal 
-                                                        price={offer.price * offer.timeDelta}
-                                                        offerID={offer.id}
-                                                        accessToken={token}
-                                                        onTransactionSuccess={() => handleTransactionSuccess(offer.id)}
-                                                    />
+                                                        <Paypal
+                                                            price={offer.price * offer.timeDelta}
+                                                            offerID={offer.id}
+                                                            accessToken={token}
+                                                            onTransactionSuccess={() => handleTransactionSuccess(offer.id)}
+                                                        />
                                                     </div>
                                                 </div>
                                             );
@@ -622,27 +646,27 @@ export const ListOfOffers = () => {
                                             return (
                                                 <div key={offer.id} className="filtered-listing-card-received">
 
-                                                <div className="offer-details-description"> {/* Renamed class */}
-                                                    <div className="detail-item">
-                                                        <p className="detail-title">Offered Price:</p>
-                                                        <p>${offer.price} / {offer.timeUnit}</p>
-                                                    </div>
-                                                    <div className="detail-item">
-                                                        <p className="detail-title">Start:</p>
-                                                        <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                        <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
-                                                    </div>
-                                                    <div className="detail-item">
-                                                        <p className="detail-title">End:</p>
-                                                        <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                        <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
-                                                    </div>
-                                                    <div className="detail-item">
-                                                        <p className="detail-title">Total Price:</p>
-                                                        <p>${offer.price * offer.timeDelta}</p>
+                                                    <div className="offer-details-description"> {/* Renamed class */}
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Offered Price:</p>
+                                                            <p>${offer.price} / {offer.timeUnit}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Start:</p>
+                                                            <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                            <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">End:</p>
+                                                            <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
+                                                            <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        </div>
+                                                        <div className="detail-item">
+                                                            <p className="detail-title">Total Price:</p>
+                                                            <p>${offer.price * offer.timeDelta}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             );
                                         })}
                                     </>
@@ -663,13 +687,13 @@ export const ListOfOffers = () => {
         </div>
     );
 }
-    
-    
-    
+
+
+
 export default ListOfOffers;
 
 
-     
+
 // {filteredListings.length > 0 ? (
 //     <>
 //         {/* Section for listings with status 'P' */}

@@ -25,7 +25,6 @@ if (token) {
   try {
     decodedToken = jwtDecode(token);
     user_id = decodedToken.user_id; // Extract user_id from the decoded token
-    console.log(user_id);
   } catch (error) {
     console.error('Failed to decode token', error);
   }
