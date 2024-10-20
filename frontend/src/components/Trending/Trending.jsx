@@ -44,14 +44,20 @@ const TrendingGrid = ({ updateCount }) => {
       })
       .then((data) => {
         // mapping the data to match the card
-        const formattedData = data.map((listing) => ({
-          id: listing.id,
-          time: listing.created_at,
-          title: listing.title,
-          description: listing.description,
-          rate: `$${1}/Day`, // Adjust this if needed
-          image: listing.photos.length > 0 ? listing.photos[0].image_url : '',
-        }));
+        const formattedData = data.map((listing) => {
+          const rateObj = listing.rates.length > 0 ? listing.rates[0] : null; // Extract the rate object
+          const rate = rateObj ? `$${rateObj.rate}/${rateObj.time_unit}` : 'Rate unavailable'; // Format the rate
+
+          return {
+            id: listing.id,
+            time: listing.created_at,
+            title: listing.title,
+            description: listing.description,
+            rate: rate, // Use the extracted rate here
+            image: listing.photos.length > 0 ? listing.photos[0].image_url : '',
+          };
+        });
+        
         setListingsData(formattedData);
         setLoading(false);
         updateCount(formattedData.length); // Update the count here
