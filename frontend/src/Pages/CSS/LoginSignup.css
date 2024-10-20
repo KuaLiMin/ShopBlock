@@ -64,10 +64,16 @@
     display: flex;
     align-items: center;
     margin-top: 25px;
-    gap: 20px;
+    gap: 10px;
     color: #5c5c5c;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
+}
+
+.loginsignup-agree input {
+    margin: 0;
+    width: 18px;
+    height: 18px;
 }
 
 .error-container {
