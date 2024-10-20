@@ -1,73 +1,110 @@
 import React from 'react';
-import { Card, CardContent, Typography, Avatar, Box, Stack, Divider, Container } from '@mui/material';
-import StarIcon from '@mui/icons-material/Star';
+import PropTypes from 'prop-types';
+import Avatar from '@mui/material/Avatar';
+import Rating from '@mui/material/Rating';
 import RateButton from './RateButton';
+import './CardTemplate.css';
 
-const CardTemplate = ({ title, name, hourlyRate, timeStart, timeEnd, amount, completed }) => {
+const CardTemplate = ({ transaction, user, title }) => {
+  // Extracting relevant details from props
+  const { scheduledStart, scheduledEnd, amount, payment_id } = transaction;
+
+  // Formatting the scheduled start and end times
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString(undefined, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false, // 24-hour format
+    });
+  };
+
+  // Handling undefined scheduledStart and scheduledEnd safely
+  const startTime = scheduledStart ? formatDate(scheduledStart) : "N/A"; // Default if undefined
+  const endTime = scheduledEnd ? formatDate(scheduledEnd) : "N/A"; // Default if undefined
+
+  // Splitting date and time for separate display
+  const [startDate, startClock] = startTime.split(', ');
+  const [endDate, endClock] = endTime.split(', ');
+  // Get current time for comparison
+  const currentTime = new Date();
+  // Check if the current time is greater than the scheduled end time
+  const isRateButtonVisible = currentTime > new Date(scheduledEnd);
+
+
   return (
-    <Container 
-      maxWidth={false} 
-      sx={{ 
-        mx: 'auto', 
-        px: { xs: 2, sm: 3, md: '100px' }, 
-        maxWidth: '1200px'  // Set maxWidth to 1000px
-      }} 
-    >
-      <Card sx={{ width: '100%', boxShadow: 3, borderRadius: 2, mb: 3 }}>
-        <CardContent>
-          <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-            <Typography variant="h5" component="div" fontWeight="bold" fontSize="21px" gutterBottom>
-              {title}
-            </Typography>
-            {completed && (
-              <Box sx={{ paddingRight: 1 }}>
-                <RateButton />
-              </Box>
-            )}
-          </Box>
-          <Divider sx={{ mb: 2 }} />
-          <Stack spacing={2}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-                <Avatar src="/api/placeholder/40/40" alt={name} />
-                <Typography variant="subtitle1">{name}</Typography>
-                <Box sx={{ display: 'flex', color: 'gold' }}>
-                  {[...Array(5)].map((_, i) => (
-                    <StarIcon key={i} sx={{ fontSize: 16, color: 'gold' }} />
-                  ))}
-                </Box>
-              </Box>
-              <Typography variant="h6">${hourlyRate}/hr</Typography>
-              <Box textAlign="center">
-                <Typography variant="body2" color="text.secondary" fontSize="20px" fontWeight="bold">
-                  {timeStart.split(' ')[0]}
-                </Typography>
-                <Typography variant="body1">
-                  {timeStart.split(' ')[1]}
-                </Typography>
-              </Box>
-              <Box textAlign="center">
-                <Typography variant="body2" color="text.secondary" fontSize="20px" fontWeight="bold">
-                  {timeEnd.split(' ')[0]}
-                </Typography>
-                <Typography variant="body1">
-                  {timeEnd.split(' ')[1]}
-                </Typography>
-              </Box>
-              <Box textAlign="center" sx={{ mr: 10 }}>
-                <Typography variant="body2" color="text.secondary" fontSize="20px" fontWeight="bold">
-                  Total Paid
-                </Typography>
-                <Typography variant="body1" fontWeight="semi-bold">
-                  ${amount}
-                </Typography>
-              </Box>
-            </Stack>
-          </Stack>
-        </CardContent>
-      </Card>
-    </Container>
+    <div className="card-template">
+      <div>
+      <div className = 'all-details-above-card-template'>
+        <h3>{title}</h3>
+          {/* Conditionally render RateButton */}
+          {isRateButtonVisible && <RateButton id={user?.id}/>}
+        </div>
+      <hr style={{marginTop: '0px', width: '100%' }} />
+      <div className = "all-details-below-card-template">
+        {user && (
+          <div className = 'card-template-userprofile'>
+              {/* Displaying User Avatar */}
+              <Avatar
+                src={user?.avatar || "/api/placeholder/40/40"} 
+                alt={user?.username || "User Avatar"} 
+                sx={{ width: 45, height: 45 }}
+                onError={(e) => { 
+                  e.target.onerror = null; 
+                  e.target.src = "https://via.placeholder.com/40"; 
+                }}
+              />
+              <div className="card-template-user-rating">
+                {/* Displaying User Username */}
+                <h1>{user?.username || "Unknown User"}</h1>
+                
+                {/* Displaying User Average Rating */}
+                <Rating 
+                  name="user-rating" 
+                  value={parseFloat(user?.average_rating) || 0} 
+                  precision={0.5} 
+                  size="small"
+                  readOnly 
+                />
+              </div>
+          </div>
+        )}
+          <div className='card-template-details'>
+            <strong>Scheduled Start Date</strong>
+            <div>{startDate}</div>
+            <div>{startClock}</div>
+          </div>
+          <div className='card-template-details'>
+            <strong>Scheduled End Date</strong>
+            <div>{endDate}</div>
+            <div>{endClock}</div>
+          </div>
+          <div className='card-template-details'>
+          <strong>Total Paid</strong>
+          <p>${amount}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
+};
+
+// PropTypes for type-checking props
+CardTemplate.propTypes = {
+  transaction: PropTypes.shape({
+    scheduledStart: PropTypes.string.isRequired,
+    scheduledEnd: PropTypes.string.isRequired,
+    amount: PropTypes.number.isRequired,
+    payment_id: PropTypes.string.isRequired,
+  }).isRequired,
+  user: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+    avatar: PropTypes.string.isRequired,
+    average_rating: PropTypes.string.isRequired,
+  }),
 };
 
 export default CardTemplate;

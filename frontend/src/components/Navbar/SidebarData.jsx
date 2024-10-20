@@ -7,6 +7,29 @@ import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
 import CheckCircleSharpIcon from '@mui/icons-material/CheckCircleSharp';
 import HelpIcon from '@mui/icons-material/Help';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { jwtDecode } from 'jwt-decode';
+
+// Helper function to get the token from cookies
+const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+};
+
+const token = getCookie('access'); // Assuming the token is stored in a cookie named 'access'
+let decodedToken = null;
+let user_id = null;
+
+if (token) {
+  try {
+    decodedToken = jwtDecode(token);
+    user_id = decodedToken.user_id; // Extract user_id from the decoded token
+    console.log(user_id);
+  } catch (error) {
+    console.error('Failed to decode token', error);
+  }
+}
 
 export const SidebarData = [
     {
@@ -23,7 +46,7 @@ export const SidebarData = [
     },
     {
         title: 'Listings',
-        path: '/listing',
+        path: `/user/${user_id}`,
         icon: <TocRoundedIcon />,
         cName: 'nav-text'
     },
