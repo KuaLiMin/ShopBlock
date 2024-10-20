@@ -49,12 +49,12 @@ export const SidebarData = [
         icon: <TocRoundedIcon />,
         cName: 'nav-text'
     },
-    {
-        title: 'Rentals',
-        path: '/',
-        icon: <DataSaverOffIcon />,
-        cName: 'nav-text'
-    },
+    // {
+    //     title: 'Rentals',
+    //     path: '/',
+    //     icon: <DataSaverOffIcon />,
+    //     cName: 'nav-text'
+    // },
     {
         title: 'Purchases',
         path: '/history',
