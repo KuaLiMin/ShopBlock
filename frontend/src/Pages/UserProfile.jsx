@@ -170,8 +170,8 @@ const UserProfile = () => {
             <div className="user-details">
               <h2>@{profile.username}</h2>
               <p className="user-rating">
-                {profile.rating} <span className="stars">★★★★★</span>{" "}
-                <span className="review-count">({profile.reviews})</span>
+                5.0 <span className="stars">★★★★★</span>{" "}
+                <span className="review-count">(234)</span>
               </p>
             </div>
             {/* Hidden file input for avatar upload */}
