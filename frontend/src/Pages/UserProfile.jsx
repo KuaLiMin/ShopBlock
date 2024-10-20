@@ -87,6 +87,22 @@ const UserProfile = () => {
           // Handle the error (e.g., display a notification)
         }
 
+        // Try catch for retrieving total number of transactions
+        try {
+          const response = await axios.get('/transactions/', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`, // Include the access token
+            },
+          });
+      
+          console.log('Transactions data:', response.data);
+          // Handle the response data here, e.g., store it in state
+        } catch (error) {
+          console.error('Error fetching transactions:', error);
+          // Handle error here, e.g., display an error message
+        }
+
       } catch (error) {
         console.error('General error occurred:', error);
       }
@@ -289,7 +305,7 @@ const UserProfile = () => {
               </div>
               <div className="info-block">
                 <img src={rentals} alt="Rentals icon" />
-                <p>{profile.rentals} Rentals</p>
+                <p>0 Rentals</p>
               </div>
             </div>
             <p className="input-field">

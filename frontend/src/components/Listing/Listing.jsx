@@ -124,7 +124,6 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
 
   useEffect(() => {
     const token = getCookie('access'); 
-    // console.log(token)
 
     if (!token) {
       setError(new Error('User not logged in'));
@@ -142,9 +141,6 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
     }
 
     const loggedInUserId = decodedToken.user_id; 
-    console.log("Logged in user ID:", loggedInUserId);
-    console.log("param user ID:", user_id);
-
   
     if (parseInt(loggedInUserId) !== parseInt(user_id)) {
       setError(new Error('Wrong user login'));
