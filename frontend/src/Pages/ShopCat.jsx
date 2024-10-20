@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './CSS/shopcat.css';
 import { Link } from 'react-router-dom';
-import SideNav from '../components/Listing/SideNav';
+import FilterBar from '../components/Filterbar/Filterbar';
 
-const ShopCatCard = ({ updateCount, categoryCode }) => {
+const ShopCatCard = ({ updateCount, categoryCode, filters }) => {
   const [listingsData, setListingsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +21,6 @@ const ShopCatCard = ({ updateCount, categoryCode }) => {
         console.log("API Response:", data);
         const filteredData = data.filter((listing) => listing.category === categoryCode);
         const formattedData = filteredData.map((listing) => {
-          // **Extract rate and time_unit from the 'rates' array**
           const rateObj = listing.rates.length > 0 ? listing.rates[0] : null;
           const rate = rateObj ? `$${rateObj.rate}/${rateObj.time_unit}` : 'Rate unavailable';
           
@@ -30,22 +29,42 @@ const ShopCatCard = ({ updateCount, categoryCode }) => {
             time: listing.created_at,
             title: listing.title,
             description: listing.description,
-            // **Use extracted 'rate' here**
             rate: rate,
+            price: rateObj ? rateObj.rate : 0, // Capture the price for filtering
+            time_unit: rateObj ? rateObj.time_unit : '', // Capture the time unit for filtering
             image: listing.photos.length > 0 ? listing.photos[0].image_url : '',
           };
         });
 
-        setListingsData(formattedData);
+        // Apply filters based on the filter state passed from ShopCatCounter
+        const finalFilteredData = formattedData.filter((listing) => {
+          const matchesPrice = filters.price ? listing.price <= filters.price : true;
+          
+          // Convert the selected rates into the corresponding time unit format for backend filtering
+          const timeUnitMap = {
+            'hourly': 'H',
+            'daily': 'D',
+            'weekly': 'W',
+            'ot': 'OT' // Map One Time Payment to OT
+          };
+
+          const matchesRate = filters.rates.length
+            ? filters.rates.some((rate) => listing.time_unit.toUpperCase() === timeUnitMap[rate])
+            : true;
+
+          return matchesPrice && matchesRate;
+        });
+
+        setListingsData(finalFilteredData);
         setLoading(false);
-        updateCount(formattedData.length);
+        updateCount(finalFilteredData.length);
       })
       .catch((error) => {
         console.error('Error fetching listings:', error);
         setError(error);
         setLoading(false);
       });
-  }, [categoryCode, updateCount]);
+  }, [categoryCode, updateCount, filters]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading data</p>;
@@ -68,28 +87,36 @@ const ShopCatCard = ({ updateCount, categoryCode }) => {
   );
 };
 
+
 const ShopCatCounter = ({ banner, categoryCode, categoryLabel }) => {
   const [productCount, setProductCount] = useState(0);
+  const [filters, setFilters] = useState({ price: 0, rates: [] }); // Filter state
 
   const updateProductCount = (count) => {
     setProductCount(count);
   };
 
+  // Function to handle filter changes from FilterBar
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
   return (
     <div className="shop-cat-container">
       <div className="side-nav-wrapper">
-        <SideNav />
+        <FilterBar onFilterChange={handleFilterChange} />
       </div>
       <div className="shop-cat-content">
         <img className="shopcat-banner" src={banner} alt="" />
         <div className="category-indexSort">
           <p>Showing {productCount} products in {categoryLabel}.</p>
         </div>
-        <ShopCatCard updateCount={updateProductCount} categoryCode={categoryCode} />
+        <ShopCatCard updateCount={updateProductCount} categoryCode={categoryCode} filters={filters} />
       </div>
     </div>
   );
 };
+
 
 const ShopCat = {
   EL: (props) => <ShopCatCounter {...props} categoryCode="EL" categoryLabel="Electronics" />,
