@@ -11,7 +11,6 @@ import MuiAlert from '@mui/material/Alert';
 
 const UserProfile = () => {
   const { userId } = useParams();
-  console.log("USER ID HERE =======", userId); // Logs '1'
 
   const [profile, setProfile] = useState(null); // State to hold user profile data
   const [reviews, setReviews] = useState([]);
@@ -42,10 +41,8 @@ const UserProfile = () => {
       try {
         // Try catch for retrieving basic user info
         try {
+          console.log("USER ID HERE =======", userId);
           const profileResponse = await axios.get('/user', {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
             params: { id: userId },
           });
           setProfile(profileResponse.data); // Store the profile data in state
@@ -66,7 +63,6 @@ const UserProfile = () => {
             },
           });
           setReviews(reviewResponse.data); // Store the reviews data in state
-          console.log("Review data: ", reviewResponse.data);
         } catch (reviewError) {
           console.error('Error fetching review data:', reviewError);
         }
@@ -92,7 +88,6 @@ const UserProfile = () => {
   // Save the updated biography
   const handleSaveBioClick = () => {
     setIsEditingBio(false); // Exit edit mode
-    console.log('Biography saved:', biographyContent);
     setSnackbarMessage('Biography saved!'); // Set the Snackbar message
     setSnackbarOpen(true); // Show Snackbar
     // You can add your API call here to save the updated biography
@@ -116,8 +111,6 @@ const UserProfile = () => {
   // Save the updated username and phone number
   const handleSaveAboutClick = () => {
     setIsEditingAbout(false); // Exit edit mode
-    console.log('Username saved:', username);
-    console.log('Phone number saved:', phoneNumber);
     setSnackbarMessage('Username and Phone Number saved!'); // Set the Snackbar message
     setSnackbarOpen(true); // Show Snackbar
     // You can add your API call here to save the updated username and phone number
