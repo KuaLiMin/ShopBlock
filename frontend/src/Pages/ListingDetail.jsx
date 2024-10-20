@@ -160,7 +160,7 @@ const token = getCookie('access'); // Get the 'access' cookie value
 
   const handleViewUserRatings = (username) => {
     // Navigate to the user's profile page with the username as a URL parameter
-    navigate(`/profile/${encodeURIComponent(username)}`);
+    navigate(`/userprofile/${encodeURIComponent(username)}`);
   };
 
   const handleMakeOffer = async () => {

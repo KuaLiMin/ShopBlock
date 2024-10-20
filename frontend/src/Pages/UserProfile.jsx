@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CSS/UserProfile.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import listings from '../components/Images/listings.png';
 import rentals from '../components/Images/rentals.png';
 import default_icon from '../components/Images/default_icon.png';
