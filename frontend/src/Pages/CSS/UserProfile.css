@@ -46,11 +46,53 @@ h1 {
 }
 
 .user-image {
+  width: 100px; /* Fixed size */
+  height: 100px; /* Fixed size */
+  object-fit: cover;
   border-radius: 50%;
-  width: 100px;
-  /* Increased the size */
-  height: 100px;
-  margin-right: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.avatar-container {
+  position: relative;
+  width: 100px; /* Fixed size */
+  height: 100px; /* Fixed size */
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.change-avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px; /* Fixed size */
+  height: 100px; /* Fixed size */
+  background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.camera-icon {
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+}
+
+.avatar-container:hover .change-avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-container:hover .user-image {
+  opacity: 0.5;
+}
+
+.user-details {
+  margin-left: 30px; /* Add more space between the avatar and the user details */
+  flex-grow: 1; /* Ensure the user details take up the remaining space */
 }
 
 .user-details h2 {
@@ -74,6 +116,7 @@ h1 {
 .review-count {
   color: #888;
 }
+
 
 /* About Me Section */
 .about-me {
@@ -102,6 +145,24 @@ h1 {
 
 .edit-btn:hover {
   background-color: #007c8a;
+}
+
+.save-btn {
+  background-color: #009eb6;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: -10px;
+}
+
+.save-btn {
+  background-color: #28a745;
+}
+
+.save-btn:hover {
+  background-color: #218838;
 }
 
 .about-me-details {
@@ -133,20 +194,35 @@ h1 {
   min-height: 150px;
 }
 
-.reviews {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  position: relative;
-  min-height: 400px;
-}
-
 .bio-text {
   background-color: #f9f9f9;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ddd;
   min-height: 105px;
+  height: 105px;
+  width: 100%; /* Set the width to 100% */
+  box-sizing: border-box; /* Include padding and border in the element's width and height */
+}
+
+.bio-text-editable {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  min-height: 105px;
+  height: 105px;
+  width: 100%; /* Ensure the textarea takes the same width */
+  resize: none; /* Disable resizing */
+  box-sizing: border-box; /* Include padding and border in the element's width and height */
+}
+
+.reviews {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  min-height: 400px;
 }
 
 .review {
@@ -174,4 +250,18 @@ h1 {
 .review-text {
   margin-top: 10px;
   color: #555;
+}
+
+.input-field {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between the label and the input */
+}
+
+.input-field input {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }

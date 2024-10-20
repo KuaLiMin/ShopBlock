@@ -101,12 +101,13 @@ export const ChangePassword = () => {
     // Add axios PUT request here
     try {
       const response = await axios.put('/user/', {
-        email: profile.email,
-        username: profile.username,
         password: oldPassword,
-        phone_number: profile.phone, 
-        biography: profile.biography,
         new_password: newPassword
+      }, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,    // Add Bearer token here
+          'Content-Type': 'application/json',    // If you're sending JSON data
+        },
       });
 
       console.log(response.data); // Handle the response
@@ -120,6 +121,16 @@ export const ChangePassword = () => {
       setErrorMessage('An error occurred while resetting the password.');
       setLoading(false);
     }
+
+    // Create a FormData object
+    // const formData = new FormData();
+    // formData.append('email', profile.email);
+    // formData.append('username', profile.username);
+    // formData.append('password', oldPassword); // Current password
+    // formData.append('phone_number', profile.phone_number);
+    // formData.append('avatar', ""); // Empty string or file object if needed
+    // formData.append('biography', profile.biography);
+    // formData.append('new_password', newPassword); // New password
   };
 
 

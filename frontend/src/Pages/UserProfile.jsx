@@ -3,20 +3,17 @@ import axios from 'axios';
 import './CSS/UserProfile.css';
 import listings from '../components/Images/listings.png';
 import rentals from '../components/Images/rentals.png';
+import default_icon from '../components/Images/default_icon.png';
+import camera_icon from '../components/Images/camera.png';
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null); // State to hold user profile data
-
-  // Utility function to get a specific cookie by name
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
-
-  // Example usage
-  const accessToken = getCookie('access');
-  console.log('Access Token:', accessToken);
+  const [isEditingBio, setIsEditingBio] = useState(false); // State for biography edit mode
+  const [isEditingAbout, setIsEditingAbout] = useState(false); // State for about me edit mode
+  const [biographyContent, setBiographyContent] = useState('');
+  const [username, setUsername] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   // Fetch the user profile data when the component mounts
   useEffect(() => {
@@ -28,6 +25,7 @@ const UserProfile = () => {
           },
         });
         setProfile(response.data); // Store the profile data in state
+        setBiographyContent(response.data.biography);
         console.log(response.data)
       } catch (error) {
         console.error('Error fetching profile data', error);
@@ -36,6 +34,94 @@ const UserProfile = () => {
 
     fetchProfile();
   }, []);
+
+  // Utility function to get a specific cookie by name
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  const accessToken = getCookie('access');
+
+  // Handle edit/save button click for biography
+  const handleEditBioClick = () => {
+    setIsEditingBio(!isEditingBio); // Toggle between edit mode and view mode for bio
+  };
+
+  // Save the updated biography
+  const handleSaveBioClick = () => {
+    setIsEditingBio(false); // Exit edit mode
+    console.log('Biography saved:', biographyContent);
+    // You can add your API call here to save the updated biography
+  };
+
+
+  // Handle biography text change
+  const handleBiographyChange = (e) => {
+    setBiographyContent(e.target.value); // Update the biography content
+  };
+
+  // Handle username and phone number changes
+  const handleUsernameChange = (e) => setUsername(e.target.value);
+  const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value);
+
+  // Handle edit/save button click for about me
+  const handleEditAboutClick = () => {
+    setIsEditingAbout(!isEditingAbout); // Toggle between edit mode and view mode for about mes
+  };
+
+  // Save the updated username and phone number
+  const handleSaveAboutClick = () => {
+    setIsEditingAbout(false); // Exit edit mode
+    console.log('Username saved:', username);
+    console.log('Phone number saved:', phoneNumber);
+    // You can add your API call here to save the updated username and phone number
+  };
+
+  const handleAvatarClick = () => {
+    // Trigger the hidden file input when the avatar is clicked
+    document.getElementById('avatarInput').click();
+  };
+
+  const handleFileChange = (e) => {
+    // Get the selected file from input
+    const file = e.target.files[0];
+    if (file) {
+      // Set the file to the state or upload it directly
+      setSelectedFile(file);
+
+      // Optionally, you can upload the file to the server here
+      // For demonstration, let's update the avatar preview
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProfile({ ...profile, avatar: event.target.result });
+      };
+      reader.readAsDataURL(file);
+      // Now upload the file to the server
+      uploadAvatar(file); // Call the upload function
+    }
+  };
+
+  const uploadAvatar = async (file) => {
+    const formData = new FormData();
+    formData.append('avatar', file); // Ensure 'avatar' is the correct field name expected by your backend
+  
+    // try {
+    //   const response = await axios.put('/user/', formData, {
+    //     headers: {
+    //       'Authorization': `Bearer ${accessToken}`, // Pass the access token if required
+    //       'Content-Type': 'multipart/form-data', // Important for file uploads
+    //     },
+    //   });
+    //   console.log('Avatar updated successfully:', response.data);
+  
+    //   // Optionally, update the profile state with the new avatar URL returned from the server
+    //   setProfile({ ...profile, avatar: response.data.avatar });
+    // } catch (error) {
+    //   console.error('Error uploading avatar:', error);
+    // }
+  };
 
   // If profile data is not yet loaded, show a loading or sign-in message
   if (!profile) {
@@ -75,21 +161,42 @@ const UserProfile = () => {
         <div className="left-section">
           {/* User Info and Image */}
           <div className="user-info">
-            <img src={profile.avatar} alt="User" className="user-image" />
+            <div className="avatar-container" onClick={handleAvatarClick}>
+              <img src={profile.avatar || default_icon} alt="User" className="user-image" />
+              <div className="change-avatar-overlay">
+                <img src={camera_icon} alt="Change avatar" className="camera-icon" />
+              </div>
+            </div>
             <div className="user-details">
               <h2>@{profile.username}</h2>
               <p className="user-rating">
-                5.0 <span className="stars">★★★★★</span>{" "}
-                <span className="review-count">(234)</span>
+                {profile.rating} <span className="stars">★★★★★</span>{" "}
+                <span className="review-count">({profile.reviews})</span>
               </p>
             </div>
+            {/* Hidden file input for avatar upload */}
+            <input
+              type="file"
+              id="avatarInput"
+              style={{ display: 'none' }}
+              accept="image/*"
+              onChange={handleFileChange}
+            />
           </div>
 
           {/* About Me */}
           <div className="about-me">
             <div className="section-header">
               <h3>About me</h3>
-              <button className="edit-btn">Edit</button> {/* Add edit button */}
+              {isEditingAbout ? (
+                <button className="save-btn" onClick={handleSaveAboutClick}>
+                  Save
+                </button>
+              ) : (
+                <button className="edit-btn" onClick={handleEditAboutClick}>
+                  Edit
+                </button>
+              )}
             </div>
             <div className="about-me-details">
               <div className="info-block">
@@ -101,12 +208,31 @@ const UserProfile = () => {
                 <p>{profile.rentals} Rentals</p>
               </div>
             </div>
-            <p>
-              <strong>Username:</strong> {profile.username}
+            <p className="input-field">
+              <strong>Username:</strong>{" "}
+              {isEditingAbout ? (
+                <input
+                  type="text"
+                  value={username}
+                  onChange={handleUsernameChange}
+                />
+              ) : (
+                profile.username
+              )}
             </p>
-            <p>
-              <strong>Mobile:</strong> +65 {profile.phone_number}
+            <p className="input-field">
+              <strong>Mobile:</strong>{" "}
+              {isEditingAbout ? (
+                <input
+                  type="text"
+                  value={phoneNumber}
+                  onChange={handlePhoneNumberChange}
+                />
+              ) : (
+                `+65 ${profile.phone_number}`
+              )}
             </p>
+
             <p>
               <strong>Email:</strong> {profile.email}
             </p>
@@ -119,16 +245,25 @@ const UserProfile = () => {
           <div className="biography">
             <div className="section-header">
               <h3>Biography</h3>
-              <button className="edit-btn">Edit</button> {/* Add edit button */}
+              {isEditingBio ? (
+                <button className="save-btn" onClick={handleSaveBioClick}>
+                  Save
+                </button>
+              ) : (
+                <button className="edit-btn" onClick={handleEditBioClick}>
+                  Edit
+                </button>
+              )}
             </div>
-            <p className="bio-text">
-              Hey there! I'm Ronaldo, a marketing professional by day and a sports
-              enthusiast by night. Originally from Brazil and now calling
-              Singapore home, I've embraced the blend of cultures and the vibrant
-              lifestyle this city offers. My weekends are often filled with
-              football matches, hiking, and capturing the beauty of Singapore with
-              my DSLR camera.
-            </p>
+            {isEditingBio ? (
+              <textarea
+                className="bio-text-editable"
+                value={biographyContent}
+                onChange={handleBiographyChange}
+              />
+            ) : (
+              <p className="bio-text">{profile.biography}</p>
+            )}
           </div>
 
           {/* Reviews */}
