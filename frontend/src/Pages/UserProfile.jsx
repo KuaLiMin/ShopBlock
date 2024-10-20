@@ -8,6 +8,9 @@ import default_icon from '../components/Images/default_icon.png';
 import camera_icon from '../components/Images/camera.png';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import StarIcon from '@mui/icons-material/Star';
+import StarHalfIcon from '@mui/icons-material/StarHalf'; // Import a half star icon
+import StarOutlineIcon from '@mui/icons-material/StarOutline'; // For empty stars
 
 const UserProfile = () => {
   const { userId } = useParams();
@@ -41,7 +44,6 @@ const UserProfile = () => {
       try {
         // Try catch for retrieving basic user info
         try {
-          console.log("USER ID HERE =======", userId);
           const profileResponse = await axios.get('/user', {
             params: { id: userId },
           });
@@ -63,6 +65,7 @@ const UserProfile = () => {
             },
           });
           setReviews(reviewResponse.data); // Store the reviews data in state
+          console.log(reviewResponse.data.length)
         } catch (reviewError) {
           console.error('Error fetching review data:', reviewError);
         }
@@ -218,8 +221,24 @@ const UserProfile = () => {
             <div className="user-details">
               <h2>@{profile.username}</h2>
               <p className="user-rating">
-                5.0 <span className="stars">★★★★★</span>{" "}
-                <span className="review-count">(234)</span>
+                {profile.average_rating.toFixed(1)}{" "}
+                <span className="stars">
+                  {Array.from({ length: 5 }, (_, index) => {
+                    const ratingValue = profile.average_rating;
+
+                    if (index < Math.floor(ratingValue)) {
+                      // Full star
+                      return <StarIcon key={index} style={{ color: 'gold' }} />;
+                    } else if (index < ratingValue && index + 1 > ratingValue) {
+                      // Half star
+                      return <StarHalfIcon key={index} style={{ color: 'gold' }} />;
+                    } else {
+                      // Empty star
+                      return <StarOutlineIcon key={index} style={{ color: 'lightgrey' }} />;
+                    }
+                  })}
+                </span>{" "}
+                <span className="review-count">({reviews.length})</span>
               </p>
             </div>
             {/* Hidden file input for avatar upload */}
