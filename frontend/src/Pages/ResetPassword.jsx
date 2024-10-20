@@ -59,7 +59,6 @@ export const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show the loading spinner when login is in progress
 
     if (!email || !phone || !newPassword) {
       setErrorMessage('All fields are required.');
@@ -85,6 +84,7 @@ export const ResetPassword = () => {
     setErrorMessage('');
     // Add axios PUT request here
     try {
+      setLoading(true); // Show the loading spinner when login is in progress
       const response = await axios.put('/reset-password/', {
         email: email,
         phone_number: phone,  // Assuming phone should be sent as a string

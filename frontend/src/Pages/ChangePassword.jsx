@@ -73,7 +73,6 @@ export const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show the loading spinner when login is in progress
 
     if (!oldPassword || !newPassword || !confirmPassword) {
       setErrorMessage('All fields are required.');
@@ -100,6 +99,7 @@ export const ChangePassword = () => {
     setErrorMessage('');
     // Add axios PUT request here
     try {
+      setLoading(true); // Show the loading spinner when login is in progress
       const response = await axios.put('/user/', {
         password: oldPassword,
         new_password: newPassword

@@ -39,7 +39,6 @@ export const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show the loading spinner when login is in progress
 
     const url = '/api/login/';
     const data = {
@@ -57,12 +56,14 @@ export const SignUp = () => {
       setErrorMessage('All fields are required.');
       return;
     }
+    console.log("over here ======")
     // if (email !== "o") {
     //   setUsernameErrorMessage('Username not found!');
     //   return;
     // } else setUsernameErrorMessage('');
 
     try {
+      setLoading(true); // Show the loading spinner when login is in progress
       const response = await axios.post(url, data, { headers });
 
       // Check if the response status is OK (2xx)
