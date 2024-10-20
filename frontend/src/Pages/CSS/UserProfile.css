@@ -1,152 +1,177 @@
 /* General Profile Container */
 .profile-container {
-    width: 100vw;
-    height: 70vh;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    /* justify-content: center;
-    align-items: center; */
-  }
-  
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    /* padding-left: 40px; */
-  }
-  
-  .short-description {
-    font-size: 1.2rem;
-    color: #555;
-  }
-  
-  .profile-content {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-  }
-  
-  /* Left Section - User Info */
-  .left-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .user-info {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .user-image {
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    margin-right: 20px;
-  }
-  
-  .user-details h2 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-  
-  .user-rating {
-    color: #555;
-    margin-top: 5px;
-  }
-  
-  .stars {
-    color: gold;
-    display: inline-block;   /* Ensures stars appear in a row */
-    font-size: 24px;         /* Adjust the size of the stars */
-    margin-right: 5px;       /* Adds spacing between stars */
-  }
-  
-  .review-count {
-    color: #888;
-  }
-  
-  /* About Me Section */
-  .about-me {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .about-me h3 {
-    margin-bottom: 10px;
-  }
-  
-  .about-me-details {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 15px;
-  }
-  
-  .info-block {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  /* Right Section - Biography and Reviews */
-  .right-section {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .biography, .reviews {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .biography h3, .reviews h3 {
-    margin-bottom: 10px;
-  }
-  
-  .bio-text {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-  }
-  
-  .review {
-    margin-top: 10px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-  }
-  
-  .review-header {
-    display: flex;
-    align-items: center;
-  }
-  
-  .reviewer-image {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin-right: 15px;
-  }
-  
-  .reviewer-details h4 {
-    margin: 0;
-  }
-  
-  .review-rating {
-    color: gold;
-  }
-  
-  .review-text {
-    margin-top: 10px;
-    color: #555;
-  }
-  
+  max-width: 100%;
+  /* Adjust the width to fit the screen */
+  margin: 0 auto;
+  /* Center the container */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  min-height: 70vh;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.short-description {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.profile-content {
+  display: flex;
+  justify-content: space-between;
+  /* Ensure left and right sections are spaced out */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Left Section - User Info */
+.left-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-height: 150px;
+}
+
+.user-image {
+  border-radius: 50%;
+  width: 100px;
+  /* Increased the size */
+  height: 100px;
+  margin-right: 20px;
+}
+
+.user-details h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  /* Adjusted font size */
+}
+
+.user-rating {
+  color: #555;
+  margin-top: 5px;
+}
+
+.stars {
+  color: gold;
+  display: inline-block;
+  font-size: 24px;
+  margin-right: 5px;
+}
+
+.review-count {
+  color: #888;
+}
+
+/* About Me Section */
+.about-me {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  min-height: 400px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-btn {
+  background-color: #009eb6;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: -10px;
+}
+
+.edit-btn:hover {
+  background-color: #007c8a;
+}
+
+.about-me-details {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.info-block {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Right Section - Biography and Reviews */
+.right-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 70%;
+}
+
+.biography {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  min-height: 150px;
+}
+
+.reviews {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  min-height: 400px;
+}
+
+.bio-text {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  min-height: 105px;
+}
+
+.review {
+  margin-top: 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+}
+
+.reviewer-image {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+}
+
+.review-rating {
+  color: gold;
+}
+
+.review-text {
+  margin-top: 10px;
+  color: #555;
+}
