@@ -40,7 +40,7 @@ export const SidebarData = [
     },
     {
         title: 'User Profile',
-        path: '/userprofile',
+        path: `/userprofile/${user_id}`,
         icon: <AccountCircleIcon />,
         cName: 'nav-text'
     },

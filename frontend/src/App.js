@@ -43,7 +43,7 @@ function App() {
           <Route path='/support' element={<Support />} />
           <Route path='/geo' element={<geo />} />
           <Route path='/user' element={<user />} />
-          <Route path='/userprofile' element={<UserProfile />} />
+          <Route path='/userprofile/:userId' element={<UserProfile />} />
           <Route path='/history' element={<TransactionHistory />} />
           <Route path='/offers' element={<ListOfOffers />} />
         </Routes>
