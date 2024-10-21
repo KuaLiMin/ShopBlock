@@ -195,7 +195,6 @@ const TransactionHistory = () => {
 
                 // Only pass the data to CardTemplate if current time is greater than scheduledEnd
                 if (currentTime < scheduledEndTime) {
-                  setHasValidTransaction(true);
                   return (
                     <CardTemplate
                       key={transaction.id}
