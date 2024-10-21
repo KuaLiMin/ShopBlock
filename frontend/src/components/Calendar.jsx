@@ -6,7 +6,6 @@ import './Calendar.css';
 
 dayjs.extend(utc); // Use the UTC plugin
 
-
 const Calendar = ({ offers }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [calendarData, setCalendarData] = useState([]);
@@ -39,7 +38,6 @@ const Calendar = ({ offers }) => {
         // Update state with the generated calendar data
         setCalendarData(Object.entries(dateMap).map(([date, offers]) => ({ date, offers })));
     };
-    
 
     useEffect(() => {
         generateCalendarData();
@@ -47,10 +45,13 @@ const Calendar = ({ offers }) => {
 
     const getDaysInMonth = (month, year) => {
         const days = [];
-        const lastDate = new Date(year, month + 1, 0).getDate();
+        const lastDate = new Date(year, month + 1, 0).getDate(); // Get the last date of the month
+
+        // Add actual days of the month
         for (let i = 1; i <= lastDate; i++) {
             days.push(new Date(year, month, i));
         }
+
         return days;
     };
 

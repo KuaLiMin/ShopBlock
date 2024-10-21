@@ -15,7 +15,7 @@ const CardTemplate = ({ transaction, user, title }) => {
 
   // Formatting the scheduled start and end times using Day.js
   const formatDate = (dateString) => {
-    return dayjs.utc(dateString).local().startOf('day').format('DD/MM/YYYY HH:mm'); // Set to start of day with seconds
+    return dayjs.utc(dateString).format('DD/MM/YYYY HH:mm'); // Set to start of day with seconds
   };
 
   // Handling undefined scheduledStart and scheduledEnd safely
