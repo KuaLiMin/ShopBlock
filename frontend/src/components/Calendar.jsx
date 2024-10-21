@@ -55,7 +55,7 @@ const Calendar = ({ offers }) => {
 
     const getHighlightClass = (offersForDate, day) => {
         const today = new Date();
-        if (day < today.setHours(0, 0, 0, 0)) return 'highlight-grey'; // Grey for past dates
+        if (day <= today.setHours(0, 0, 0, 0)) return 'highlight-grey'; // Grey for past dates
         if (!offersForDate) return 'highlight-green'; // No offers, green for available
         if (offersForDate.some(offer => offer.status === 'P')) return 'highlight-orange'; // Pending
         if (offersForDate.some(offer => offer.status === 'C' || offer.status === 'A')) return 'highlight-black'; // Confirmed or Accepted
