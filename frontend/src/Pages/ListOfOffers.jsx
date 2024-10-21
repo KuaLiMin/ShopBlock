@@ -478,12 +478,12 @@ export const ListOfOffers = () => {
                                                         <div className="detail-item">
                                                             <p className="detail-title">Start:</p>
                                                             <p>{dayjs.utc(offer.scheduledStart).format('DD/MM/YYYY')}</p>
-                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm:ss')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">End:</p>
                                                             <p>{dayjs.utc(offer.scheduledEnd).format('DD/MM/YYYY')}</p>
-                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm:ss')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Total Price:</p>
@@ -545,12 +545,12 @@ export const ListOfOffers = () => {
                                                         <div className="detail-item">
                                                         <p className="detail-title">Start:</p>
                                                             <p>{dayjs.utc(offer.scheduledStart).format('DD/MM/YYYY')}</p>
-                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm:ss')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">End:</p>
                                                             <p>{dayjs.utc(offer.scheduledEnd).format('DD/MM/YYYY')}</p>
-                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm:ss')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Total Price:</p>
@@ -620,12 +620,12 @@ export const ListOfOffers = () => {
                                                         <div className="detail-item">
                                                         <p className="detail-title">Start:</p>
                                                             <p>{dayjs.utc(offer.scheduledStart).format('DD/MM/YYYY')}</p>
-                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm:ss')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">End:</p>
                                                             <p>{dayjs.utc(offer.scheduledEnd).format('DD/MM/YYYY')}</p>
-                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm:ss')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Total Price:</p>
@@ -657,12 +657,12 @@ export const ListOfOffers = () => {
                                                         <div className="detail-item">
                                                         <p className="detail-title">Start:</p>
                                                             <p>{dayjs.utc(offer.scheduledStart).format('DD/MM/YYYY')}</p>
-                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm:ss')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">End:</p>
                                                             <p>{dayjs.utc(offer.scheduledEnd).format('DD/MM/YYYY')}</p>
-                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm:ss')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Total Price:</p>
