@@ -160,7 +160,11 @@ export const ChangePassword = () => {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Position at top-right
       >
-        <MuiAlert onClose={handleClose} severity="success" variant="filled" sx={{ width: '100%' }}>
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleClose}
+          severity="success">
           {successMessage}
         </MuiAlert>
       </Snackbar>
