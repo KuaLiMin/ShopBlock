@@ -92,25 +92,54 @@ class UserController(GenericAPIView):
 
     # user updates their profile
     @extend_schema(
-        request=UserUpdateSerializer,
-        responses={200: UserSerializer},
-    )
+    request=UserUpdateSerializer,
+    responses={200: UserSerializer},
+)
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def put(self, request: Request):
         user = request.user
-
-        if not check_password(request.data.get("password"), user.password):
+        
+        # Only allow the user to update their own profile information if they are authenticated
+        if not user.is_authenticated:
             return Response(
-                {"error": "Password does not match"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "You must be authenticated to update your profile"},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserUpdateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update other optional fields
+        if "username" in request.data:
+            user.username = request.data["username"]
+        if "phone_number" in request.data:
+            user.phone_number = request.data["phone_number"]
+        if "avatar" in request.data:
+            user.avatar = request.data["avatar"]
+        if "biography" in request.data:
+            user.biography = request.data["biography"]
+
+        # Update password if requested
+        if "new_password" in request.data:
+            if "password" not in request.data:
+                return Response(
+                    {"error": "Old password is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if not check_password(request.data["password"], user.password):
+                return Response(
+                    {"error": "Old password is incorrect"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.password = make_password(request.data["new_password"])
+
+        # Save the updated user information
+        user.save()
+
+        # Return the updated user data
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
 
 class RegisterController(APIView):
