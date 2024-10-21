@@ -67,10 +67,24 @@ class UserCreateSerializer(UserSerializer):
 
 
 class UserUpdateSerializer(UserCreateSerializer):
-    new_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=False)
 
     class Meta(UserSerializer.Meta):
-        fields = (*UserSerializer.Meta.fields, "new_password")
+        fields = fields = (
+            "username",
+            "password",
+            "phone_number",
+            "avatar",
+            "biography",
+            "new_password",
+        )
+        extra_kwargs = {
+            **UserSerializer.Meta.extra_kwargs,
+            "username": {"required": False},
+            "biography": {"required": False},
+            "password": {"required": False},
+            "phone_number": {"required": False},
+        }
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get("username", instance.username)
