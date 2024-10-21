@@ -178,7 +178,7 @@ const TransactionHistory = () => {
         <div className="task-container">
           {/* Check if there are transactions */}
           {transactions.length === 0 ? (
-            <p>No data found.</p>
+            <h3 style={{ color: 'red', margin: '50px' }}>No transactions in process found!</h3>
           ) : (
             <>
 
@@ -219,7 +219,7 @@ const TransactionHistory = () => {
         <div className='task-container'>
           {/* Check if there are transactions */}
           {transactions.length === 0 ? (
-            <p>No data found.</p>
+            <h3 style={{ color: 'red', margin: '50px' }}>No transactions completed found!</h3>
           ) : (
             <>
               {transactions.map(transaction => {
