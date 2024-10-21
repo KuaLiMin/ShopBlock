@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Button, Typography, Box, Tooltip } from '@mui/material';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'; // Import the UTC plugin
 import './Calendar.css';
+
+dayjs.extend(utc); // Use the UTC plugin
+
 
 const Calendar = ({ offers }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -12,34 +17,29 @@ const Calendar = ({ offers }) => {
         offers.forEach(offer => {
             const startDate = new Date(offer.scheduled_start);
             const endDate = new Date(offer.scheduled_end);
-            
-            // Add offer to the start date only
-            const startDateString = startDate.toISOString().split('T')[0];
-            if (!dateMap[startDateString]) {
-                dateMap[startDateString] = [];
-            }
+            startDate.setHours(0, 0, 0, 0); // Set start of the day
+            endDate.setHours(0, 0, 0, 0); // Set start of the day
+            let currentDate = new Date(startDate); // Initialize currentDate
     
-            if (["C", "A", "P"].includes(offer.status)) {
-                dateMap[startDateString].push(offer); // Only add for start date
-            }
-    
-            // Increment currentDate by one day to check if the endDate is included
-            let currentDate = new Date(startDate);
-            currentDate.setDate(currentDate.getDate() + 1);
-    
-            // Continue checking for the endDate only
+            // Iterate from startDate to endDate (inclusive)
             while (currentDate <= endDate) {
-                const currentDateString = currentDate.toISOString().split('T')[0];
-                if (!dateMap[currentDateString]) {
-                    dateMap[currentDateString] = [];
+                const dateString = currentDate.toISOString().split('T')[0];
+                if (!dateMap[dateString]) {
+                    dateMap[dateString] = [];
                 }
-                // Only add status for the day if there is an offer on that specific day
-                currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+    
+                // Only add offers with statuses C, A, or P
+                if (["C", "A", "P"].includes(offer.status)) {
+                    dateMap[dateString].push(offer);
+                }
+                currentDate.setDate(currentDate.getDate() + 1); // Increment by 1 day
             }
         });
     
+        // Update state with the generated calendar data
         setCalendarData(Object.entries(dateMap).map(([date, offers]) => ({ date, offers })));
     };
+    
 
     useEffect(() => {
         generateCalendarData();
