@@ -264,6 +264,11 @@ const token = getCookie('access'); // Get the 'access' cookie value
     } else if (timeUnit === 'D') {
       // Calculate time difference in days
       timeDelta = end.diff(start, 'day'); // Get difference in days
+      if (start.isSame(end, 'day')) {
+        timeDelta = 1; // If the same day, return 1
+      }else {
+        timeDelta += 1; // Add 1 day to include the current day
+      }
     } else if (timeUnit === 'W') {
       timeDelta = end.diff(start, 'day'); // Calculate in days for weeks
     } else if (timeUnit === 'OT') {
