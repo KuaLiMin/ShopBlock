@@ -116,23 +116,41 @@ const UserProfile = () => {
     setSnackbarOpen(false);
   };
 
+  // Handle biography text change
+  const handleBiographyChange = (e) => {
+    setBiographyContent(e.target.value); // Update the biography content
+  };
+
   // Handle edit/save button click for biography
   const handleEditBioClick = () => {
     setIsEditingBio(!isEditingBio); // Toggle between edit mode and view mode for bio
   };
 
   // Save the updated biography
-  const handleSaveBioClick = () => {
+  const handleSaveBioClick = async () => {
     setIsEditingBio(false); // Exit edit mode
-    setSnackbarMessage('Biography saved!'); // Set the Snackbar message
-    setSnackbarOpen(true); // Show Snackbar
+
     // You can add your API call here to save the updated biography
-  };
+    try {
+      const response = await axios.put('/user/', {
+        biography: biographyContent,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,    // Add Bearer token here
+          'Content-Type': 'application/json',    // If you're sending JSON data
+        },
+      });
 
+      console.log(response.data); // Handle the response
 
-  // Handle biography text change
-  const handleBiographyChange = (e) => {
-    setBiographyContent(e.target.value); // Update the biography content
+      // If the request is successful, clear any loading or error messages
+      setSnackbarMessage('Biography saved!'); // Set the Snackbar message
+      setSnackbarOpen(true); // Show Snackbar
+    } catch (error) {
+      console.error(error);
+      setSnackbarMessage('An error occured!'); // Set the Snackbar message
+      setSnackbarOpen(true); // Show Snackbar
+    }
   };
 
   // Handle username and phone number changes
@@ -145,11 +163,31 @@ const UserProfile = () => {
   };
 
   // Save the updated username and phone number
-  const handleSaveAboutClick = () => {
+  const handleSaveAboutClick = async () => {
     setIsEditingAbout(false); // Exit edit mode
-    setSnackbarMessage('Username and Phone Number saved!'); // Set the Snackbar message
-    setSnackbarOpen(true); // Show Snackbar
+
     // You can add your API call here to save the updated username and phone number
+    try {
+      const response = await axios.put('/user/', {
+        username: username,
+        phone_number: phoneNumber,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,    // Add Bearer token here
+          'Content-Type': 'application/json',    // If you're sending JSON data
+        },
+      });
+
+      console.log(response.data); // Handle the response
+
+      // If the request is successful, clear any loading or error messages
+      setSnackbarMessage('Username and Phone Number saved!'); // Set the Snackbar message
+      setSnackbarOpen(true); // Show Snackbar
+    } catch (error) {
+      console.error(error);
+      setSnackbarMessage('An error occured!'); // Set the Snackbar message
+      setSnackbarOpen(true); // Show Snackbar
+    }
   };
 
   const handleAvatarClick = () => {
@@ -180,9 +218,26 @@ const UserProfile = () => {
     const formData = new FormData();
     formData.append('avatar', file); // Ensure 'avatar' is the correct field name expected by your backend
 
-    // Trigger the snackbar on successful upload
-    setSnackbarMessage('Avatar updated successfully!');
-    setSnackbarOpen(true); // Show Snackbar
+    try {
+      const response = await axios.put('/user/', {
+        avatar: selectedFile,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,    // Add Bearer token here
+          'Content-Type': 'application/json',    // If you're sending JSON data
+        },
+      });
+
+      console.log(response.data); // Handle the response
+
+      // If the request is successful, clear any loading or error messages
+      setSnackbarMessage('Avatar updated successfully!');
+      setSnackbarOpen(true); // Show Snackbar
+    } catch (error) {
+      console.error(error);
+      setSnackbarMessage('An error occured!'); // Set the Snackbar message
+      setSnackbarOpen(true); // Show Snackbar
+    }
 
     // try {
     //   const response = await axios.put('/user/', formData, {
