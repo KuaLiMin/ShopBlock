@@ -8,25 +8,36 @@ const Calendar = ({ offers }) => {
 
     const generateCalendarData = () => {
         const dateMap = {};
-
+    
         offers.forEach(offer => {
             const startDate = new Date(offer.scheduled_start);
             const endDate = new Date(offer.scheduled_end);
+            
+            // Add offer to the start date only
+            const startDateString = startDate.toISOString().split('T')[0];
+            if (!dateMap[startDateString]) {
+                dateMap[startDateString] = [];
+            }
+    
+            if (["C", "A", "P"].includes(offer.status)) {
+                dateMap[startDateString].push(offer); // Only add for start date
+            }
+    
+            // Increment currentDate by one day to check if the endDate is included
             let currentDate = new Date(startDate);
-
+            currentDate.setDate(currentDate.getDate() + 1);
+    
+            // Continue checking for the endDate only
             while (currentDate <= endDate) {
-                const dateString = currentDate.toISOString().split('T')[0];
-                if (!dateMap[dateString]) {
-                    dateMap[dateString] = [];
+                const currentDateString = currentDate.toISOString().split('T')[0];
+                if (!dateMap[currentDateString]) {
+                    dateMap[currentDateString] = [];
                 }
-
-                if (["C", "A", "P"].includes(offer.status)) {
-                    dateMap[dateString].push(offer);
-                }
-                currentDate.setDate(currentDate.getDate() + 1);
+                // Only add status for the day if there is an offer on that specific day
+                currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
             }
         });
-
+    
         setCalendarData(Object.entries(dateMap).map(([date, offers]) => ({ date, offers })));
     };
 
