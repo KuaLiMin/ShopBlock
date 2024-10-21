@@ -686,7 +686,7 @@ class TransactionController(GenericAPIView):
                 value={
                     "offer_id": 1,
                     "amount": 100.00,
-                    "status": "D",
+                    "status": "C",
                     "payment_id": "QWER1234",
                 },
                 request_only=True,
