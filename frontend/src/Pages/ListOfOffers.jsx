@@ -7,6 +7,9 @@ import AcceptButton from '../components/AcceptButton';
 import RejectButton from '../components/RejectButton';
 import ListingsToggle from '../components/ListingsToggle';
 import Paypal from './Paypal';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
 
 export const ListOfOffers = () => {
     const [uniqueListings, setUniqueListings] = useState([]);
@@ -474,13 +477,13 @@ export const ListOfOffers = () => {
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Start:</p>
-                                                            <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                            <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('DD/MM/YYYY')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm:ss')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">End:</p>
-                                                            <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                            <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('DD/MM/YYYY')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm:ss')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Total Price:</p>
@@ -540,14 +543,14 @@ export const ListOfOffers = () => {
                                                             <p>${offer.price} / {offer.timeUnit}</p>
                                                         </div>
                                                         <div className="detail-item">
-                                                            <p className="detail-title">Start:</p>
-                                                            <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                            <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        <p className="detail-title">Start:</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('DD/MM/YYYY')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm:ss')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">End:</p>
-                                                            <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                            <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('DD/MM/YYYY')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm:ss')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Total Price:</p>
@@ -615,14 +618,14 @@ export const ListOfOffers = () => {
                                                             <p>${offer.price} / {offer.timeUnit}</p>
                                                         </div>
                                                         <div className="detail-item">
-                                                            <p className="detail-title">Start:</p>
-                                                            <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                            <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        <p className="detail-title">Start:</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('DD/MM/YYYY')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm:ss')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">End:</p>
-                                                            <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                            <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('DD/MM/YYYY')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm:ss')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Total Price:</p>
@@ -652,14 +655,14 @@ export const ListOfOffers = () => {
                                                             <p>${offer.price} / {offer.timeUnit}</p>
                                                         </div>
                                                         <div className="detail-item">
-                                                            <p className="detail-title">Start:</p>
-                                                            <p>{new Date(offer.scheduledStart).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                            <p>{new Date(offer.scheduledStart).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                        <p className="detail-title">Start:</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('DD/MM/YYYY')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledStart).format('HH:mm:ss')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">End:</p>
-                                                            <p>{new Date(offer.scheduledEnd).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}</p>
-                                                            <p>{new Date(offer.scheduledEnd).toLocaleTimeString(undefined, { hour12: false })}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('DD/MM/YYYY')}</p>
+                                                            <p>{dayjs.utc(offer.scheduledEnd).format('HH:mm:ss')}</p>
                                                         </div>
                                                         <div className="detail-item">
                                                             <p className="detail-title">Total Price:</p>
