@@ -169,12 +169,14 @@ class RegisterController(APIView):
 
 class ListingController(GenericAPIView):
     """
-    Listing endpoint, [GET, POST, DELETE]
+    Listing endpoint, [GET, POST, PUT, DELETE]
 
     For the GET request, it returns all listings that are stored in the database.
         This will also support searching the listings by name with a query parameter.
 
     For the POST request, this is the same as "creating" a new listing.
+
+    For the PUT request, this will allow the user to update their posted listings.
 
     For the DELETE request, it deletes a specific listing if the user is authorized.
     """
