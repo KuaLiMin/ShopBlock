@@ -1,7 +1,7 @@
 .calendar {
     display: grid;
-    grid-template-columns: repeat(7, 1fr); /* 7 columns for the week */
-    gap: 0; /* No gaps between the grid items */
+    grid-template-columns: repeat(7, 2fr); /* 7 columns for the week */
+    gap: 5px; /* No gaps between the grid items */
     margin: 0; /* No margin around the calendar */
 }
 
@@ -20,7 +20,7 @@
     background-color: #d3d3d3;
     cursor: default;
     pointer-events: none;
-  }
+}
   
 .highlight-black {
     background-color: black;
