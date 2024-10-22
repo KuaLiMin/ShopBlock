@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -137,7 +138,7 @@ class ListingRate(models.Model):
     )
     time_unit = models.CharField(max_length=2, choices=TimeUnit.choices)
     rate = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal(0.0))]
     )
 
     class Meta:
