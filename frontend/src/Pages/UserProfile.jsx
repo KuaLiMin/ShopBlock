@@ -96,7 +96,7 @@ const UserProfile = () => {
             },
           });
       
-          console.log('Transactions data:', response.data);
+          // console.log('Transactions data:', response.data);
           // Handle the response data here, e.g., store it in state
         } catch (error) {
           console.error('Error fetching transactions:', error);
@@ -219,23 +219,21 @@ const UserProfile = () => {
     formData.append('avatar', file); // Ensure 'avatar' is the correct field name expected by your backend
 
     try {
-      const response = await axios.put('/user/', {
-        avatar: selectedFile,
-      }, {
+      const response = await axios.put('/user/', formData, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,    // Add Bearer token here
-          'Content-Type': 'application/json',    // If you're sending JSON data
+          'Content-Type': 'multipart/form-data',    // Set the content type to multipart/form-data
         },
       });
-
+  
       console.log(response.data); // Handle the response
-
+  
       // If the request is successful, clear any loading or error messages
       setSnackbarMessage('Avatar updated successfully!');
       setSnackbarOpen(true); // Show Snackbar
     } catch (error) {
       console.error(error);
-      setSnackbarMessage('An error occured!'); // Set the Snackbar message
+      setSnackbarMessage('An error occurred!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
     }
 

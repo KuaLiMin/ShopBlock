@@ -54,7 +54,7 @@ export const ChangePassword = () => {
   }, []);
 
   const nextPage = () => {
-    navigate('/userprofile');
+    navigate('/');
   }
 
   // Function to handle opening the snackbar
