@@ -7,6 +7,7 @@ import { Button, Dialog, DialogContent, DialogActions, TextField, IconButton, Ty
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
+import CloseIcon from '@mui/icons-material/Close'; // Import close icon
 import unsplash from '../components/Images/unsplash.jpg';
 
 const Support = () => {
@@ -102,7 +103,7 @@ const Support = () => {
                 open={openSupportModal}
                 onClose={handleCloseSupportModal}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
                 PaperProps={{
                     style: {
                         backgroundColor: 'transparent',
@@ -111,29 +112,50 @@ const Support = () => {
                 }}
                 BackdropProps={{
                     style: { backgroundColor: 'rgba(0, 0, 0, 0.8)' }, // Darken background
-                }}>
-                <DialogContent style={{ display: 'flex', padding: '0', justifyContent: 'center' }}>
+                }}
+            >
+                <DialogContent style={{ display: 'flex', padding: '0', justifyContent: 'center', position: 'relative', height: '50vh' }}> {/* Increased height */}
+
+                    {/* Close button */}
+                    <IconButton
+                        onClick={handleCloseSupportModal}
+                        style={{
+                            position: 'absolute',
+                            top: '2px',
+                            right: '120px', // Adjusted to be inside the green box
+                            color: 'white', // White color for the close button
+                            zIndex: 2, // Ensure it appears above all modal content
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+
                     <div
                         style={{
                             display: 'flex',
-                            width: '80%',
+                            width: '80%', // Keep the width the same
                             backgroundColor: 'white',
                             borderRadius: '10px',
                             overflow: 'hidden',
                             boxShadow: '0 5px 20px rgba(0, 0, 0, 0.2)',
-                        }}>
+                            flexDirection: 'row',
+                            height: '100%', // Ensures the content takes up the full height
+                        }}
+                    >
                         {/* Left side (contact info) */}
                         <div
                             style={{
-                                width: '50%',
-                                padding: '20px',
+                                width: '40%', // Set width for the left side (40%)
+                                padding: '40px',
                                 backgroundImage: `url(${unsplash})`,
                                 backgroundSize: 'cover',
+                                backgroundPosition: 'center',
                                 color: 'white',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
-                            }}>
+                            }}
+                        >
                             <Typography variant="h5" style={{ fontWeight: 'bold' }}>
                                 Let's get in touch
                             </Typography>
@@ -154,12 +176,13 @@ const Support = () => {
                         {/* Right side (form) */}
                         <div
                             style={{
-                                width: '50%',
-                                padding: '20px',
+                                width: '60%', // Set width for the right side (60%)
+                                padding: '40px',
                                 backgroundColor: '#009688',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
+                                position: 'relative',
                             }}
                         >
                             <div>
@@ -217,6 +240,8 @@ const Support = () => {
                     </div>
                 </DialogContent>
             </Dialog>
+
+
         </div>
     );
 };

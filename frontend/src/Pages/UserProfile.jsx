@@ -50,7 +50,8 @@ const UserProfile = () => {
           });
           setProfile(profileResponse.data); // Store the profile data in state
           setBiographyContent(profileResponse.data.biography);
-          //console.log(profileResponse.data)
+          setUsername(profileResponse.data.username);
+          setPhoneNumber(profileResponse.data.phone_number)
         } catch (error) {
           console.error('Error fetching profile data', error);
         }
@@ -141,8 +142,7 @@ const UserProfile = () => {
         },
       });
 
-      console.log(response.data); // Handle the response
-
+      setProfile({ ...profile, biography: response.data.biography });
       // If the request is successful, clear any loading or error messages
       setSnackbarMessage('Biography saved!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
@@ -159,7 +159,7 @@ const UserProfile = () => {
 
   // Handle edit/save button click for about me
   const handleEditAboutClick = () => {
-    setIsEditingAbout(!isEditingAbout); // Toggle between edit mode and view mode for about mes
+    setIsEditingAbout(!isEditingAbout);
   };
 
   // Save the updated username and phone number
@@ -168,18 +168,30 @@ const UserProfile = () => {
 
     // You can add your API call here to save the updated username and phone number
     try {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('phone_number', phoneNumber);
+
+      console.log("username here ====", username)
+      console.log("phoneNumber here ====", phoneNumber)
+
       const response = await axios.put('/user/', {
         username: username,
         phone_number: phoneNumber,
       }, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,    // Add Bearer token here
-          'Content-Type': 'application/json',    // If you're sending JSON data
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
       });
 
-      console.log(response.data); // Handle the response
+      setProfile({
+        ...profile,
+        username: response.data.username,
+        phone_number: response.data.phone_number,
+      });
 
+      console.log("profile here ===", profile);
       // If the request is successful, clear any loading or error messages
       setSnackbarMessage('Username and Phone Number saved!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
