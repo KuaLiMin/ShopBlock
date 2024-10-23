@@ -23,10 +23,25 @@ const Navbar = () => {
   const [loading, setLoading] = useState(false); // Track loading state
   const [username, setUsername] = useState(null); // State to hold user profile data
   const [results, setResults] = useState([]);
-  
-  const showSidebar = () => setSideBar(!sidebar);
 
   const navigate = useNavigate();
+
+  // Utility function to get a specific cookie by name
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  const accessToken = getCookie('access');
+  
+  const showSidebar = () => {
+    if (accessToken) {
+      setSideBar(!sidebar);
+    } else {
+      navigate('/signup')
+    }
+  }
 
   // Function to simulate a delay for the loading animation
   const simulateLoading = (duration) => {
@@ -47,15 +62,6 @@ const Navbar = () => {
     navigate('/');  // Redirect to login page after logout
   };
 
-  // Utility function to get a specific cookie by name
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
-
-  // Example usage: Get accessToken from cookies
-  const accessToken = getCookie('access');
   // Set logged-in state based on the presence of accessToken
   useEffect(() => {
     if (accessToken) {
@@ -133,7 +139,7 @@ const Navbar = () => {
           {isLoggedIn ? (
             <button onClick={handleLogout}>Logout</button>
           ) : (
-            <button onClick={() => navigate('/login')}>Login</button>
+            <button onClick={() => navigate('/signup')}>Login</button>
           )}
         </div>
         <div className="nav-actions">
