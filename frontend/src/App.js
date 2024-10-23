@@ -11,6 +11,7 @@ import Listing from './Pages/Listing';
 import TransactionHistory from './Payment/TransactionHistory';
 import FAQ from './Pages/FAQ';
 import Support from './Pages/Support';
+import GetSupport from './Pages/GetSupport';
 import geo from './Pages/geo';
 import user from './Pages/user';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -40,7 +41,7 @@ function App() {
           <Route path='/resetpassword' element={<ResetPassword />} />
           <Route path='/changepassword' element={<ChangePassword />} />
           <Route path='/FAQ' element={<FAQ />} />
-          <Route path='/support' element={<Support />} />
+          <Route path='/support' element={<GetSupport />} />
           <Route path='/geo' element={<geo />} />
           <Route path='/user' element={<user />} />
           <Route path='/userprofile/:userId' element={<UserProfile />} />

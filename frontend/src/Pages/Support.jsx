@@ -9,9 +9,12 @@ import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close'; // Import close icon
 import unsplash from '../components/Images/unsplash.jpg';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const Support = () => {
     const [openSupportModal, setOpenSupportModal] = useState(false);
+    const [open, setOpen] = useState(false); // State to manage the snackbar visibility
 
     const handleSupportClick = () => {
         setOpenSupportModal(true); // Open the modal when support button is clicked
@@ -19,8 +22,26 @@ const Support = () => {
 
     // Function to close the modal
     const handleCloseSupportModal = () => {
+        handleOpen();
         setOpenSupportModal(false); // Close the modal when user clicks close or any other action
     };
+
+    // Function to handle opening the snackbar
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    // Function to handle closing the snackbar
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
+
+    const handleSubmit = () => {
+        handleCloseSupportModal();
+    }
 
     return (
         <div className="support-container">
@@ -225,6 +246,7 @@ const Support = () => {
                             </div>
                             <Button
                                 variant="contained"
+                                onClick={handleSubmit}
                                 color="primary"
                                 endIcon={<SendIcon />}
                                 sx={{
@@ -240,8 +262,22 @@ const Support = () => {
                     </div>
                 </DialogContent>
             </Dialog>
-
-
+            {/* Snackbar with MuiAlert for success notification */}
+            <Snackbar
+                open={open}
+                autoHideDuration={4000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+                <MuiAlert
+                    elevation={6}
+                    variant="filled"
+                    onClose={handleClose}
+                    severity="success"
+                >
+                    Message sent!
+                </MuiAlert>
+            </Snackbar>
         </div>
     );
 };
