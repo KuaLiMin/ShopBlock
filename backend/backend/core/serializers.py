@@ -454,6 +454,22 @@ class ResetPasswordSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get("email")
         phone_number = data.get("phone_number")
-        if not User.objects.filter(email=email, phone_number=phone_number).exists():
-            raise serializers.ValidationError("The user is not found.")
+
+        # case 1: both email and phone number are not found, return error message "Both email and phone number not found"
+        if not User.objects.filter(email=email).exists() and not User.objects.filter(
+            phone_number=phone_number
+        ).exists():
+            raise serializers.ValidationError("Both email and phone number not found")
+        
+        # case 2: email is found but phone number is not found, return error message "Phone number not found"
+        if User.objects.filter(email=email).exists() and not User.objects.filter(
+            phone_number=phone_number
+        ).exists():
+            raise serializers.ValidationError("Phone number not found")
+        
+        # case 3: email is not found but phone number is found, return error message "Email not found"
+        if not User.objects.filter(email=email).exists() and User.objects.filter(
+            phone_number=phone_number
+        ).exists():
+            raise serializers.ValidationError("Email not found")
         return data
