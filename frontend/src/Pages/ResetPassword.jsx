@@ -85,6 +85,7 @@ export const ResetPassword = () => {
     // Add axios PUT request here
     try {
       setLoading(true); // Show the loading spinner when login is in progress
+      console.log(phone)
       const response = await axios.put('/reset-password/', {
         email: email,
         phone_number: phone,  // Assuming phone should be sent as a string
@@ -98,8 +99,18 @@ export const ResetPassword = () => {
       handleOpen();
       setLoading(false);
     } catch (error) {
-      console.log("over here ========")
-      console.error(error.response.data.non_field_errors);
+      if (error.response.data.non_field_errors == 'Both email and phone number not found') {
+        setErrorMessage('Both email and phone number not found');
+      } else setErrorMessage('')
+
+      if (error.response.data.non_field_errors == 'Email not found') {
+        setEmailErrorMessage('Email not found!');
+      } else setEmailErrorMessage('')
+
+      if (error.response.data.non_field_errors == 'Phone number not found') {
+        setPhoneErrorMessage('Phone number does not match!');
+      } else setPhoneErrorMessage('')
+
       setErrorMessage('An error occurred while resetting the password.');
       setLoading(false);
     }
