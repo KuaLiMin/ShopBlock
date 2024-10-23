@@ -135,7 +135,7 @@ class UserController(GenericAPIView):
                 )
             if not check_password(request.data["password"], user.password):
                 return Response(
-                    {"error": "Old password is incorrect"},
+                    {"error": "Old password is not in the database"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             user.password = make_password(request.data["new_password"])
