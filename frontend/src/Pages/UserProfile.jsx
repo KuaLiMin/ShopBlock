@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CSS/UserProfile.css';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import listings from '../components/Images/listings.png';
 import rentals from '../components/Images/rentals.png';
 import default_icon from '../components/Images/default_icon.png';
@@ -14,6 +14,11 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline'; // For empty star
 
 const UserProfile = () => {
   const { userId } = useParams();
+
+  // To detect if the page is in viewOnly mode
+  const location = useLocation();
+  const isViewOnly = location.state?.viewOnly || false; // Default to false if not present
+  console.log("over here ====", isViewOnly)
 
   const [profile, setProfile] = useState(null); // State to hold user profile data
   const [reviews, setReviews] = useState([]);
@@ -204,7 +209,10 @@ const UserProfile = () => {
 
   const handleAvatarClick = () => {
     // Trigger the hidden file input when the avatar is clicked
-    document.getElementById('avatarInput').click();
+    if(!isViewOnly) {
+      document.getElementById('avatarInput').click();
+    }
+    //document.getElementById('avatarInput').click();
   };
 
   const handleFileChange = (e) => {
@@ -312,9 +320,9 @@ const UserProfile = () => {
           <div className="user-info">
             <div className="avatar-container" onClick={handleAvatarClick}>
               <img src={profile.avatar || default_icon} alt="User" className="user-image" />
-              <div className="change-avatar-overlay">
+              {!isViewOnly && (<div className="change-avatar-overlay">
                 <img src={camera_icon} alt="Change avatar" className="camera-icon" />
-              </div>
+              </div>)}
             </div>
             <div className="user-details">
               <h2>@{profile.username}</h2>
@@ -340,20 +348,20 @@ const UserProfile = () => {
               </p>
             </div>
             {/* Hidden file input for avatar upload */}
-            <input
+            {!isViewOnly && (<input
               type="file"
               id="avatarInput"
               style={{ display: 'none' }}
               accept="image/*"
               onChange={handleFileChange}
-            />
+            />)}
           </div>
 
           {/* About Me */}
           <div className="about-me">
             <div className="section-header">
               <h3>About me</h3>
-              {isEditingAbout ? (
+              {!isViewOnly && (isEditingAbout ? (
                 <button className="save-btn" onClick={handleSaveAboutClick}>
                   Save
                 </button>
@@ -361,7 +369,7 @@ const UserProfile = () => {
                 <button className="edit-btn" onClick={handleEditAboutClick}>
                   Edit
                 </button>
-              )}
+              ))}
             </div>
             <div className="about-me-details">
               <div className="info-block">
@@ -402,11 +410,11 @@ const UserProfile = () => {
               <strong>Email:</strong> {profile.email}
             </p>
             {/* Change Password Button */}
-            <div className="change-password-container">
+            {!isViewOnly && (<div className="change-password-container">
               <button className="change-password-btn" onClick={handleChangePasswordClick}>
                 Change Password
               </button>
-            </div>
+            </div>)}
           </div>
         </div>
 
@@ -416,7 +424,7 @@ const UserProfile = () => {
           <div className="biography">
             <div className="section-header">
               <h3>Biography</h3>
-              {isEditingBio ? (
+              {!isViewOnly && (isEditingBio ? (
                 <button className="save-btn" onClick={handleSaveBioClick}>
                   Save
                 </button>
@@ -424,7 +432,7 @@ const UserProfile = () => {
                 <button className="edit-btn" onClick={handleEditBioClick}>
                   Edit
                 </button>
-              )}
+              ))}
             </div>
             {isEditingBio ? (
               <textarea
