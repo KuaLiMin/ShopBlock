@@ -18,7 +18,6 @@ const UserProfile = () => {
   // To detect if the page is in viewOnly mode
   const location = useLocation();
   const isViewOnly = location.state?.viewOnly || false; // Default to false if not present
-  console.log("over here ====", isViewOnly)
 
   const [profile, setProfile] = useState(null); // State to hold user profile data
   const [reviews, setReviews] = useState([]);
