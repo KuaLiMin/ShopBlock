@@ -51,7 +51,11 @@ from backend.core.serializers import (
 
 class UserController(GenericAPIView):
     """
-    User endpoint for GET
+    User endpoint for GET, PUT
+
+    GET gets the details of the user
+
+    PUT updates the details of the user
     """
 
     queryset = User.objects.all()
@@ -83,7 +87,7 @@ class UserController(GenericAPIView):
             if not user_id:
                 return Response(
                     {"error": "User ID is required for unauthenticated requests"},
-                    status=400,
+                    status=status.HTTP_401_UNAUTHORIZED,
                 )
             user = get_object_or_404(self.queryset, id=user_id)
 
@@ -92,14 +96,14 @@ class UserController(GenericAPIView):
 
     # user updates their profile
     @extend_schema(
-    request=UserUpdateSerializer,
-    responses={200: UserSerializer},
-)
+        request=UserUpdateSerializer,
+        responses={200: UserSerializer},
+    )
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def put(self, request: Request):
         user = request.user
-        
+
         # Only allow the user to update their own profile information if they are authenticated
         if not user.is_authenticated:
             return Response(
@@ -149,6 +153,12 @@ class RegisterController(APIView):
     def post(self, request):
         # Check if the email already exists - all emails are unique
         # reject if the email exists
+        if "email" not in request.data:
+            return Response(
+                "Requires an email to register an account",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if User.objects.filter(email=request.data["email"]).exists():
             return Response(
                 {"error": "Email already registered"},
@@ -169,12 +179,14 @@ class RegisterController(APIView):
 
 class ListingController(GenericAPIView):
     """
-    Listing endpoint, [GET, POST, DELETE]
+    Listing endpoint, [GET, POST, PUT, DELETE]
 
     For the GET request, it returns all listings that are stored in the database.
         This will also support searching the listings by name with a query parameter.
 
     For the POST request, this is the same as "creating" a new listing.
+
+    For the PUT request, this will allow the user to update their posted listings.
 
     For the DELETE request, it deletes a specific listing if the user is authorized.
     """

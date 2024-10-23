@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -36,14 +37,24 @@ class UserManager(BaseUserManager):
     # Do some validation here before creating a new user
     # if validation goes through, then create the new user
     def create_user(
-        self, email, username, password=None, phone_number=None, avatar=None, biography=""
+        self,
+        email,
+        username,
+        password=None,
+        phone_number=None,
+        avatar=None,
+        biography="",
     ):
         if not email:
             raise ValueError("Users must have an email")
 
         email = self.normalize_email(email)
         user = self.model(
-            email=email, username=username, phone_number=phone_number, avatar=avatar, biography=biography
+            email=email,
+            username=username,
+            phone_number=phone_number,
+            avatar=avatar,
+            biography=biography,
         )
 
         user.set_password(password)
@@ -58,7 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     avatar = models.ImageField(upload_to="avatars/", null=True)
     # 8 for singapore only
     phone_number = models.CharField(max_length=8, unique=True)
-    biography = models.TextField()
+    biography = models.TextField(blank=True)
 
     objects = UserManager()
 
@@ -137,7 +148,7 @@ class ListingRate(models.Model):
     )
     time_unit = models.CharField(max_length=2, choices=TimeUnit.choices)
     rate = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal(0.0))]
     )
 
     class Meta:
@@ -201,7 +212,9 @@ class Offer(models.Model):
     # TODO : For scheduling checking
     scheduled_start = models.DateTimeField(default=timezone.now)
     scheduled_end = models.DateTimeField(default=timezone.now)
-    time_unit = models.CharField(max_length=2, choices=TimeUnit.choices, default=TimeUnit.HOURLY)
+    time_unit = models.CharField(
+        max_length=2, choices=TimeUnit.choices, default=TimeUnit.HOURLY
+    )
     time_delta = models.IntegerField(default=1)
 
     # for the original listing owner to accept
