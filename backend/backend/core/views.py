@@ -111,9 +111,10 @@ class UserController(GenericAPIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        serializer = UserUpdateSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Probably dont need the serializer
+        # serializer = UserUpdateSerializer(data=request.data)
+        # if not serializer.is_valid():
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Update other optional fields
         if "username" in request.data:
@@ -134,7 +135,7 @@ class UserController(GenericAPIView):
                 )
             if not check_password(request.data["password"], user.password):
                 return Response(
-                    {"error": "Old password is incorrect"},
+                    {"error": "Old password is not in the database"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             user.password = make_password(request.data["new_password"])
