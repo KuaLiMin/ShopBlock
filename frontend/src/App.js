@@ -47,6 +47,7 @@ function App() {
           <Route path='/history' element={<TransactionHistory />} />
           <Route path='/offers' element={<ListOfOffers />} />
         </Routes>
+        <Support />
         <Footer />
       </BrowserRouter>
     </div>
