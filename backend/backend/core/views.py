@@ -111,9 +111,10 @@ class UserController(GenericAPIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        serializer = UserUpdateSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Probably dont need the serializer
+        # serializer = UserUpdateSerializer(data=request.data)
+        # if not serializer.is_valid():
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Update other optional fields
         if "username" in request.data:

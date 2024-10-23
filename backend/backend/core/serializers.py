@@ -88,12 +88,19 @@ class UserUpdateSerializer(UserCreateSerializer):
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get("username", instance.username)
-        instance.phone_number = validated_data.get("phone_number", instance.phone_number)
-        instance.password = make_password(validated_data["new_password"]) if validated_data.get("new_password") else instance.password
+        instance.phone_number = validated_data.get(
+            "phone_number", instance.phone_number
+        )
+        instance.password = (
+            make_password(validated_data["new_password"])
+            if validated_data.get("new_password")
+            else instance.password
+        )
         instance.avatar = validated_data.get("avatar", instance.avatar)
         instance.save()
         return instance
-    
+
+
 class ListingPhotoSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
 
@@ -237,7 +244,7 @@ class ListingUpdateSerializer(ListingCreateSerializer):
         write_only=True,
         required=False,
     )
-    
+
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get("description", instance.description)
@@ -438,14 +445,15 @@ class TransactionSerializer(serializers.ModelSerializer):
 
         return transaction
 
+
 class ResetPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
     phone_number = serializers.CharField(max_length=15)
     new_password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        email = data.get('email')
-        phone_number = data.get('phone_number')
+        email = data.get("email")
+        phone_number = data.get("phone_number")
         if not User.objects.filter(email=email, phone_number=phone_number).exists():
             raise serializers.ValidationError("The user is not found.")
         return data
