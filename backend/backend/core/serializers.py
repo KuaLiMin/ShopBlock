@@ -1,5 +1,6 @@
 import json
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.db.models import Avg
 from django.contrib.auth.hashers import make_password
 from backend.core.models import (
@@ -456,20 +457,49 @@ class ResetPasswordSerializer(serializers.Serializer):
         phone_number = data.get("phone_number")
 
         # case 1: both email and phone number are not found, return error message "Both email and phone number not found"
-        if not User.objects.filter(email=email).exists() and not User.objects.filter(
-            phone_number=phone_number
-        ).exists():
+        if (
+            not User.objects.filter(email=email).exists()
+            and not User.objects.filter(phone_number=phone_number).exists()
+        ):
             raise serializers.ValidationError("Both email and phone number not found")
-        
+
         # case 2: email is found but phone number is not found, return error message "Phone number not found"
-        if User.objects.filter(email=email).exists() and not User.objects.filter(
-            phone_number=phone_number
-        ).exists():
+        if (
+            User.objects.filter(email=email).exists()
+            and not User.objects.filter(phone_number=phone_number).exists()
+        ):
             raise serializers.ValidationError("Phone number not found")
-        
+
         # case 3: email is not found but phone number is found, return error message "Email not found"
-        if not User.objects.filter(email=email).exists() and User.objects.filter(
-            phone_number=phone_number
-        ).exists():
+        if (
+            not User.objects.filter(email=email).exists()
+            and User.objects.filter(phone_number=phone_number).exists()
+        ):
             raise serializers.ValidationError("Email not found")
+        return data
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        # First check if the email exists
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(
+                {'email': 'No account found with this email address'},
+                code='no_account'
+            )
+
+        # If email exists but password is wrong
+        if not user.check_password(password):
+            raise serializers.ValidationError(
+                {'password': 'Incorrect password'},
+                code='wrong_password'
+            )
+
+        # If both are correct, return the token
+        data = super().validate(attrs)
         return data

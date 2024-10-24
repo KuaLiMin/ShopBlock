@@ -54,8 +54,8 @@ urlpatterns = [
     # reset password route, [PUT]
     path("reset-password/", views.ResetPasswordController.as_view()),
     # authentication jwt tokens
-    path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/login/", views.LoginController.as_view(), name="token_obtain_pair"),
+    # path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # swagger and redoc
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

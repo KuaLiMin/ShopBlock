@@ -14,9 +14,10 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import authentication_classes, permission_classes, action
 from django.contrib.auth.hashers import check_password
-from rest_framework import status
+from rest_framework import status, serializers
 from django.contrib.auth.hashers import make_password
 
 from backend.core.models import (
@@ -42,6 +43,7 @@ from backend.core.serializers import (
     ReviewSerializer,
     TransactionSerializer,
     UserUpdateSerializer,
+    CustomTokenObtainPairSerializer
 )
 
 # The views here will be mapped to a url in urls.py
@@ -798,3 +800,16 @@ class ResetPasswordController(APIView):
                 {"message": "Password reset successfully"}, status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginController(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+        except serializers.ValidationError as e:
+            return Response(
+                e.detail,
+                status=status.HTTP_401_UNAUTHORIZED
+            )
