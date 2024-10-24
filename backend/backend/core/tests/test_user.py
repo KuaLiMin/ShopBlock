@@ -192,27 +192,25 @@ class UserTestCase(TestCase):
         response = self.client.put("/user/", update_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # TODO : Yuxuan I don't know how your update user works
         # Bad case - wrong current password
-        # self.client.force_authenticate(user=user)
-        # update_data["password"] = "wrongpass"
-        # response = self.client.put("/user/", update_data, format="multipart")
-        # pprint(response.json())
-        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # self.assertEqual(
-        #     json.loads(response.content)["error"], "Old password is incorrect"
-        # )
+        self.client.force_authenticate(user=user)
+        update_data["password"] = "wrongpass"
+        response = self.client.put("/user/", update_data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            json.loads(response.content)["error"], "Old password is not in the database"
+        )
 
         # Bad case - missing required fields for password update
-        # update_data = {
-        #     "username": "updateduser",
-        #     "new_password": "newpass123",  # Missing current password
-        # }
-        # response = self.client.put("/user/", update_data, format="multipart")
-        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # self.assertEqual(
-        #     json.loads(response.content)["error"], "Old password is required"
-        # )
+        update_data = {
+            "username": "updateduser",
+            "new_password": "newpass123",  # Missing current password
+        }
+        response = self.client.put("/user/", update_data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            json.loads(response.content)["error"], "Old password is required"
+        )
 
     def test_partial_profile_update(self):
         """Test updating only specific fields of user profile"""
