@@ -43,6 +43,11 @@ export const Login = () => {
     setContactNo(value) // set contactNo : value is the dict
   };
 
+  // Function to simulate a delay for the loading animation
+  const simulateLoading = (duration) => {
+    return new Promise((resolve) => setTimeout(resolve, duration));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Show the loading spinner when login is in progress
@@ -92,28 +97,25 @@ export const Login = () => {
 
       // If registration is successful, navigate to the signup page
       console.log('Response data:', response.data);
+      // setLoading(true);
+      // await simulateLoading(2000); // 2 seconds delay
+      // setLoading(false);
       navigate('/signup'); // Redirect to signup or another page after successful registration
 
     } catch (error) {
       // Handle error responses
       console.error('There was an error!', error);
+      console.log(error.response.data.error)
 
       // Check for a 400 error and specific response messages
       if (error.response && error.response.status === 400) {
         // Assuming the backend sends a response with a specific error message
-        console.log("error.response.data === ", error.response.data)
-        if (error.response.data) {
+        if (error.response.data.error == 'Email already registered') {
           setEmailErrorMessage('Email already exists.');
         }
-
-        // You can also handle username and phone errors if your backend sends those
-        // if (error.response.data && error.response.data.username) {
-        //   setUsernameErrorMessage('Username already exists.');
-        // }
-
-        // if (error.response.data && error.response.data.phone_number) {
-        //   setPhoneErrorMessage('Phone number already exists.');
-        // }
+        else if (error.response.data.error == 'Phone already registered') {
+          setPhoneErrorMessage('Phone number alrady exists.')
+        }
 
       } else {
         // General error message for non-400 status codes
@@ -146,6 +148,11 @@ export const Login = () => {
             {/* {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'} */}
             Register
           </Button>
+          {loading && (
+            <div className="loading-overlay">
+              <CircularProgress size={60} />
+            </div>
+          )}
           <div className="loginsignup-agree">
             <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
             <p>By continuing, I agree to the terms of use & privacy policy.</p>
