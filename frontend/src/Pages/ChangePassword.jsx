@@ -118,7 +118,7 @@ export const ChangePassword = () => {
       setLoading(false);
     } catch (error) {
       if (error.response.data.error == 'Old password is not in the database') {
-        setOldPasswordMessage('Password not found!');
+        setOldPasswordMessage('Password does not match!');
       }
       setErrorMessage('An error occurred while resetting the password.');
       setLoading(false);
