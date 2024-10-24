@@ -17,7 +17,7 @@ from backend.core.models import (
     TimeUnit,
 )
 
-from backend.core.tests.utils import get_test_photo
+from backend.core.tests.utils import get_test_photo, get_blank_photo
 
 
 class ListingTestCase(TestCase):
@@ -202,7 +202,7 @@ class ListingTestCase(TestCase):
             "description": "Test description",
             "category": Category.SUPPLIES,
             "listing_type": ListingType.RENTAL,
-            "photos": [get_test_photo()],
+            "photos": [get_blank_photo()],
             "rates": json.dumps({"time_unit": TimeUnit.DAILY, "rate": "25.00"}),
             "locations": json.dumps(
                 {

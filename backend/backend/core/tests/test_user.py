@@ -17,7 +17,7 @@ from backend.core.models import (
     TimeUnit,
 )
 
-from backend.core.tests.utils import get_test_photo
+from backend.core.tests.utils import get_test_photo, get_blank_photo
 
 
 class UserTestCase(TestCase):
@@ -25,7 +25,7 @@ class UserTestCase(TestCase):
         self.client = APIClient()
 
         # Create a test avatar image
-        self.test_avatar = get_test_photo()
+        self.test_avatar = get_blank_photo()
 
         # Create an existing user for duplicate testing
         self.existing_user = User.objects.create_user(
