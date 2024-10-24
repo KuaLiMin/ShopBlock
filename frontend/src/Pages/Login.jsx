@@ -111,10 +111,10 @@ export const Login = () => {
       if (error.response && error.response.status === 400) {
         // Assuming the backend sends a response with a specific error message
         if (error.response.data.error == 'Email already registered') {
-          setEmailErrorMessage('Email already exists.');
+          setEmailErrorMessage('An account with this email already exists.');
         }
         else if (error.response.data.error == 'Phone already registered') {
-          setPhoneErrorMessage('Phone number alrady exists.')
+          setPhoneErrorMessage('An account with this phone number exists!')
         }
 
       } else {
