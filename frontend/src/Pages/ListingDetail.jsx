@@ -117,7 +117,7 @@ const token = getCookie('access'); // Get the 'access' cookie value
         ? dayjs(scheduledStartDate).startOf('day')
         : dayjs(scheduledStartDate).hour(scheduledStartTime.hour()).minute(0).second(0);
     const endDateTime = (selectedTimeUnit === 'D' || selectedTimeUnit === 'W' || selectedTimeUnit === 'OT')
-        ? dayjs(scheduledEndDate).startOf('day')
+        ? dayjs(scheduledEndDate).endOf('day')
         : dayjs(scheduledEndDate).hour(scheduledEndTime.hour()).minute(0).second(0);
     // Date and time comparison checks
     if (startDateTime.isAfter(endDateTime)) {
@@ -255,28 +255,36 @@ const token = getCookie('access'); // Get the 'access' cookie value
   const calculateTimeDelta = (scheduledStart, scheduledEnd, timeUnit) => {
     // Parse the scheduled start and end times using dayjs
     const start = dayjs(scheduledStart);
-    const end = dayjs(scheduledEnd);
-    
+    let end = dayjs(scheduledEnd);
+
+    if (end.hour() === 7 && end.minute() === 59 && end.second() === 59) {
+      end = end.clone().add(1, 'second'); // Clone the end time and add one second
+    }
+
+    console.log(start);
+    console.log(end);
+  
     // Calculate the time delta
     let timeDelta;
   
     if (timeUnit === 'H') {
-      // Calculate time difference in hours
-      timeDelta = end.diff(start, 'hour'); // Get difference in hours
+        // Calculate time difference in hours
+        timeDelta = end.diff(start, 'hour'); // Get difference in hours
     } else if (timeUnit === 'D') {
-      // Calculate time difference in days
-      timeDelta = end.diff(start, 'day'); // Get difference in days
+        // Calculate time difference in days based on total hours
+        timeDelta = end.diff(start, 'hour') / 24; // Full day coverage without cutting off
     } else if (timeUnit === 'W') {
-      timeDelta = end.diff(start, 'day'); // Calculate in days for weeks
+        // Calculate time difference in weeks by dividing days by 7
+        timeDelta = end.diff(start, 'hour') / (24);
     } else if (timeUnit === 'OT') {
-      // Set time delta to 1 for 'OT'
-      timeDelta = 1;
+        // Set time delta to 1 for 'OT'
+        timeDelta = 1;
     } else {
-      throw new Error('Invalid time unit provided'); // Handle invalid time unit
+        throw new Error('Invalid time unit provided'); // Handle invalid time unit
     }
   
     return timeDelta;
-  };
+};
 
   // Function to close the Snackbar
   const handleCloseSnackbar = () => {
@@ -569,6 +577,7 @@ const token = getCookie('access'); // Get the 'access' cookie value
                 <DesktopDatePicker
                   label="Start Date"
                   value={scheduledStartDate}
+                  format="DD/MM/YYYY"
                   onChange={(newValue) => setScheduledStartDate(newValue)}
                 />
               </div>
@@ -587,6 +596,7 @@ const token = getCookie('access'); // Get the 'access' cookie value
               <div style={{ marginTop: '10px', minWidth: '300px' }}>
                 <DesktopDatePicker
                   label="End Date"
+                  format="DD/MM/YYYY"
                   value={scheduledEndDate}
                   onChange={(newValue) => setScheduledEndDate(newValue)}
                 />

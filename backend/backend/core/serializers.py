@@ -173,7 +173,7 @@ class ListingSerializer(serializers.ModelSerializer):
 
 # Specific serializer for POSTing a Listing
 # then this will split into the listing and listing_photos table
-class ListingCreateSerializer(ListingSerializer):
+class ListingCreateSerializer(serializers.ModelSerializer):
     photos = serializers.ListField(
         child=serializers.ImageField(
             max_length=1000000, allow_empty_file=False, use_url=False
@@ -182,22 +182,26 @@ class ListingCreateSerializer(ListingSerializer):
         required=True,  # This makes it easy for me for now
     )
 
-    rates = serializers.ListField(
-        child=serializers.DictField(
-            child=serializers.CharField(),  # Handle individual rate fields
-        ),
-        write_only=True,
-    )
+    category = serializers.ChoiceField(choices=Category.choices)
+    listing_type = serializers.ChoiceField(choices=ListingType.choices)
+    locations = serializers.CharField()
+    rates = serializers.CharField()
 
-    locations = serializers.ListField(
-        child=serializers.DictField(
-            child=serializers.CharField(),  # Handle individual rate fields
-        ),
-        write_only=True,
-    )
-
-    class Meta(ListingSerializer.Meta):
-        fields = ListingSerializer.Meta.fields + ["photos", "rates", "locations"]
+    class Meta:
+        model = Listing
+        fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "title",
+            "description",
+            "category",
+            "listing_type",
+            "photos",
+            "locations",
+            "rates",
+        ]
+        read_only_fields = ["created_at", "updated_at"]
 
     def create(self, validated_data):
         # Extract the photos from the validated data
@@ -206,6 +210,9 @@ class ListingCreateSerializer(ListingSerializer):
         rates_data = validated_data.pop("rates", [])
         # Extract the location from the validated data
         location_data = validated_data.pop("locations", [])
+
+        rates_data = json.loads(rates_data)
+        location_data = json.loads(location_data)
 
         # Create the base Listing object
         listing = Listing.objects.create(**validated_data)
@@ -222,13 +229,13 @@ class ListingCreateSerializer(ListingSerializer):
                 rate=rate_data["rate"],
             )
 
-        for location in location_data:
+        for location_data in location_data:
             ListingLocation.objects.create(
                 listing=listing,
-                latitude=location["latitude"],
-                longitude=location["longitude"],
-                query=location["query"],
-                notes=location["notes"],
+                latitude=location_data["latitude"],
+                longitude=location_data["longitude"],
+                query=location_data["query"],
+                notes=location_data["notes"],
             )
 
         return listing
@@ -245,6 +252,9 @@ class ListingUpdateSerializer(ListingCreateSerializer):
         write_only=True,
         required=False,
     )
+
+    locations = serializers.CharField()
+    rates = serializers.CharField()
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
@@ -266,6 +276,7 @@ class ListingUpdateSerializer(ListingCreateSerializer):
 
         # Update the rates
         rates_data = validated_data.get("rates", [])
+        rates_data = json.loads(rates_data)
         if rates_data:
             # Delete old rates
             instance.rates.all().delete()
@@ -279,6 +290,7 @@ class ListingUpdateSerializer(ListingCreateSerializer):
 
         # Update the locations
         location_data = validated_data.get("locations", [])
+        location_data = json.loads(location_data)
         if location_data:
             # Delete old rates
             instance.locations.all().delete()
@@ -482,22 +494,20 @@ class ResetPasswordSerializer(serializers.Serializer):
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         # First check if the email exists
-        email = attrs.get('email')
-        password = attrs.get('password')
+        email = attrs.get("email")
+        password = attrs.get("password")
 
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             raise serializers.ValidationError(
-                {'email': 'No account found with this email address'},
-                code='no_account'
+                {"email": "No account found with this email address"}, code="no_account"
             )
 
         # If email exists but password is wrong
         if not user.check_password(password):
             raise serializers.ValidationError(
-                {'password': 'Incorrect password'},
-                code='wrong_password'
+                {"password": "Incorrect password"}, code="wrong_password"
             )
 
         # If both are correct, return the token
