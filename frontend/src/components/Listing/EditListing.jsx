@@ -19,33 +19,33 @@ import {
 } from '@mui/material';
 
 const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
 };
 
 const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
-  
+
   const [formData, setFormData] = useState({
     uploaded_by: '',
     title: '',
-    price: '', 
-    unit: '', 
-    category: '', 
-    description: '', 
-    locationAddress: '', 
-    locationNotes: '', 
-    image_url: '', 
-    listing_type: '', 
-    longitude: '', 
-    latitude: '', 
+    price: '',
+    unit: '',
+    category: '',
+    description: '',
+    locationAddress: '',
+    locationNotes: '',
+    image_url: '',
+    listing_type: '',
+    longitude: '',
+    latitude: '',
     photos: [],
   });
   const token = getCookie('access');
   let decodedToken;
   decodedToken = jwtDecode(token);
-  const loggedInUserId = decodedToken.user_id;  
+  const loggedInUserId = decodedToken.user_id;
   const [fileNames, setFileNames] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [mapUrl, setMapUrl] = useState('');
@@ -58,14 +58,14 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
           const listing = response.data;
 
           // console.log("Retrieved listing data:", listing);
-          
+
           // Update formData with the fetched details
           setFormData({
             title: listing.title,
             description: listing.description,
             category: listing.category,
             listing_type: listing.listing_type,
-            photos: listing.photos ? listing.photos.map(photo => photo.image_url) : [], 
+            photos: listing.photos ? listing.photos.map(photo => photo.image_url) : [],
             locationAddress: listing.locations[0]?.query || '',
             locationNotes: listing.locations[0]?.notes || '',
             longitude: listing.locations[0]?.longitude || '',
@@ -101,8 +101,8 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
   };
 
   const handleRemovePhoto = (index) => {
-    const updatedPhotos = formData.photos.filter((_, i) => i !== index);  
-    const updatedFileNames = fileNames.filter((_, i) => i !== index);  
+    const updatedPhotos = formData.photos.filter((_, i) => i !== index);
+    const updatedFileNames = fileNames.filter((_, i) => i !== index);
     setFormData({
       ...formData,
       photos: updatedPhotos,
@@ -115,14 +115,14 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
 
     const requiredFields = ['title', 'price', 'unit', 'category', 'description', 'locationAddress', 'listing_type'];
     let isValid = true;
-  
+
     requiredFields.forEach((field) => {
       if (!formData[field]) {
         isValid = false;
         alert(`The field ${field} is required.`); // You can replace this with custom UI error messages
       }
     });
-  
+
     if (!isValid) return;
 
     const formPayload = new FormData();
@@ -141,7 +141,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     for (let pair of formPayload.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`);
     }
-    
+
     // const locations = {
     //   latitude: formData.latitude,
     //   longitude: formData.longitude,
@@ -178,23 +178,23 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
       },
       body: formPayload,
     })
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then(error => { 
-          throw new Error(JSON.stringify(error));
-        });
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log('Success:', data);
-      toggleModal();
-      // window.location.reload();
-      // onUpdate();
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then(error => {
+            throw new Error(JSON.stringify(error));
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Success:', data);
+        toggleModal();
+        // window.location.reload();
+        // onUpdate();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
 
   };
 
@@ -234,7 +234,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
         query: formData.locationAddress,
         notes: formData.locationNotes,
       };
-  
+
       setFormData({
         ...formData,
         locations: [...(formData.locations || []), newLocation],
@@ -258,13 +258,13 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
 
   const handleLocationChange = (e, index) => {
     const { name, value } = e.target;
-    
+
     const updatedLocations = [...formData.locations];
     updatedLocations[index] = {
       ...updatedLocations[index],
-      [name]: value, 
+      [name]: value,
     };
-    
+
     setFormData({
       ...formData,
       locations: updatedLocations,
@@ -273,12 +273,12 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
 
   const searchLocationForLocation = (index) => {
     const locationQuery = formData.locations[index]?.query.replace(/ /g, '+');
-    
+
     if (!locationQuery) {
       alert('Please enter a location to search');
       return;
     }
-  
+
     // Example search logic (this would need to be adjusted based on your actual search API)
     fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${locationQuery}&returnGeom=Y&getAddrDetails=Y&pageNum=1`, {
       headers: {
@@ -289,7 +289,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
       .then((data) => {
         // Assuming the search returns an updated location
         const updatedLocation = data.results[0];
-        
+
         // Update the specific location at the provided index
         const updatedLocations = [...formData.locations];
         updatedLocations[index] = {
@@ -303,7 +303,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
         } else {
           setSearchResults([]); // Clear results if nothing is found
         }
-        
+
         setFormData({
           ...formData,
           locations: updatedLocations,
@@ -318,7 +318,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     const input = formData.locationAddress.replace(/ /g, '+');
     fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${input}&returnGeom=Y&getAddrDetails=Y&pageNum=1`, {
       headers: {
-        'Authorization': 'YOUR_API_KEY', 
+        'Authorization': 'YOUR_API_KEY',
       },
     })
       .then((response) => response.json())
@@ -330,20 +330,20 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
         }
       })
       .catch((error) => console.error('Error fetching location:', error));
-};
+  };
 
 
   const handleLocationSelect = (location) => {
     const { ADDRESS, LATITUDE, LONGITUDE } = location;
-  
+
     // Check if the location has latitude and longitude
     if (!LATITUDE || !LONGITUDE) {
       console.error('Invalid location data:', location);
       return;
     }
-  
+
     const formattedAddress = ADDRESS.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '+');
-  
+
     // Set the selected location details in the formData state, including longitude and latitude
     setMapUrl(`https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${formattedAddress}&t=&z=14&ie=UTF8&iwloc=B&output=embed`);
     setFormData({
@@ -381,7 +381,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 onChange={handleChange}
                 required
               />
-  
+
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
                 Price and Unit
               </Typography>
@@ -414,7 +414,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                   </FormControl>
                 </Grid>
               </Grid>
-  
+
               <Button onClick={addRate}>Add Rate</Button>
               {Array.isArray(formData.rates) && formData.rates.length > 0 && (
                 <>
@@ -457,7 +457,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                   ))}
                 </>
               )}
-  
+
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
                 Category
               </Typography>
@@ -473,7 +473,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                   <MenuItem value="SE">Services</MenuItem>
                 </Select>
               </FormControl>
-  
+
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
                 Listing Type
               </Typography>
@@ -489,7 +489,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 </Select>
               </FormControl>
             </Grid>
-  
+
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle1" gutterBottom>
                 Description
@@ -504,7 +504,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 onChange={handleChange}
                 required
               />
-  
+
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
                 Add Photo
               </Typography>
@@ -512,7 +512,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 📷 Add photo
                 <input type="file" multiple hidden onChange={handleFileChange} />
               </Button>
-  
+
               {fileNames.length > 0 && (
                 <ul>
                   {fileNames.map((name, index) => (
@@ -527,13 +527,13 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
               )}
             </Grid>
           </Grid>
-  
+
           {/* Location section */}
           <div style={{ marginTop: '32px' }}>
             <Typography variant="h6" gutterBottom>
               Locations
             </Typography>
-  
+
             {Array.isArray(formData.locations) && formData.locations.length > 0 && (
               <>
                 {formData.locations.map((location, index) => (
@@ -583,11 +583,11 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
               </div>
             )}
 
-  
+
             <Button onClick={addLocation} disabled={formData.locations?.length >= 3}>
               Add Location
             </Button>
-  
+
             {mapUrl && (
               <iframe
                 title="Selected Location"
@@ -613,18 +613,32 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
           </div>
         </form>
       </DialogContent>
-  
+
       <DialogActions>
-        <Button onClick={toggleModal} color="secondary">
+        <Button onClick={toggleModal} color="secondary"
+          sx={{
+            backgroundColor: '#e0e0e0',  // Light gray background for cancel
+            color: '#333',                // Darker gray text
+            '&:hover': {
+              backgroundColor: '#d5d5d5', // Darker gray on hover
+            }
+          }}>
           Cancel
         </Button>
-        <Button onClick={handleSubmit} color="primary" type="submit">
+        <Button onClick={handleSubmit} color="primary" type="submit"
+          sx={{
+            backgroundColor: 'primary.main', // theme color
+            color: 'white',
+            '&:hover': {
+              backgroundColor: 'primary.dark', // theme-aware hover color
+            }
+          }}>
           Save Changes
         </Button>
       </DialogActions>
     </Dialog>
   );
-  
+
 };
 
 export default EditListing;
