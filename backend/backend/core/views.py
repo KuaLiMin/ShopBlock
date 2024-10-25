@@ -167,9 +167,21 @@ class RegisterController(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if "phone_number" not in request.data:
+            return Response(
+                "Requires a phone number to register an account",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if User.objects.filter(email=request.data["email"]).exists():
             return Response(
                 {"error": "Email already registered"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if User.objects.filter(phone_number=request.data["phone_number"]).exists():
+            return Response(
+                {"error": "Phone number already registered"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
