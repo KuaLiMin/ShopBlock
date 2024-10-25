@@ -4,7 +4,12 @@ from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
 from django.shortcuts import render, get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiExample,
+    inline_serializer,
+)
 from drf_spectacular.types import OpenApiTypes
 from rest_framework import permissions, viewsets, status
 from rest_framework.views import APIView
@@ -14,9 +19,10 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import authentication_classes, permission_classes, action
 from django.contrib.auth.hashers import check_password
-from rest_framework import status
+from rest_framework import status, serializers
 from django.contrib.auth.hashers import make_password
 
 from backend.core.models import (
@@ -42,6 +48,7 @@ from backend.core.serializers import (
     ReviewSerializer,
     TransactionSerializer,
     UserUpdateSerializer,
+    CustomTokenObtainPairSerializer,
 )
 
 # The views here will be mapped to a url in urls.py
@@ -309,10 +316,6 @@ class ListingController(GenericAPIView):
     @permission_classes([IsAuthenticated])
     def post(self, request: Request):
         request_copy = request.data.copy()
-        if "rates" in request_copy and isinstance(request_copy["rates"], str):
-            request_copy["rates"] = json.loads(request_copy["rates"])
-        if "locations" in request_copy and isinstance(request_copy["locations"], str):
-            request_copy["locations"] = json.loads(request_copy["locations"])
 
         serializer = ListingCreateSerializer(data=request_copy)
         # Use custom serializer for the post request here
@@ -347,10 +350,10 @@ class ListingController(GenericAPIView):
             )
 
         request_copy = request.data.copy()
-        if "rates" in request_copy and isinstance(request_copy["rates"], str):
-            request_copy["rates"] = json.loads(request_copy["rates"])
-        if "locations" in request_copy and isinstance(request_copy["locations"], str):
-            request_copy["locations"] = json.loads(request_copy["locations"])
+        # if "rates" in request_copy and isinstance(request_copy["rates"], str):
+        #     request_copy["rates"] = json.loads(request_copy["rates"])
+        # if "locations" in request_copy and isinstance(request_copy["locations"], str):
+        #     request_copy["locations"] = json.loads(request_copy["locations"])
 
         serializer = ListingUpdateSerializer(listing, data=request_copy)
         if serializer.is_valid():
@@ -798,3 +801,13 @@ class ResetPasswordController(APIView):
                 {"message": "Password reset successfully"}, status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginController(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+        except serializers.ValidationError as e:
+            return Response(e.detail, status=status.HTTP_401_UNAUTHORIZED)

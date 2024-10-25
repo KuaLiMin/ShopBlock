@@ -83,6 +83,11 @@ export const SignUp = () => {
     } catch (error) {
       // Handle error and show a message to the user
       console.error('Error:', error);
+      
+      if (error.response.data.email == 'No account found with this email address') {
+        setEmailErrorMessage('No account found with this email address.');
+      } else setEmailErrorMessage('')
+
       if (count < 3) {
         setPasswordErrorMessage('Incorrect Password! Please try again.');
         setCount(count + 1);

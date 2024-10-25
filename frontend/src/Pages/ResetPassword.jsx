@@ -108,7 +108,7 @@ export const ResetPassword = () => {
       } else setEmailErrorMessage('')
 
       if (error.response.data.non_field_errors == 'Phone number not found') {
-        setPhoneErrorMessage('Phone number does not match!');
+        setPhoneErrorMessage('Phone number not found!');
       } else setPhoneErrorMessage('')
 
       setErrorMessage('An error occurred while resetting the password.');
