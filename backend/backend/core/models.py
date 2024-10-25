@@ -65,7 +65,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
-    username = models.CharField(max_length=255, unique=True)
+    username = models.CharField(max_length=255, unique=False)
     avatar = models.ImageField(upload_to="avatars/", null=True)
     # 8 for singapore only
     phone_number = models.CharField(max_length=8, unique=True)
