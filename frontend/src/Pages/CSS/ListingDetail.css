@@ -12,9 +12,8 @@
 }
 
 .listing-detail-container img {
-    max-width: 300px;           /* Image won't exceed 300px */
-    width: 100%;                /* Take the full width of the container */
-    height: auto;               /* Maintain aspect ratio */
+    height: 300px;           /* Image won't exceed 300px */
+    width: auto;
     margin: 30px 0;             /* Add top and bottom margins for spacing */
 }
 
