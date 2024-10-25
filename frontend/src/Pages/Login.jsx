@@ -113,7 +113,7 @@ export const Login = () => {
         if (error.response.data.error == 'Email already registered') {
           setEmailErrorMessage('An account with this email already exists.');
         }
-        else if (error.response.data.error == 'Phone already registered') {
+        else if (error.response.data.error == 'Phone number already registered') {
           setPhoneErrorMessage('An account with this phone number exists!')
         }
 
@@ -148,11 +148,11 @@ export const Login = () => {
             {/* {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'} */}
             Register
           </Button>
-          {loading && (
+          {/*loading && (
             <div className="loading-overlay">
               <CircularProgress size={60} />
             </div>
-          )}
+          )*/}
           <div className="loginsignup-agree">
             <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
             <p>By continuing, I agree to the terms of use & privacy policy.</p>

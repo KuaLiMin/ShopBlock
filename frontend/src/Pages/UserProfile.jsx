@@ -22,6 +22,7 @@ const UserProfile = () => {
   const [profile, setProfile] = useState(null); // State to hold user profile data
   const [reviews, setReviews] = useState([]);
   const [userListings, setUserListings] = useState([]);
+  const [userTransactions, setUserTransactions] = useState([]);
   const [isEditingBio, setIsEditingBio] = useState(false); // State for biography edit mode
   const [isEditingAbout, setIsEditingAbout] = useState(false); // State for about me edit mode
   const [biographyContent, setBiographyContent] = useState('');
@@ -100,8 +101,8 @@ const UserProfile = () => {
               'Authorization': `Bearer ${accessToken}`, // Include the access token
             },
           });
-      
-          // console.log('Transactions data:', response.data);
+
+          setUserTransactions(response.data.length)
           // Handle the response data here, e.g., store it in state
         } catch (error) {
           console.error('Error fetching transactions:', error);
@@ -377,7 +378,7 @@ const UserProfile = () => {
               </div>
               <div className="info-block">
                 <img src={rentals} alt="Rentals icon" />
-                <p>0 Rentals</p>
+                <p>{userTransactions} Transactions</p>
               </div>
             </div>
             <p className="input-field">
