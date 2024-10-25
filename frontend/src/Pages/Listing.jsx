@@ -19,7 +19,7 @@ export const Listing = () => {
   }
 
   const accessToken = getCookie('access');
-  console.log(accessToken)
+  // console.log(accessToken)
 
   // Function to update the number of listings
   const updateListingsCount = (count) => {

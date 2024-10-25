@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import './Listing.css';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 import {
   Dialog,
   DialogTitle,
@@ -43,7 +44,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     listing_type: '',
     longitude: '',
     latitude: '',
-    // rates: [],
+    rates: [],
     photos: [],
   });
 
@@ -54,13 +55,6 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
   // Handle file input for the photo
   const handleFileChange = (e) => {
-    // const file = e.target.files[0]; 
-    //   setFormData({
-    //     ...formData,
-    //     image_url: file, 
-    //   });
-    //   setFileName(file.name); 
-    // }
     const files = Array.from(e.target.files);
     setFormData({
       ...formData,
@@ -76,6 +70,44 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleRemovePhoto = (index) => {
+    const updatedPhotos = formData.photos.filter((_, i) => i !== index);  // Remove the photo at the specified index
+    const updatedFileNames = fileNames.filter((_, i) => i !== index);  // Remove the corresponding file name
+    setFormData({
+      ...formData,
+      photos: updatedPhotos,
+    });
+    setFileNames(updatedFileNames);
+  };
+
+  const handleRateChange = (e, index) => {
+    const { name, value } = e.target;
+    const updatedRates = [...formData.rates];
+    updatedRates[index] = {
+      ...updatedRates[index],
+      [name.includes('rate') ? 'rate' : 'time_unit']: value,
+    };
+    setFormData({ ...formData, rates: updatedRates });
+  };
+
+  const addRate = () => {
+    const newRate = {
+      time_unit: formData.unit,
+      rate: parseFloat(formData.price),
+    };
+    setFormData({
+      ...formData,
+      rates: [...formData.rates, newRate], // Append new rate to rates array
+      price: '', // Clear the input fields
+      unit: '',
+    });
+  };
+
+  const removeRate = (index) => {
+    const updatedRates = formData.rates.filter((_, i) => i !== index);
+    setFormData({ ...formData, rates: updatedRates });
   };
 
   const handleSubmit = (e) => {
@@ -106,28 +138,52 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     formPayload.append('category', formData.category);
     formPayload.append('listing_type', formData.listing_type);
 
-    // const photosArray = [formData.image_url]; 
-    // photosArray.forEach((photo, index) => {
-    //   formPayload.append(`photos[${index}]`, photo); // Append each photo in an array format
-    // });
-
     formData.photos.forEach((photo, index) => {
       formPayload.append(`photos[${index}]`, photo);
     });
 
-    const locations = {
+    // const defaultLocations = [
+    //   { "latitude": 1.34755085440782, "longitude": 103.68175755377, "query": "NTU", "notes": "meet me at North spine koufu" },
+    // ];
+
+    const locations = [{
       latitude: formData.latitude,
       longitude: formData.longitude,
       query: formData.locationAddress,
       notes: formData.locationNotes
-    };
-    formPayload.append('locations', JSON.stringify(locations));
+    }];
+    // formPayload.append('locations', JSON.stringify(locations));
+    // const locationsString = JSON.stringify(locations);
+    // formPayload.append('locations', locationsString);
 
-    const rates = {
+    const combinedLocations = [...locations, ...defaultLocations];
+    formPayload.append('locations', JSON.stringify(combinedLocations));
+
+    
+
+    // const rates = {
+    //   time_unit: formData.unit,
+    //   rate: parseFloat(formData.price)
+    // };
+    // formPayload.append('rates', JSON.stringify(rates));
+    // formData.rates.forEach((rate, index) => {
+    //   const rateJson = JSON.stringify({
+    //     time_unit: rate.time_unit,
+    //     rate: parseFloat(rate.rate),
+    //   });
+    //   formPayload.append(`rates`, rateJson); // Appending rates as separate JSON objects
+    // });
+
+    // formPayload.append('rates', JSON.stringify(formData.rates));
+    const newRate = {
       time_unit: formData.unit,
-      rate: parseFloat(formData.price)
+      rate: parseFloat(formData.price),
     };
-    formPayload.append('rates', JSON.stringify(rates));
+    const combinedRates = [newRate, ...formData.rates];
+    // formPayload.append('rates', JSON.stringify(combinedRates));
+    const ratesString = JSON.stringify(combinedRates);
+    formPayload.append('rates', ratesString);
+    
 
     for (let pair of formPayload.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`);
@@ -149,20 +205,13 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
         console.log('Success:', data); // Handle success
         toggleModal(); // Close the modal after successful submission
       })
-      .catch((error) => {
+      .catch((error,data) => {
         console.error('Error:', error); // Handle errors
+        console.error('response:', data);
       });
   };
 
-  const handleRemovePhoto = (index) => {
-    const updatedPhotos = formData.photos.filter((_, i) => i !== index);  // Remove the photo at the specified index
-    const updatedFileNames = fileNames.filter((_, i) => i !== index);  // Remove the corresponding file name
-    setFormData({
-      ...formData,
-      photos: updatedPhotos,
-    });
-    setFileNames(updatedFileNames);
-  };
+
 
   const searchLocation = () => {
     const input = formData.locationAddress.replace(/ /g, '+');
@@ -198,19 +247,6 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       latitude: parseFloat(LATITUDE), // Set the latitude
     });
   };
-
-  // const addRate = () => {
-  //   const newRate = {
-  //     time_unit: formData.unit,
-  //     rate: parseFloat(formData.price),
-  //   };
-  //   setFormData({
-  //     ...formData,
-  //     rates: [...formData.rates, newRate], // Append new rate to rates array
-  //     price: '', // Clear the input fields
-  //     unit: '',
-  //   });
-  // };
 
   return (
     <Dialog open={isModalOpen} onClose={(event, reason) => {
@@ -269,16 +305,52 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                   </FormControl>
                 </Grid>
               </Grid>
-              {/* <Button onClick={addRate}>Add Rate</Button>
+
+              <Button onClick={addRate}>Add Rate</Button>
               {Array.isArray(formData.rates) && formData.rates.length > 0 && (
-                <ul>
+                <>
                   {formData.rates.map((rate, index) => (
-                    <li key={index}>
-                      {rate.time_unit}: {rate.rate}
-                    </li>
+                    <div key={index}>
+                      <Grid container spacing={2} alignItems="center">
+                        <Grid item xs={5}>
+                          <TextField
+                            fullWidth
+                            label="Rate"
+                            name={`rate-${index}`}
+                            type="number"
+                            value={rate.rate}
+                            onChange={(e) => handleRateChange(e, index)}
+                            required
+                          />
+                        </Grid>
+                        <Grid item xs={5}>
+                          <FormControl fullWidth>
+                            <Select
+                              name={`unit-${index}`}
+                              value={rate.time_unit}
+                              onChange={(e) => handleRateChange(e, index)}
+                              required
+                            >
+                              <MenuItem value="OT">One Time</MenuItem>
+                              <MenuItem value="H">Hourly</MenuItem>
+                              <MenuItem value="D">Daily</MenuItem>
+                              <MenuItem value="W">Weekly</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={2} style={{ textAlign: 'center' }}>
+                          {/* <Button variant="contained" onClick={() => removeRate(index)}>
+                            X
+                          </Button> */}
+                          <IconButton onClick={() => removeRate(index)} size="small" aria-label="remove">
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Grid>
+                      </Grid>
+                    </div>
                   ))}
-                </ul>
-              )} */}
+                </>
+              )}
 
               {/* Category */}
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
@@ -368,7 +440,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
               Location
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid item xs={9}>
                 <TextField
                   fullWidth
                   label="Search for a Location"
@@ -378,7 +450,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                   placeholder="Search for a location"
                 />
                 <Button onClick={searchLocation} sx={{
-                  marginTop: 2, // theme-aware spacing (equivalent to 16px if spacing factor is 8)
+                  marginTop: 2, 
                   backgroundColor: 'primary.main', // theme color
                   color: 'white',
                   '&:hover': {

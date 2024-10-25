@@ -173,7 +173,6 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
           title: listing.title,
           description: listing.description,
           rate: formatRate(listing.rates), 
-          // image: listing.photos.length > 0 ? listing.photos[0].image_url : 'https://placehold.co/140x100',
           image: listing.photos ? listing.photos.map(photo => photo.image_url) : [],
           
         }));
