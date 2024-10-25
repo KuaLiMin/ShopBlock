@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
 import { Link } from 'react-router-dom';
+import no_image from "../Images/no_image.jpg"
 
 // Changed from Trending to TrendingCounter
 const TrendingCounter = () => {
@@ -8,7 +9,7 @@ const TrendingCounter = () => {
 
   // Function to update number of trending items
   const updateTrendingCount = (count) => {
-    setTrendingCount(count);
+    setTrendingCount(Math.min(count, 10)); // Limit the count to no more than 10
   };
 
   return (
@@ -60,7 +61,7 @@ const TrendingGrid = ({ updateCount }) => {
         
         setListingsData(formattedData);
         setLoading(false);
-        updateCount(formattedData.length); // Update the count here
+        updateCount(Math.min(formattedData.length, 10)); // Limit the count to no more than 10
       })
       .catch((error) => {
         console.error('Error fetching listings:', error);
@@ -86,7 +87,7 @@ const TrendingCard = ({ id, time, title, rate, image }) => {
 
   return (
     <Link to={`/listing/${title}-${formattedTime}-${id}`}>
-      <img src={image} alt={title} className="Trending-item" />
+      <img src={image || no_image} alt={title} className="Trending-item" />
       <div className="Trending-info">
         <h4>{title}</h4>
         <p>{rate}</p>
