@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Typography, Box, Tooltip } from '@mui/material'; 
+import { Button, Typography, Box, Tooltip } from '@mui/material';
 import './Calendar.css';
 
 const Calendar = ({ offers }) => {
@@ -12,26 +12,34 @@ const Calendar = ({ offers }) => {
         offers.forEach(offer => {
             const startDate = new Date(offer.scheduled_start);
             const endDate = new Date(offer.scheduled_end);
-            startDate.setHours(0, 0, 0, 0);
-            endDate.setHours(0, 0, 0, 0);
-            let currentDate = new Date(startDate);
     
-            while (currentDate <= endDate) {
+            // Extract date components only for accurate day-based comparisons
+            const startDateString = startDate.toISOString().split('T')[0];
+            const endDateString = endDate.toISOString().split('T')[0];
+    
+            let currentDate = new Date(startDateString);
+    
+            while (currentDate.toISOString().split('T')[0] <= endDateString) {
                 const dateString = currentDate.toISOString().split('T')[0];
                 if (!dateMap[dateString]) {
                     dateMap[dateString] = [];
                 }
     
+                // Include only offers with status "C", "A", or "P"
                 if (["C", "A", "P"].includes(offer.status)) {
                     dateMap[dateString].push(offer);
                 }
+    
+                // Increment to the next day, ensuring it's midnight
                 currentDate.setDate(currentDate.getDate() + 1);
+                currentDate.setHours(0, 0, 0, 0);
             }
         });
     
         setCalendarData(Object.entries(dateMap).map(([date, offers]) => ({ date, offers })));
     };
     
+    // Rest of the component remains the same
     useEffect(() => {
         generateCalendarData();
     }, [offers, currentMonth]);
@@ -98,7 +106,7 @@ const Calendar = ({ offers }) => {
                         <Tooltip key={dateString} title={!isPastDate ? tooltipText : ''}>
                             <div
                                 className={`calendar-day ${highlightClass}`}
-                                style={{ display: 'inline-block', width: '100%', boxSizing: 'border-box', padding: '5px' }} // Adjust width as necessary for your layout
+                                style={{ display: 'inline-block', width: '100%', boxSizing: 'border-box', padding: '5px' }}
                             >
                                 {day.getDate()}
                             </div>
