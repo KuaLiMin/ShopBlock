@@ -203,15 +203,8 @@ class ListingTestCase(TestCase):
             "category": Category.SUPPLIES,
             "listing_type": ListingType.RENTAL,
             "photos": [get_blank_photo()],
-            "rates": json.dumps({"time_unit": TimeUnit.DAILY, "rate": "25.00"}),
-            "locations": json.dumps(
-                {
-                    "latitude": 1.35160,
-                    "longitude": 103.87119,
-                    "query": "Nex",
-                    "notes": "Test location",
-                }
-            ),
+            "rates": '[{"time_unit": "D", "rate": "25.00"}]',
+            "locations": '[{"latitude": 1.35160, "longitude": 103.87119, "query": "Nex", "notes": "Test location"}]',
             "uploaded_by": self.user1.id,
         }
 
@@ -238,15 +231,8 @@ class ListingTestCase(TestCase):
             "description": "Updated description",
             "category": Category.ELECTRONICS,
             "listing_type": ListingType.RENTAL,
-            "rates": json.dumps({"time_unit": TimeUnit.HOURLY, "rate": "15.00"}),
-            "locations": json.dumps(
-                {
-                    "latitude": 1.35160,
-                    "longitude": 103.87119,
-                    "query": "Nex",
-                    "notes": "Test location",
-                }
-            ),
+            "rates": '[{"time_unit": "OT", "rate": "15.00"}]',
+            "locations": '[{"latitude": 1.35160, "longitude": 103.87119, "query": "Nex", "notes": "Test location"}]',
             "uploaded_by": self.user1.id,
         }
 
