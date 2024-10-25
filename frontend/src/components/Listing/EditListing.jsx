@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import {
@@ -54,6 +56,8 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
       axios.get(`/listing/?id=${listingId}`)
         .then(response => {
           const listing = response.data;
+
+          // console.log("Retrieved listing data:", listing);
           
           // Update formData with the fetched details
           setFormData({
@@ -68,6 +72,8 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
             latitude: listing.locations[0]?.latitude || '',
             price: listing.rates[0]?.rate || '',
             unit: listing.rates[0]?.time_unit || '',
+            locations: listing.locations || [],  // Array of locations
+            rates: listing.rates || [],  // Array of rates
           });
         })
         .catch(error => {
@@ -126,20 +132,6 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     formPayload.append('description', formData.description);
     formPayload.append('category', formData.category);
     formPayload.append('listing_type', formData.listing_type);
-    
-    const locations = {
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      query: formData.locationAddress,
-      notes: formData.locationNotes,
-    };
-    formPayload.append('locations', JSON.stringify(locations));
-
-    const rates = {
-      time_unit: formData.unit,
-      rate: parseFloat(formData.price),
-    };
-    formPayload.append('rates', JSON.stringify(rates));
 
     formData.photos.forEach((photo, index) => {
       if (photo instanceof File) {  // Only append if it's a new file
@@ -149,6 +141,33 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     for (let pair of formPayload.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`);
     }
+    
+    // const locations = {
+    //   latitude: formData.latitude,
+    //   longitude: formData.longitude,
+    //   query: formData.locationAddress,
+    //   notes: formData.locationNotes,
+    // };
+    // formPayload.append('locations', JSON.stringify(locations));
+
+    // const rates = {
+    //   time_unit: formData.unit,
+    //   rate: parseFloat(formData.price),
+    // };
+    // formPayload.append('rates', JSON.stringify(rates));
+
+    const serializedLocations = JSON.stringify(formData.locations);  // Assuming formData.locations is already an array of location objects
+    formPayload.append('locations', serializedLocations);
+
+    // Handle rates as an array of JSON objects
+    const serializedRates = JSON.stringify(formData.rates);  // Assuming formData.rates is already an array of rate objects
+    formPayload.append('rates', serializedRates);
+
+    // Debugging: Log form data to check if everything is correct
+    for (let pair of formPayload.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+
 
     fetch('/listing/', {
       method: 'PUT',
@@ -170,29 +189,129 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     .then((data) => {
       console.log('Success:', data);
       toggleModal();
-      window.location.reload();
+      // window.location.reload();
       // onUpdate();
     })
     .catch((error) => {
       console.error('Error:', error);
     });
+
+  };
+
+  const handleRateChange = (e, index) => {
+    const { name, value } = e.target;
+    const updatedRates = [...formData.rates];
+    updatedRates[index] = {
+      ...updatedRates[index],
+      [name.includes('rate') ? 'rate' : 'time_unit']: value,
+    };
+    setFormData({ ...formData, rates: updatedRates });
+  };
+
+  const addRate = () => {
+    const newRate = {
+      time_unit: formData.unit,
+      rate: parseFloat(formData.price),
+    };
+    setFormData({
+      ...formData,
+      rates: [...formData.rates, newRate], // Append new rate to rates array
+      price: '', // Clear the input fields
+      unit: '',
+    });
+  };
+
+  const removeRate = (index) => {
+    const updatedRates = formData.rates.filter((_, i) => i !== index);
+    setFormData({ ...formData, rates: updatedRates });
+  };
+
+  const addLocation = () => {
+    if ((formData.locations?.length || 0) < 3) {
+      const newLocation = {
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        query: formData.locationAddress,
+        notes: formData.locationNotes,
+      };
+  
+      setFormData({
+        ...formData,
+        locations: [...(formData.locations || []), newLocation],
+        locationAddress: '', // Clear after adding
+        locationNotes: '', // Clear after adding
+        latitude: '', // Reset latitude
+        longitude: '' // Reset longitude
+      });
+    } else {
+      alert("You can only add up to 3 locations.");
+    }
+  };
+
+  const removeLocation = (index) => {
+    const updatedLocations = formData.locations.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      locations: updatedLocations
+    });
+  };
+
+  const handleLocationChange = (e, index) => {
+    const { name, value } = e.target;
     
+    const updatedLocations = [...formData.locations];
+    updatedLocations[index] = {
+      ...updatedLocations[index],
+      [name]: value, 
+    };
+    
+    setFormData({
+      ...formData,
+      locations: updatedLocations,
+    });
+  };
 
-    // axios.put('/listing/', formPayload,{
-    //   headers: {
-    //     'Authorization': `Bearer ${token}`,
-    //     'Content-Type': 'multipart/form-data',  
-    //   },
-    // })
-    //   .then((response) => {
-    //     // Successful update
-    //     toggleModal();
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error updating listing:', error);
-    //   });
-
-
+  const searchLocationForLocation = (index) => {
+    const locationQuery = formData.locations[index]?.query.replace(/ /g, '+');
+    
+    if (!locationQuery) {
+      alert('Please enter a location to search');
+      return;
+    }
+  
+    // Example search logic (this would need to be adjusted based on your actual search API)
+    fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${locationQuery}&returnGeom=Y&getAddrDetails=Y&pageNum=1`, {
+      headers: {
+        'Authorization': 'YOUR_API_KEY',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Assuming the search returns an updated location
+        const updatedLocation = data.results[0];
+        
+        // Update the specific location at the provided index
+        const updatedLocations = [...formData.locations];
+        updatedLocations[index] = {
+          ...updatedLocations[index],
+          query: updatedLocation.ADDRESS,
+          longitude: parseFloat(updatedLocation.LONGITUDE),
+          latitude: parseFloat(updatedLocation.LATITUDE),
+        };
+        if (data.results && data.results.length > 0) {
+          setSearchResults(data.results);
+        } else {
+          setSearchResults([]); // Clear results if nothing is found
+        }
+        
+        setFormData({
+          ...formData,
+          locations: updatedLocations,
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching location:', error);
+      });
   };
 
   const searchLocation = () => {
@@ -204,10 +323,15 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setSearchResults(data.results);
+        if (data.results && data.results.length > 0) {
+          setSearchResults(data.results);
+        } else {
+          setSearchResults([]); // Clear results if nothing is found
+        }
       })
       .catch((error) => console.error('Error fetching location:', error));
-  };
+};
+
 
   const handleLocationSelect = (location) => {
     const { ADDRESS, LATITUDE, LONGITUDE } = location;
@@ -228,10 +352,11 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
       longitude: parseFloat(LONGITUDE), // Set the longitude
       latitude: parseFloat(LATITUDE), // Set the latitude
     });
+
+    setMapUrl(`https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${ADDRESS}&t=&z=14&ie=UTF8&iwloc=B&output=embed`);
   };
 
   return (
-    
     <Dialog
       open={isModalOpen}
       onClose={(event, reason) => {
@@ -243,7 +368,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
       fullWidth
     >
       <DialogTitle>Edit Listing</DialogTitle>
-      <DialogContent> 
+      <DialogContent>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -256,7 +381,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 onChange={handleChange}
                 required
               />
-
+  
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
                 Price and Unit
               </Typography>
@@ -289,7 +414,50 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                   </FormControl>
                 </Grid>
               </Grid>
-
+  
+              <Button onClick={addRate}>Add Rate</Button>
+              {Array.isArray(formData.rates) && formData.rates.length > 0 && (
+                <>
+                  {formData.rates.map((rate, index) => (
+                    <div key={index}>
+                      <Grid container spacing={2} alignItems="center">
+                        <Grid item xs={5}>
+                          <TextField
+                            fullWidth
+                            label="Rate"
+                            name={`rate-${index}`}
+                            type="number"
+                            value={rate.rate}
+                            onChange={(e) => handleRateChange(e, index)}
+                            required
+                          />
+                        </Grid>
+                        <Grid item xs={5}>
+                          <FormControl fullWidth>
+                            <Select
+                              name={`unit-${index}`}
+                              value={rate.time_unit}
+                              onChange={(e) => handleRateChange(e, index)}
+                              required
+                            >
+                              <MenuItem value="OT">One Time</MenuItem>
+                              <MenuItem value="H">Hourly</MenuItem>
+                              <MenuItem value="D">Daily</MenuItem>
+                              <MenuItem value="W">Weekly</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <IconButton onClick={() => removeRate(index)} size="small" aria-label="remove">
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Grid>
+                      </Grid>
+                    </div>
+                  ))}
+                </>
+              )}
+  
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
                 Category
               </Typography>
@@ -305,7 +473,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                   <MenuItem value="SE">Services</MenuItem>
                 </Select>
               </FormControl>
-
+  
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
                 Listing Type
               </Typography>
@@ -321,7 +489,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 </Select>
               </FormControl>
             </Grid>
-
+  
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle1" gutterBottom>
                 Description
@@ -336,7 +504,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 onChange={handleChange}
                 required
               />
-
+  
               <Typography variant="subtitle1" gutterBottom style={{ marginTop: '16px' }}>
                 Add Photo
               </Typography>
@@ -344,18 +512,12 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
                 📷 Add photo
                 <input type="file" multiple hidden onChange={handleFileChange} />
               </Button>
-              {/* {fileNames.length > 0 && (
-                <ul>
-                  {fileNames.map((name, index) => (
-                    <li key={index}>{name}</li>
-                  ))}
-                </ul>
-              )} */}
+  
               {fileNames.length > 0 && (
                 <ul>
                   {fileNames.map((name, index) => (
                     <li key={index}>
-                      {name} 
+                      {name}
                       <Button onClick={() => handleRemovePhoto(index)} color="secondary">
                         Remove
                       </Button>
@@ -365,67 +527,93 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
               )}
             </Grid>
           </Grid>
-
+  
+          {/* Location section */}
           <div style={{ marginTop: '32px' }}>
             <Typography variant="h6" gutterBottom>
-              Location
+              Locations
             </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Search for a Location"
-                  name="locationAddress"
-                  value={formData.locationAddress}
-                  onChange={handleChange}
-                  placeholder="Search for a location"
-                />
-                <Button onClick={searchLocation} style={{ marginTop: '8px' }}>
-                  Search
-                </Button>
+  
+            {Array.isArray(formData.locations) && formData.locations.length > 0 && (
+              <>
+                {formData.locations.map((location, index) => (
+                  <Grid container spacing={2} key={index}>
+                    <Grid item xs={10}>
+                      <TextField
+                        fullWidth
+                        label="Location"
+                        name="query" // Ensure this matches the key in the location object
+                        value={location.query}
+                        onChange={(e) => handleLocationChange(e, index)} // Handle location changes dynamically
+                      />
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Button onClick={() => searchLocationForLocation(index)} sx={{
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'primary.dark',
+                        }
+                      }}>
+                        Search
+                      </Button>
+                    </Grid>
+                    <Grid item xs={1} style={{ textAlign: 'center' }}>
+                      <IconButton onClick={() => removeLocation(index)} size="small" aria-label="remove">
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                ))}
+              </>
+            )}
 
-                {/* Display search results */}
+            {/* Display search results */}
+            {searchResults.length > 0 && (
+              <div style={{ marginTop: '8px' }}>
                 {searchResults.map((result, index) => (
                   <Button
                     key={index}
                     style={{ display: 'block', marginTop: '8px' }}
-                    // onClick={() => handleLocationSelect(result.ADDRESS)}
-                    onClick={() => handleLocationSelect(result)}
+                    onClick={() => handleLocationSelect(result)}  // Update with selected location
                   >
                     {result.ADDRESS}
-          
                   </Button>
                 ))}
+              </div>
+            )}
 
-                {/* Display selected location on map */}
-                {mapUrl && (
-                  <iframe
-                    title="Selected Location"
-                    width="100%"
-                    height="300"
-                    frameBorder="0"
-                    scrolling="no"
-                    src={mapUrl}
-                    style={{ marginTop: '16px' }}
-                  ></iframe>
-                )}
-              </Grid>
+  
+            <Button onClick={addLocation} disabled={formData.locations?.length >= 3}>
+              Add Location
+            </Button>
+  
+            {mapUrl && (
+              <iframe
+                title="Selected Location"
+                width="100%"
+                height="200"
+                frameBorder="0"
+                scrolling="no"
+                src={mapUrl}
+                style={{ marginTop: '16px' }}
+              ></iframe>
+            )}
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Additional Notes (e.g., Meet at third floor lift lobby)"
-                  name="locationNotes"
-                  value={formData.locationNotes}
-                  onChange={handleChange}
-                  multiline
-                />
-              </Grid>
+            <Grid item xs={12} style={{ marginTop: '16px' }}>
+              <TextField
+                fullWidth
+                label="Additional Notes (e.g., Meet at third floor lift lobby)"
+                name="locationNotes"
+                value={formData.locationNotes}
+                onChange={handleChange}
+                multiline
+              />
             </Grid>
           </div>
         </form>
       </DialogContent>
-
+  
       <DialogActions>
         <Button onClick={toggleModal} color="secondary">
           Cancel
@@ -436,6 +624,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
       </DialogActions>
     </Dialog>
   );
+  
 };
 
 export default EditListing;
