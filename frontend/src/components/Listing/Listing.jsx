@@ -9,7 +9,6 @@ import "./Slider.css";
 
 const formatRate = (rates) => {
   if (rates.length > 0) {
-    const rateInfo = rates[0]; // Assuming you're using the first rate in the array
     const timeUnitMap = {
       OT: 'OneTime',
       H: 'Hour',
@@ -17,13 +16,25 @@ const formatRate = (rates) => {
       W: 'Week',
     };
 
-    const timeUnit = timeUnitMap[rateInfo.time_unit] || 'Unknown'; // Map time_unit or default to 'Unknown'
-    const rate = `$${parseFloat(rateInfo.rate).toFixed(2)}`; // Format the rate with two decimal points
-
-    return `${rate} / ${timeUnit}`;
+    return rates.map(rateInfo => {
+      const timeUnit = timeUnitMap[rateInfo.time_unit] || 'Unknown'; // Map time_unit or default to 'Unknown'
+      const rate = `$${parseFloat(rateInfo.rate).toFixed(2)}`; // Format the rate with two decimal points
+      return `${rate} / ${timeUnit}`;
+    }).join(', '); // Join each formatted rate with a comma for readability
   }
   return 'Rate not available'; // Default if no rate is found
 };
+
+const formatDate = (isoString) => {
+  const date = new Date(isoString);
+  const day = String(date.getDate()).padStart(2, '0');  // Ensures two digits
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
+
 
 // Helper function to get the token from cookies
 const getCookie = (name) => {
@@ -34,7 +45,7 @@ const getCookie = (name) => {
 };
 
 
-const ListingCard = ({id, time, title, rate, image = [], onDelete}) => {
+const ListingCard = ({id, time, title, rates = [], image = [], onDelete}) => {
   const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
   const [isModalOpen, setModalOpen] = useState(false);
   
@@ -80,9 +91,6 @@ const ListingCard = ({id, time, title, rate, image = [], onDelete}) => {
       <Link to={`/listing/${title}-${formattedTime}-${id}`}> {/* CREATED BY HAYES */}
         {/* <img src={image} alt={title} className="listing-image" /> */}
         <CustomSlider>
-          {/* {imagesToDisplay.map((image, index) => {
-            return <img key={index} src={image} alt={''} />;
-          })} */}
           {image.length > 0 ? (
             image.map((img, index) => (
               <img key={index} src={img} alt={title} className="listing-image" />
@@ -90,11 +98,11 @@ const ListingCard = ({id, time, title, rate, image = [], onDelete}) => {
           ) : (
             <img src="https://placehold.co/140x100" className="listing-image" />
           )}
-         
         </CustomSlider>
         <div className="listing-info">
           <h4>{title}</h4>
-          <p>{rate}</p>
+          <p>{formatRate(rates)}</p>
+          {/* <p>Created at: {formatDate(time)}</p> */}
         </div>
       </Link>   {/* CREATED BY HAYES */}
 
@@ -172,7 +180,8 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
           time: listing.created_at,
           title: listing.title,
           description: listing.description,
-          rate: formatRate(listing.rates), 
+          // rate: formatRate(listing.rates), 
+          rates: listing.rates,
           image: listing.photos ? listing.photos.map(photo => photo.image_url) : [],
           
         }));

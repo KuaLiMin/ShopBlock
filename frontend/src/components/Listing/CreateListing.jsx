@@ -120,7 +120,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     requiredFields.forEach((field) => {
       if (!formData[field]) {
         isValid = false;
-        alert(`The field ${field} is required.`); // You can replace this with custom UI error messages
+        alert(`The field ${field} is required.`); 
       }
     });
 
