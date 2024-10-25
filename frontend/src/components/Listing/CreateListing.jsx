@@ -536,7 +536,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                           fullWidth
                           label="Location"
                           value={location.query}
-                          disabled
+                          
                         />
                       </Grid>
                       <Grid item xs={1}>
