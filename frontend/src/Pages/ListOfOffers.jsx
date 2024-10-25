@@ -610,7 +610,7 @@ export const ListOfOffers = () => {
                                         <h1 style={{ marginTop: '10px', marginBottom: '10px', fontSize: '20px' }}>Offers Pending Payment</h1>
                                         {offerDetails.filter(offer => offer.status === 'A').map((offer) => {
                                             return (
-                                                <div key={offer.id} className="filtered-listing-card-received">
+                                                <div key={offer.id} className="filtered-listing-card-made">
 
                                                     <div className="offer-details-description"> {/* Renamed class */}
                                                         <div className="detail-item">
@@ -647,7 +647,7 @@ export const ListOfOffers = () => {
                                         <h1 style={{ marginTop: '50px', marginBottom: '10px', fontSize: '20px' }}>Rejected Offers</h1>
                                         {offerDetails.filter(offer => offer.status === 'R').map((offer) => {
                                             return (
-                                                <div key={offer.id} className="filtered-listing-card-received">
+                                                <div key={offer.id} className="filtered-listing-card-made">
 
                                                     <div className="offer-details-description"> {/* Renamed class */}
                                                         <div className="detail-item">
