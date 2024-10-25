@@ -46,12 +46,13 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     latitude: '',
     rates: [],
     photos: [],
+    locations: [] 
   });
 
   const [searchResults, setSearchResults] = useState([]);
   const [mapUrl, setMapUrl] = useState('');
-  // const [fileName, setFileName] = useState(''); 
   const [fileNames, setFileNames] = useState([]);
+  // const [locations, setLocations] = useState([]);
 
   // Handle file input for the photo
   const handleFileChange = (e) => {
@@ -146,33 +147,24 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     //   { "latitude": 1.34755085440782, "longitude": 103.68175755377, "query": "NTU", "notes": "meet me at North spine koufu" },
     // ];
 
-    const locations = [{
+    const locationsString = JSON.stringify(formData.locations);
+    formPayload.append('locations', locationsString);
+
+    const locations = {
       latitude: formData.latitude,
       longitude: formData.longitude,
       query: formData.locationAddress,
       notes: formData.locationNotes
-    }];
-    // formPayload.append('locations', JSON.stringify(locations));
-    // const locationsString = JSON.stringify(locations);
-    // formPayload.append('locations', locationsString);
+    };
 
-    const combinedLocations = [...locations, ...defaultLocations];
-    formPayload.append('locations', JSON.stringify(combinedLocations));
+    const combinedLocations = [...formData.locations, locations]; 
 
-    
+    // Serialize the combined locations array
+    const combinedLocationsString = JSON.stringify(combinedLocations);
 
-    // const rates = {
-    //   time_unit: formData.unit,
-    //   rate: parseFloat(formData.price)
-    // };
-    // formPayload.append('rates', JSON.stringify(rates));
-    // formData.rates.forEach((rate, index) => {
-    //   const rateJson = JSON.stringify({
-    //     time_unit: rate.time_unit,
-    //     rate: parseFloat(rate.rate),
-    //   });
-    //   formPayload.append(`rates`, rateJson); // Appending rates as separate JSON objects
-    // });
+    // Append the combined locations to the form payload
+    formPayload.append('locations', combinedLocationsString);
+
 
     // formPayload.append('rates', JSON.stringify(formData.rates));
     const newRate = {
@@ -211,7 +203,61 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       });
   };
 
+  const addLocation = () => {
+    if ((formData.locations?.length || 0) < 3) {
+      const newLocation = {
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        query: formData.locationAddress,
+        notes: formData.locationNotes,
+      };
+  
+      setFormData({
+        ...formData,
+        locations: [...(formData.locations || []), newLocation],
+        locationAddress: '', // Clear after adding
+        locationNotes: '', // Clear after adding
+        latitude: '', // Reset latitude
+        longitude: '' // Reset longitude
+      });
+    } else {
+      alert("You can only add up to 3 locations.");
+    }
+  };
 
+  const removeLocation = (index) => {
+    const updatedLocations = formData.locations.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      locations: updatedLocations
+    });
+  };
+
+  const searchLocationForLocation = (index) => {
+    const input = formData.locations[index]?.query.replace(/ /g, '+');
+    if (!input) {
+      alert('Please enter a location');
+      return;
+    }
+    fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${input}&returnGeom=Y&getAddrDetails=Y&pageNum=1`, {
+      headers: {
+        'Authorization': 'YOUR_API_KEY',
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle search results for this specific location
+      const updatedLocations = [...formData.locations];
+      updatedLocations[index].searchResults = data.results;
+  
+      setFormData({
+        ...formData,
+        locations: updatedLocations,
+      });
+    })
+    .catch((error) => console.error('Error fetching location:', error));
+  };
+  
 
   const searchLocation = () => {
     const input = formData.locationAddress.replace(/ /g, '+');
@@ -237,9 +283,9 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     }
 
     const formattedAddress = ADDRESS.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '+');
-
     // Set the selected location details in the formData state, including longitude and latitude
     setMapUrl(`https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${formattedAddress}&t=&z=14&ie=UTF8&iwloc=B&output=embed`);
+    
     setFormData({
       ...formData,
       locationAddress: ADDRESS, // Set the full address
@@ -439,8 +485,8 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
             <Typography variant="h6" gutterBottom>
               Location
             </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={9}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={10}>
                 <TextField
                   fullWidth
                   label="Search for a Location"
@@ -449,8 +495,9 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                   onChange={handleChange}
                   placeholder="Search for a location"
                 />
+              </Grid>
+              <Grid item xs={2}>
                 <Button onClick={searchLocation} sx={{
-                  marginTop: 2, 
                   backgroundColor: 'primary.main', // theme color
                   color: 'white',
                   '&:hover': {
@@ -459,44 +506,83 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
                 }}>
                   Search
                 </Button>
+              </Grid>
+            </Grid>
 
-                {/* Display search results */}
-                {searchResults.map((result, index) => (
-                  <Button
-                    key={index}
-                    style={{ display: 'block', marginTop: '8px' }}
-                    // onClick={() => handleLocationSelect(result.ADDRESS)}
-                    onClick={() => handleLocationSelect(result)}
-                  >
-                    {result.ADDRESS}
+            {/* Display search results */}
+            {searchResults.map((result, index) => (
+              <Button
+                key={index}
+                style={{ display: 'block', marginTop: '8px' }}
+                onClick={() => handleLocationSelect(result)}
+              >
+                {result.ADDRESS}
+              </Button>
+            ))}
 
-                  </Button>
+            {/* Button to add location */}
+            <Button onClick={addLocation} disabled={formData.locations?.length >= 3}>
+              Add Location
+            </Button>
+
+            {/* Display added locations with search for each location */}
+            {Array.isArray(formData.locations) && formData.locations.length > 0 && (
+              <>
+                {formData.locations.map((location, index) => (
+                  <div key={index}>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item xs={10}>
+                        <TextField
+                          fullWidth
+                          label="Location"
+                          value={location.query}
+                          disabled
+                        />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <Button onClick={() => searchLocationForLocation(index)} sx={{
+                          backgroundColor: 'primary.main',
+                          color: 'white',
+                          '&:hover': {
+                            backgroundColor: 'primary.dark',
+                          }
+                        }}>
+                          Search
+                        </Button>
+                      </Grid>
+                      <Grid item xs={1} style={{ textAlign: 'center' }}>
+                        <IconButton onClick={() => removeLocation(index)} size="small" aria-label="remove">
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
+                  </div>
                 ))}
+              </>
+            )}
 
-                {/* Display selected location on map */}
-                {mapUrl && (
-                  <iframe
-                    title="Selected Location"
-                    width="100%"
-                    height="200"
-                    frameBorder="0"
-                    scrolling="no"
-                    src={mapUrl}
-                    style={{ marginTop: '16px' }}
-                  ></iframe>
-                )}
-              </Grid>
+            {/* Display selected location on map */}
+            {mapUrl && (
+              <iframe
+                title="Selected Location"
+                width="100%"
+                height="200"
+                frameBorder="0"
+                scrolling="no"
+                src={mapUrl}
+                style={{ marginTop: '16px' }}
+              ></iframe>
+            )}
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Additional Notes (e.g., Meet at third floor lift lobby)"
-                  name="locationNotes"
-                  value={formData.locationNotes}
-                  onChange={handleChange}
-                  multiline
-                />
-              </Grid>
+            <Grid item xs={12} style={{ marginTop: '16px' }}>
+              <TextField
+                fullWidth
+                label="Additional Notes (e.g., Meet at third floor lift lobby)"
+                name="locationNotes"
+                value={formData.locationNotes}
+                onChange={handleChange}
+                multiline
+              />
             </Grid>
           </div>
 
