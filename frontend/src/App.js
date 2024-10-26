@@ -30,24 +30,24 @@ function App() {
         <Navbar />
         <Routes>
           <Route path='/' element={<Categories />} />
-          <Route path='/electronics' element={<ShopCat.EL banner={electronics_banner} />} />
-          <Route path='/supplies' element={<ShopCat.SU banner={supplies_banner} />} />
-          <Route path='/services' element={<ShopCat.SE banner={services_banner} />} />
-          <Route path="/listing" element={<Listing />} />
+          <Route path='/electronics/' element={<ShopCat.EL banner={electronics_banner} />} />
+          <Route path='/supplies/' element={<ShopCat.SU banner={supplies_banner} />} />
+          <Route path='/services/' element={<ShopCat.SE banner={services_banner} />} />
+          <Route path="/listing/" element={<Listing />} />
           <Route path="/user/:user_id" element={<Listing />} />
           <Route path="/listing/:slug" element={<ListingDetail />} />
-          <Route path='/cart' element={<cart />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<SignUp />} />
-          <Route path='/resetpassword' element={<ResetPassword />} />
-          <Route path='/changepassword' element={<ChangePassword />} />
-          <Route path='/FAQ' element={<FAQ />} />
-          <Route path='/support' element={<GetSupport />} />
-          <Route path='/geo' element={<geo />} />
-          <Route path='/user' element={<user />} />
+          <Route path='/cart/' element={<cart />} />
+          <Route path='/login/' element={<Login />} />
+          <Route path='/signup/' element={<SignUp />} />
+          <Route path='/resetpassword/' element={<ResetPassword />} />
+          <Route path='/changepassword/' element={<ChangePassword />} />
+          <Route path='/FAQ/' element={<FAQ />} />
+          <Route path='/support/' element={<GetSupport />} />
+          <Route path='/geo/' element={<geo />} />
+          <Route path='/user/' element={<user />} />
           <Route path='/userprofile/:userId' element={<UserProfile />} />
-          <Route path='/history' element={<TransactionHistory />} />
-          <Route path='/offers' element={<ListOfOffers />} />
+          <Route path='/history/' element={<TransactionHistory />} />
+          <Route path='/offers/' element={<ListOfOffers />} />
           <Route path='/purchasereceived/' element ={<RenterTransactionHistory />}/>
         </Routes>
         <Support />
