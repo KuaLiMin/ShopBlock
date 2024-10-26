@@ -229,6 +229,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
         toggleModal(); // Close the modal after successful submission
       })
       .catch((error,data) => {
+        alert('Error in submission. Please try again.');
         console.error('Error:', error); // Handle errors
         console.error('response:', data);
       });
