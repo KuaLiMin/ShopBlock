@@ -20,7 +20,11 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.decorators import authentication_classes, permission_classes, action
+from rest_framework.decorators import (
+    authentication_classes,
+    permission_classes,
+    parser_classes,
+)
 from django.contrib.auth.hashers import check_password
 from rest_framework import status, serializers
 from django.contrib.auth.hashers import make_password
@@ -101,6 +105,45 @@ class UserController(GenericAPIView):
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
+    @parser_classes([MultiPartParser, FormParser])
+    def post(self, request: Request):
+        # Check if the email already exists - all emails are unique
+        # reject if the email exists
+        if "email" not in request.data:
+            return Response(
+                "Requires an email to register an account",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if "phone_number" not in request.data:
+            return Response(
+                "Requires a phone number to register an account",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if User.objects.filter(email=request.data["email"]).exists():
+            return Response(
+                {"error": "Email already registered"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if User.objects.filter(phone_number=request.data["phone_number"]).exists():
+            return Response(
+                {"error": "Phone number already registered"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Serialize the user data
+        serializer = UserCreateSerializer(data=request.data)
+
+        # If data is successfully serialized then save it into the db
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # Default response is bad request
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     # user updates their profile
     @extend_schema(
         request=UserUpdateSerializer,
@@ -153,48 +196,6 @@ class UserController(GenericAPIView):
         # Return the updated user data
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
-
-class RegisterController(APIView):
-    serializer_class = UserCreateSerializer
-    parser_classes = (MultiPartParser, FormParser)
-
-    def post(self, request):
-        # Check if the email already exists - all emails are unique
-        # reject if the email exists
-        if "email" not in request.data:
-            return Response(
-                "Requires an email to register an account",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if "phone_number" not in request.data:
-            return Response(
-                "Requires a phone number to register an account",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if User.objects.filter(email=request.data["email"]).exists():
-            return Response(
-                {"error": "Email already registered"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if User.objects.filter(phone_number=request.data["phone_number"]).exists():
-            return Response(
-                {"error": "Phone number already registered"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Serialize the user data
-        serializer = UserCreateSerializer(data=request.data)
-
-        # If data is successfully serialized then save it into the db
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        # Default response is bad request
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListingController(GenericAPIView):
@@ -716,7 +717,7 @@ class TransactionController(GenericAPIView):
             queryset = self.get_queryset()
             serializer = self.get_serializer(queryset, many=True)
             return JsonResponse(serializer.data, safe=False)
-        
+
         # Unauthorized permission
         return Response(
             {"error": "Not logged in"},

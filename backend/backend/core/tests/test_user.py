@@ -47,7 +47,7 @@ class UserTestCase(TestCase):
             "biography": "Test biography",
         }
 
-        response = self.client.post("/register/", data, format="multipart")
+        response = self.client.post("/user/", data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Verify response data
@@ -68,9 +68,7 @@ class UserTestCase(TestCase):
             "password": "newpass123",
             "phone_number": "99999999",
         }
-        response = self.client.post(
-            "/register/", duplicate_email_data, format="multipart"
-        )
+        response = self.client.post("/user/", duplicate_email_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content)["error"], "Email already registered"
@@ -82,7 +80,7 @@ class UserTestCase(TestCase):
             # missing email and password
             "phone_number": "77777777",
         }
-        response = self.client.post("/register/", incomplete_data, format="multipart")
+        response = self.client.post("/user/", incomplete_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_user_login(self):
@@ -96,7 +94,7 @@ class UserTestCase(TestCase):
             "biography": "",
         }
         register_response = self.client.post(
-            "/register/", register_data, format="multipart"
+            "/user/", register_data, format="multipart"
         )
         self.assertEqual(register_response.status_code, status.HTTP_201_CREATED)
 
