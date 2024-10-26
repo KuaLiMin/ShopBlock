@@ -90,7 +90,7 @@ const token = getCookie('access'); // Get the 'access' cookie value
       setSnackbarOpen(true);
       return;
   }
-  
+
     let today = new Date();
     if (scheduledStartDate < today) {
       setSnackbarMessage('Start date cannot be in the past.');
@@ -98,7 +98,7 @@ const token = getCookie('access'); // Get the 'access' cookie value
       return;
     }
 
-    if (selectedTimeUnit !== 'D' && selectedTimeUnit !== 'W' && selectedTimeUnit !== 'OT' && !scheduledStartTime) {
+    if (selectedTimeUnit !== 'D' && selectedTimeUnit !== 'W' && !scheduledStartTime) {
         setSnackbarMessage('Missing input, please input Start Time');
         setSnackbarOpen(true);
         return;
@@ -108,7 +108,7 @@ const token = getCookie('access'); // Get the 'access' cookie value
         setSnackbarOpen(true);
         return;
     }
-    if (selectedTimeUnit !== 'D' && selectedTimeUnit !== 'W' && selectedTimeUnit !== 'OT' && !scheduledEndTime) {
+    if (selectedTimeUnit !== 'D' && selectedTimeUnit !== 'W' && !scheduledEndTime) {
         setSnackbarMessage('Missing input, please input End Time');
         setSnackbarOpen(true);
         return;
