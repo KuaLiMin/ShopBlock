@@ -289,14 +289,22 @@ export const ListOfOffers = () => {
             const data = await response.json();
             console.log('Offer rejected:', data);
 
-            // Optionally, update the UI or remove the offer from the list
-            setAllListings((prevListings) =>
-                prevListings.filter((listing) => listing.offer_id !== offerId) // Use offer_id here
+            // Update all relevant state variables
+            setAllListings(prevListings => 
+                prevListings.map(listing => 
+                    listing.offer_id === offerId 
+                        ? { ...listing, status: 'R' } 
+                        : listing
+                )
             );
 
-            // Optionally, filter out the accepted offer from offerDetails if needed
-            setOfferDetails(prevOffers =>
-                prevOffers.filter(offer => offer.id !== offerId)
+            // Update offerDetails to change the status instead of removing
+            setOfferDetails(prevOffers => 
+                prevOffers.map(offer => 
+                    offer.id === offerId 
+                        ? { ...offer, status: 'R' } 
+                        : offer
+                )
             );
 
 
@@ -334,15 +342,22 @@ export const ListOfOffers = () => {
             const data = await response.json();
             console.log('Offer accepted:', data);
 
-            // Update the UI
-            setAllListings((prevListings) =>
-                prevListings.map((listing) =>
-                    listing.offer_id === offerId ? { ...listing, status: 'A' } : listing // Use offer_id here
-                ));
+            // Update allListings state
+            setAllListings(prevListings => 
+                prevListings.map(listing => 
+                    listing.offer_id === offerId 
+                        ? { ...listing, status: 'A' } 
+                        : listing
+                )
+            );
 
-            // Optionally, filter out the accepted offer from offerDetails if needed
-            setOfferDetails(prevOffers =>
-                prevOffers.filter(offer => offer.id !== offerId)
+            // Update offerDetails to change the status instead of removing
+            setOfferDetails(prevOffers => 
+                prevOffers.map(offer => 
+                    offer.id === offerId 
+                        ? { ...offer, status: 'A' } 
+                        : offer
+                )
             );
 
 
