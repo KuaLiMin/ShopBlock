@@ -18,16 +18,10 @@
 }
 
 .listing-detail-container img{
-    height: 300px;           /* Image won't exceed 300px */
+    height: 350px;           /* Image won't exceed 350px */
     width: 100%;
     margin: 30px 0;             /* Add top and bottom margins for spacing */
 }
-
-.carousel {
-    width: 100%;                /* Take full width of parent */
-    position: relative;         /* For proper positioning of slides */
-}
-
 
 .listing-image {
     width: 100%;              
