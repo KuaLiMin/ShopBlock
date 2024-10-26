@@ -192,8 +192,8 @@ class ListingTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(json.loads(response.content)["error"], "Listing not found")
 
-    def test_create_listing(self):
-        """Test creating a new listing"""
+    def test_create_listing_single_location_single_rate(self):
+        """Test creating a listing with single location single rate"""
         self.client.force_authenticate(user=self.user1)
 
         # Good case - valid listing data
@@ -219,6 +219,117 @@ class ListingTestCase(TestCase):
         }
         response = self.client.post("/listing/", bad_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_listing_multiple_locations_single_rate(self):
+        """Test creating a listing with multiple locations and single rate"""
+        self.client.force_authenticate(user=self.user1)
+
+        data = {
+            "title": "Multi-Location Test",
+            "description": "Test listing with multiple locations",
+            "category": Category.SUPPLIES,
+            "listing_type": ListingType.RENTAL,
+            "photos": [get_blank_photo()],
+            "rates": '[{"time_unit": "D", "rate": "25.00"}]',
+            "locations": '[{"latitude": "1.35160", "longitude": "103.87119", "query": "Nex", "notes": "Location 1"}, {"latitude": "1.31745", "longitude": "103.80704", "query": "Farrer Road", "notes": "Location 2"}]',
+            "uploaded_by": self.user1.id,
+        }
+
+        response = self.client.post("/listing/", data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Verify the listing was created with correct data
+        listing_id = json.loads(response.content)["id"]
+        listing = Listing.objects.get(id=listing_id)
+
+        # Check locations
+        locations = listing.locations.all()
+        self.assertEqual(len(locations), 2)
+        self.assertEqual(locations[0].query, "Nex")
+        self.assertEqual(locations[1].query, "Farrer Road")
+
+        # Check rates
+        rates = listing.rates.all()
+        self.assertEqual(len(rates), 1)
+        self.assertEqual(rates[0].time_unit, "D")
+        self.assertEqual(float(rates[0].rate), 25.00)
+
+    def test_create_listing_single_location_multiple_rates(self):
+        """Test creating a listing with single location and multiple rates"""
+        self.client.force_authenticate(user=self.user1)
+
+        data = {
+            "title": "Multi-Rate Test",
+            "description": "Test listing with multiple rates",
+            "category": Category.SUPPLIES,
+            "listing_type": ListingType.RENTAL,
+            "photos": [get_blank_photo()],
+            "rates": '[{"time_unit": "H", "rate": "10.00"}, {"time_unit": "D", "rate": "50.00"}, {"time_unit": "W", "rate": "250.00"}]',
+            "locations": '[{"latitude": "1.35160", "longitude": "103.87119", "query": "Nex", "notes": "Single location"}]',
+            "uploaded_by": self.user1.id,
+        }
+
+        response = self.client.post("/listing/", data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Verify the listing was created with correct data
+        listing_id = json.loads(response.content)["id"]
+        listing = Listing.objects.get(id=listing_id)
+
+        # Check location
+        locations = listing.locations.all()
+        self.assertEqual(len(locations), 1)
+        self.assertEqual(locations[0].query, "Nex")
+
+        # Check rates
+        rates = listing.rates.all().order_by("time_unit")
+        self.assertEqual(len(rates), 3)
+        self.assertEqual(rates[0].time_unit, "D")
+        self.assertEqual(float(rates[0].rate), 50.00)
+        self.assertEqual(rates[1].time_unit, "H")
+        self.assertEqual(float(rates[1].rate), 10.00)
+        self.assertEqual(rates[2].time_unit, "W")
+        self.assertEqual(float(rates[2].rate), 250.00)
+
+    def test_create_listing_multiple_locations_multiple_rates(self):
+        """Test creating a listing with multiple locations and multiple rates"""
+        self.client.force_authenticate(user=self.user1)
+        
+        data = {
+            "title": "Multi-Location-Rate Test",
+            "description": "Test listing with multiple locations and rates",
+            "category": Category.SUPPLIES,
+            "listing_type": ListingType.RENTAL,
+            "photos": [get_blank_photo()],
+            "rates": '[{"time_unit": "H", "rate": "15.00"}, {"time_unit": "D", "rate": "75.00"}, {"time_unit": "W", "rate": "350.00"}]',
+            "locations": '[{"latitude": "1.35160", "longitude": "103.87119", "query": "Nex", "notes": "Location 1"}, {"latitude": "1.31745", "longitude": "103.80704", "query": "Farrer Road", "notes": "Location 2"}, {"latitude": "1.42953", "longitude": "103.83503", "query": "Yishun", "notes": "Location 3"}]',
+            "uploaded_by": self.user1.id,
+        }
+        
+        response = self.client.post("/listing/", data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Verify the listing was created with correct data
+        listing_id = json.loads(response.content)["id"]
+        listing = Listing.objects.get(id=listing_id)
+        
+        # Check locations
+        locations = listing.locations.all()
+        self.assertEqual(len(locations), 3)
+        location_queries = [loc.query for loc in locations]
+        self.assertIn("Nex", location_queries)
+        self.assertIn("Farrer Road", location_queries)
+        self.assertIn("Yishun", location_queries)
+        
+        # Check rates
+        rates = listing.rates.all().order_by('time_unit')
+        self.assertEqual(len(rates), 3)
+        self.assertEqual(rates[0].time_unit, "D")
+        self.assertEqual(float(rates[0].rate), 75.00)
+        self.assertEqual(rates[1].time_unit, "H")
+        self.assertEqual(float(rates[1].rate), 15.00)
+        self.assertEqual(rates[2].time_unit, "W")
+        self.assertEqual(float(rates[2].rate), 350.00)
 
     def test_update_listing(self):
         """Test updating an existing listing"""

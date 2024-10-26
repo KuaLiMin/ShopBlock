@@ -659,6 +659,12 @@ class ReviewsController(GenericAPIView):
     def post(self, request: Request):
         user_id = request.data.get("user_id")
 
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "You must be authenticated to update your profile"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         if not user_id:
             return Response(
                 {"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST
@@ -673,10 +679,6 @@ class ReviewsController(GenericAPIView):
 
         # Add the reviewer (current user) to the request data
         request.data["reviewer_id"] = request.user.id
-
-        from pprint import pprint
-
-        pprint(request.data)
 
         serializer = self.get_serializer(
             data=request.data, context={"request": request}
@@ -710,9 +712,16 @@ class TransactionController(GenericAPIView):
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        if request.user.is_authenticated:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        
+        # Unauthorized permission
+        return Response(
+            {"error": "Not logged in"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
     @extend_schema(
         request={
@@ -756,9 +765,15 @@ class TransactionController(GenericAPIView):
         request.data["user_id"] = request.user.id
         serializer = self.get_serializer(data=request.data)
 
-        if serializer.is_valid():
-            transaction = serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if request.user.is_authenticated:
+            if serializer.is_valid():
+                transaction = serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                {"error": "Not logged in"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
