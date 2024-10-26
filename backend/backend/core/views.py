@@ -197,7 +197,6 @@ class UserController(GenericAPIView):
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
 
-
 class ListingController(GenericAPIView):
     """
     Listing endpoint, [GET, POST, PUT, DELETE]
