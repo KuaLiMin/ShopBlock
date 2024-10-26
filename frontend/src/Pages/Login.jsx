@@ -89,7 +89,7 @@ export const Login = () => {
       formData.append('biography', 'Hey there! Nice to meet you!');
 
       // Perform POST request using async/await inside try-catch
-      const response = await axios.post('/register/', formData, {
+      const response = await axios.post('/user/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
