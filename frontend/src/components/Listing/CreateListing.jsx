@@ -49,6 +49,28 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
     locations: [] 
   });
 
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      price: '',
+      unit: '',
+      category: '',
+      description: '',
+      locationAddress: '',
+      locationNotes: '',
+      image_url: '',
+      listing_type: '',
+      longitude: '',
+      latitude: '',
+      rates: [],
+      photos: [],
+      locations: []
+    });
+    setFileNames([]);
+    setSearchResults([]);
+    setMapUrl('');
+  };
+
   const [searchResults, setSearchResults] = useState([]);
   const [mapUrl, setMapUrl] = useState('');
   const [fileNames, setFileNames] = useState([]);
@@ -116,20 +138,27 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
     const requiredFields = ['title', 'price', 'unit', 'category', 'description', 'locationAddress', 'listing_type'];
     let isValid = true;
+    let missingFields = [];
 
+    // Check each required field
     requiredFields.forEach((field) => {
       if (!formData[field]) {
         isValid = false;
-        alert(`The field ${field} is required.`); 
+        missingFields.push(field);
       }
     });
 
+    // Check if photos array has at least one photo
     if (!formData.photos.length) {
       isValid = false;
-      alert('At least one photo is required.');
+      missingFields.push('photos');
     }
 
-    if (!isValid) return;
+    
+    if (!isValid) {
+      alert(`Please fill in all fields.`);
+      return;
+    }
 
 
     const formPayload = new FormData();
@@ -195,6 +224,8 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       })
       .then((data) => {
         console.log('Success:', data); // Handle success
+        // alert('Listing created successfully!');
+        resetForm();
         toggleModal(); // Close the modal after successful submission
       })
       .catch((error,data) => {
@@ -297,6 +328,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
   return (
     <Dialog open={isModalOpen} onClose={(event, reason) => {
       if (reason !== 'backdropClick') {
+        resetForm();
         toggleModal();
       }
     }}
@@ -591,20 +623,20 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
       {/* Actions */}
       <DialogActions>
-        <Button onClick={toggleModal} color="secondary" sx={{
-          backgroundColor: '#e0e0e0',  // Light gray background for cancel
-          color: '#333',                // Darker gray text
+        <Button onClick={() => {resetForm();toggleModal();}} color="secondary" sx={{
+          backgroundColor: '#e0e0e0',  
+          color: '#333',                
           '&:hover': {
-            backgroundColor: '#d5d5d5', // Darker gray on hover
+            backgroundColor: '#d5d5d5', 
           }
         }}>
           Cancel
         </Button>
         <Button onClick={handleSubmit} color="primary" type="submit" sx={{
-          backgroundColor: 'primary.main', // theme color
+          backgroundColor: 'primary.main', 
           color: 'white',
           '&:hover': {
-            backgroundColor: 'primary.dark', // theme-aware hover color
+            backgroundColor: 'primary.dark', 
           }
         }}>
           Submit
