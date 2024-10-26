@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './CSS/shopcat.css';
 import { Link } from 'react-router-dom';
 import FilterBar from '../components/Filterbar/Filterbar';
+import no_image from '../components/Images/no_image.jpg';
 
 const ShopCatCard = ({ updateCount, categoryCode, filters }) => {
   const [listingsData, setListingsData] = useState([]);
@@ -76,7 +77,7 @@ const ShopCatCard = ({ updateCount, categoryCode, filters }) => {
           to={`/listing/${listing.title}-${listing.time.replace(/-/g, '_')}-${listing.id}`}
           key={index}
         >
-          <img src={listing.image} alt={listing.title} className="ShopCat-item" />
+          <img src={listing.image || no_image} alt={listing.title} className="ShopCat-item" />
           <div className="ShopCat-info">
             <h4>{listing.title}</h4>
             <p>{listing.rate}</p>

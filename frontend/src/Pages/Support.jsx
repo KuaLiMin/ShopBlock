@@ -22,7 +22,6 @@ const Support = () => {
 
     // Function to close the modal
     const handleCloseSupportModal = () => {
-        handleOpen();
         setOpenSupportModal(false); // Close the modal when user clicks close or any other action
     };
 
@@ -40,6 +39,7 @@ const Support = () => {
     };
 
     const handleSubmit = () => {
+        handleOpen();
         handleCloseSupportModal();
     }
 
