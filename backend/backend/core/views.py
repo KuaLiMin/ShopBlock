@@ -710,9 +710,16 @@ class TransactionController(GenericAPIView):
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def get(self, request: Request):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        if request.user.is_authenticated:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        
+        # Unauthorized permission
+        return Response(
+            {"error": "Not logged in"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
     @extend_schema(
         request={
@@ -756,9 +763,15 @@ class TransactionController(GenericAPIView):
         request.data["user_id"] = request.user.id
         serializer = self.get_serializer(data=request.data)
 
-        if serializer.is_valid():
-            transaction = serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if request.user.is_authenticated:
+            if serializer.is_valid():
+                transaction = serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                {"error": "Not logged in"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
