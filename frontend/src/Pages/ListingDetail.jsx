@@ -220,6 +220,9 @@ const token = getCookie('access'); // Get the 'access' cookie value
       if (selectedTimeUnit === 'W') {
         timeDelta = timeDelta / 7; // Divide by 7 for weeks
       }
+      if (selectedTimeUnit === 'OT') {
+        timeDelta = 1;
+      }
       try {
         const offerData = {
           listing_id: parseInt(id),
