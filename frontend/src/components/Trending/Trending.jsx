@@ -15,8 +15,8 @@ const TrendingCounter = () => {
   return (
     <div className="Trending">
             <hr />
-      <h1>TRENDING NOW!</h1>
-      <p>There are {TrendingCount} items trending!</p>
+      <h1>EXPLORE NOW!</h1>
+      <p>There are {TrendingCount} items to explore!</p>
       {/* Pass updateCount function to the TrendingGrid */}
       <TrendingGrid updateCount={updateTrendingCount} />
       <hr />
