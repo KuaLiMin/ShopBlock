@@ -21,6 +21,7 @@ import services_banner from './components/Images/banner_women.png'
 import supplies_banner from './components/Images/banner_kids.png'
 import ListingDetail from './Pages/ListingDetail';
 import ListOfOffers from './Pages/ListOfOffers';
+import RenterTransactionHistory from './Payment/RenterTransactionHistory';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path='/userprofile/:userId' element={<UserProfile />} />
           <Route path='/history' element={<TransactionHistory />} />
           <Route path='/offers' element={<ListOfOffers />} />
+          <Route path='/purchasereceived/' element ={<RenterTransactionHistory />}/>
         </Routes>
         <Support />
         <Footer />
