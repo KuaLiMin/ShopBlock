@@ -85,6 +85,12 @@ const token = getCookie('access'); // Get the 'access' cookie value
 
   const handleConfirmAvailability = () => {
     // Validation checks
+    if (!scheduledStartDate) {
+      setSnackbarMessage('Missing input, please input Start Date');
+      setSnackbarOpen(true);
+      return;
+  }
+  
     let today = new Date();
     if (scheduledStartDate < today) {
       setSnackbarMessage('Start date cannot be in the past.');
@@ -92,11 +98,6 @@ const token = getCookie('access'); // Get the 'access' cookie value
       return;
     }
 
-    if (!scheduledStartDate) {
-        setSnackbarMessage('Missing input, please input Start Date');
-        setSnackbarOpen(true);
-        return;
-    }
     if (selectedTimeUnit !== 'D' && selectedTimeUnit !== 'W' && selectedTimeUnit !== 'OT' && !scheduledStartTime) {
         setSnackbarMessage('Missing input, please input Start Time');
         setSnackbarOpen(true);
