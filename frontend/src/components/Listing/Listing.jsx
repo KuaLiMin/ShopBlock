@@ -7,6 +7,7 @@ import axios from 'axios';
 import CustomSlider from "./Slider";
 import "./Slider.css";
 
+
 const formatRate = (rates) => {
   if (rates.length > 0) {
     const timeUnitMap = {
@@ -24,6 +25,7 @@ const formatRate = (rates) => {
   }
   return 'Rate not available'; // Default if no rate is found
 };
+
 
 const formatDate = (isoString) => {
   const date = new Date(isoString);
@@ -123,7 +125,7 @@ const ListingCard = ({id, time, title, rates = [], image = [], onDelete}) => {
 }
 
 
-const ListingsGrid = ({ updateCount = () => {} }) => {
+const ListingsGrid = ({ updateCount, filters }) => {
   const [listingsData, setListingsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -175,36 +177,113 @@ const ListingsGrid = ({ updateCount = () => {} }) => {
         const userSpecificListings = data.filter(listing => listing.uploaded_by === parseInt(user_id));
 
         // Format the data for display
+        // const formattedData = userSpecificListings.map(listing => ({
+        //   id: listing.id,
+        //   time: listing.created_at,
+        //   title: listing.title,
+        //   description: listing.description,
+        //   // rate: formatRate(listing.rates), 
+        //   rates: listing.rates,
+        //   image: listing.photos ? listing.photos.map(photo => photo.image_url) : [],
+          
+        // }));
+
+        // setListingsData(formattedData);
+        // setLoading(false);
+        // updateCount(formattedData.length);
+
+        // ------------------------------------------
+
         const formattedData = userSpecificListings.map(listing => ({
           id: listing.id,
           time: listing.created_at,
           title: listing.title,
           description: listing.description,
-          // rate: formatRate(listing.rates), 
           rates: listing.rates,
+          category: listing.category ,
+          price: listing.rates.length > 0 ? listing.rates[0].rate : 0, 
+          time_unit: listing.rates.length > 0 ? listing.rates[0].time_unit : '', 
           image: listing.photos ? listing.photos.map(photo => photo.image_url) : [],
-          
         }));
 
-        setListingsData(formattedData);
+        // Apply filters based on selected price and rates
+        const timeUnitMap = { hourly: 'H', daily: 'D', weekly: 'W', ot: 'OT' };
+        const categoriesMap = { Electronics: 'EL', Supplies: 'SU', Services: 'SE' };
+
+
+        // const filteredListings = formattedData.filter(listing => {
+        //   const matchesCategory = !filters.categories.length || filters.categories.includes(listing.category);
+        //   const matchesRate = !filters.rates.length || listing.rates.some(rate => filters.rates.includes(timeUnitMap[rate.time_unit.toUpperCase()]));
+
+        //   return matchesCategory && matchesRate;
+        // });
+        
+      
+        const filteredListings = formattedData.filter(listing => {
+          // console.log(filters.rates)
+          // console.log(filters.category)
+          // console.log(listing.category)
+    
+          const matchesCategory = filters.category && filters.category.length
+            ? filters.category.some(category => listing.category === category)
+            : true;
+          
+          const matchesRate = filters.rates.length
+            ? filters.rates.some(rate => listing.time_unit.toUpperCase() === timeUnitMap[rate])
+            : true;
+            // console.log(matchesCategory)
+            // return matchesRate;
+            return matchesRate && matchesCategory;
+
+        });
+
+        // const filteredListings = formattedData.filter(listing => {
+        //   const matchesCategory = filters.category ? listing.category === filters.category : true;
+        //   return matchesCategory && matchesRate;
+        // });
+
+        // const filteredListings = formattedData.filter(listing => {
+        //   // Category filter
+        //   // const matchesCategory = filters.category ? listing.category === filters.category : true;
+        //   const matchesCategory = filters.categories
+        //     ? filters.categories.some(category => listing.category === categoriesMap[category])
+        //     : true;
+
+        //   const matchesRate = filters.rates.length
+        //     ? filters.rates.some(rate => listing.time_unit.toUpperCase() === timeUnitMap[rate])
+        //     : true;
+        //   console.log(`Listing ${listing.title} | Category: ${listing.category} | Matches Category: ${matchesCategory} | Matches Rate: ${matchesRate}`); // Debugging
+
+        //   return matchesCategory && matchesRate;
+        // });
+
+        setListingsData(filteredListings);
         setLoading(false);
-        updateCount(formattedData.length);
+        updateCount(filteredListings.length);
+
       })
       .catch(error => {
         console.error('Error fetching listings:', error);
         setError(error);
         setLoading(false);
       });
-  }, [updateCount]);
+  }, [filters, updateCount]); // f
+
   const handleDelete = (id) => {
     // Remove the deleted listing from the state
     setListingsData(prevListings => prevListings.filter(listing => listing.id !== id));
   };
 
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading data: {error.message}</p>;
 
   return (
+    // <div className="listings-grid">
+    //   {listingsData.map((listing, index) => (
+    //     <ListingCard key={index} {...listing} onDelete={handleDelete}/>
+    //   ))}
+    // </div>
     <div className="listings-grid">
       {listingsData.map((listing, index) => (
         <ListingCard key={index} {...listing} onDelete={handleDelete}/>

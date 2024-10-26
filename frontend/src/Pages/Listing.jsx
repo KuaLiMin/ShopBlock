@@ -10,6 +10,7 @@ import CreateListing from '../components/Listing/CreateListing';
 export const Listing = () => {
   const [listingsCount, setListingsCount] = useState(0);  // State to hold number of listings
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filters, setFilters] = useState({ price: 0, rates: [] }); //f
 
   // Utility function to get a specific cookie by name
   function getCookie(name) {
@@ -24,6 +25,10 @@ export const Listing = () => {
   // Function to update the number of listings
   const updateListingsCount = (count) => {
     setListingsCount(count);
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
   };
 
   // Function to toggle the modal visibility
@@ -57,9 +62,26 @@ export const Listing = () => {
     );
   }
 
+  // return (
+  //   <div className="listing-app">
+  //     <SideNav />
+  //     <div className="listing-content">
+  //       <div className="listings-header">
+  //         <h1>Your Listings</h1>
+  //         <button onClick={toggleModal} className="add-listing-btn">+ Create Listing</button>
+  //       </div>
+  //       <hr className="listings-underline" />
+  //       <p>{listingsCount} items found in Your Listings</p>
+  //       <ListingsGrid updateCount={updateListingsCount}  />
+
+  //       {/* Modal for Add Listing */}
+  //       <CreateListing isModalOpen={isModalOpen} toggleModal={toggleModal} />
+  //     </div>
+  //   </div>
+  // )
   return (
     <div className="listing-app">
-      <SideNav />
+      <SideNav onFilterChange={handleFilterChange} /> {/* Pass filter change handler */}
       <div className="listing-content">
         <div className="listings-header">
           <h1>Your Listings</h1>
@@ -67,12 +89,12 @@ export const Listing = () => {
         </div>
         <hr className="listings-underline" />
         <p>{listingsCount} items found in Your Listings</p>
-        <ListingsGrid updateCount={updateListingsCount} />
+        <ListingsGrid updateCount={updateListingsCount} filters={filters} /> {/* Pass filters */}
 
         {/* Modal for Add Listing */}
         <CreateListing isModalOpen={isModalOpen} toggleModal={toggleModal} />
       </div>
     </div>
-  )
+  );
 }
 export default Listing
