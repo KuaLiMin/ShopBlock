@@ -113,10 +113,10 @@ const token = getCookie('access'); // Get the 'access' cookie value
     }
 
     // Create start and end date/time in local time zone
-    const startDateTime = (selectedTimeUnit === 'D' || selectedTimeUnit === 'W' || selectedTimeUnit === 'OT')
+    const startDateTime = (selectedTimeUnit === 'D' || selectedTimeUnit === 'W')
         ? dayjs(scheduledStartDate).startOf('day')
         : dayjs(scheduledStartDate).hour(scheduledStartTime.hour()).minute(0).second(0);
-    const endDateTime = (selectedTimeUnit === 'D' || selectedTimeUnit === 'W' || selectedTimeUnit === 'OT')
+    const endDateTime = (selectedTimeUnit === 'D' || selectedTimeUnit === 'W')
         ? dayjs(scheduledEndDate).endOf('day')
         : dayjs(scheduledEndDate).hour(scheduledEndTime.hour()).minute(0).second(0);
     // Date and time comparison checks
@@ -138,7 +138,18 @@ const token = getCookie('access'); // Get the 'access' cookie value
           setSnackbarOpen(true);
           return; // Early return if not valid
       }
-  }
+    }
+
+    if (selectedTimeUnit === 'OT') {
+      const timeDelta = calculateTimeDelta(start, end, selectedTimeUnit);
+      
+      if (timeDelta > 24) {
+          setSnackbarMessage('Error: Must be less than or equal to 24 hours.');
+          setSnackbarOpen(true);
+          return; // Early return if not valid
+      }
+    }
+    
 
     setScheduledStart(start);
     setScheduledEnd(end);
@@ -261,12 +272,9 @@ const token = getCookie('access'); // Get the 'access' cookie value
       end = end.clone().add(1, 'second'); // Clone the end time and add one second
     }
 
-    console.log(start);
-    console.log(end);
-  
     // Calculate the time delta
     let timeDelta;
-  
+
     if (timeUnit === 'H') {
         // Calculate time difference in hours
         timeDelta = end.diff(start, 'hour'); // Get difference in hours
@@ -277,8 +285,8 @@ const token = getCookie('access'); // Get the 'access' cookie value
         // Calculate time difference in weeks by dividing days by 7
         timeDelta = end.diff(start, 'hour') / (24);
     } else if (timeUnit === 'OT') {
-        // Set time delta to 1 for 'OT'
-        timeDelta = 1;
+        // Calculate time difference in hours
+        timeDelta = end.diff(start, 'hour'); // Get difference in hours
     } else {
         throw new Error('Invalid time unit provided'); // Handle invalid time unit
     }
