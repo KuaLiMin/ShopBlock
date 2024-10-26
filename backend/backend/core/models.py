@@ -7,7 +7,7 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
 )
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.hashers import make_password
 
 
@@ -250,7 +250,12 @@ class Review(models.Model):
         related_name="reviews_received",
         on_delete=models.CASCADE,
     )
-    rating = models.PositiveSmallIntegerField()
+    rating = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(0.5, message="Rating must be at least 0.5"),
+            MaxValueValidator(5, message="Rating cannot exceed 5")
+        ]
+    )
     # Optional description for the review
     description = models.TextField(blank=True, null=True)
     # Automatically set the time when the review was created
