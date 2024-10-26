@@ -659,6 +659,12 @@ class ReviewsController(GenericAPIView):
     def post(self, request: Request):
         user_id = request.data.get("user_id")
 
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "You must be authenticated to update your profile"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         if not user_id:
             return Response(
                 {"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST
@@ -673,10 +679,6 @@ class ReviewsController(GenericAPIView):
 
         # Add the reviewer (current user) to the request data
         request.data["reviewer_id"] = request.user.id
-
-        from pprint import pprint
-
-        pprint(request.data)
 
         serializer = self.get_serializer(
             data=request.data, context={"request": request}
