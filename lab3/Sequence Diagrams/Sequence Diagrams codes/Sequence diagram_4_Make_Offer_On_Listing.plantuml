@@ -1,0 +1,43 @@
+@startuml
+' Define participants (classes remain unchanged)
+actor User as U
+boundary BrowseUI as BUI
+control BrowseManager as BM
+entity ListingEn as L
+boundary OfferUI as OUI
+control OfferManager as OM
+entity OfferEn as O
+
+' Step 4: Select a listing and make an offer on someone else's listing
+== Make an Offer on a Listing ==
+U -> BUI : 4.1 ClickViewLisingButton(): void
+activate U
+activate BUI
+BUI -> BM : 4.2 FetchListingDetails(listingId: String): ListingDetails
+activate BM
+BM -> L : 4.3 RetrieveListingFromDatabase(listingId: String): ListingDetails
+activate L
+L --> BM : 4.4 ReturnListingDetails(): ListingDetails
+deactivate L
+BM --> BUI : 4.5 DisplayListingDetails(): void
+deactivate BM
+BUI --> U : 4.6 ShowListingDetails(): void
+deactivate BUI
+
+U -> OUI : 4.7 ClickMakeOfferButton(): void
+activate OUI
+OUI --> U : 4.8 PromptOfferDetailsInput(): void
+U -> OUI : 4.9 SubmitOfferDetails(offerDetails: OfferDetails): void
+OUI -> OM : 4.10 CreateOffer(offerDetails: OfferDetails): OfferStatus: boolean
+activate OM
+OM -> O : 4.11 SaveOfferToDatabase(offerDetails: OfferDetails)
+activate O
+O --> OM : 4.12 ConfirmOfferCreation(): OfferStatus: boolean
+deactivate O
+OM --> OUI : 4.13 NotifyUIOfferCreated(): void
+deactivate OM
+OUI --> U : 4.14 ShowOfferCreationSuccessMessage(): void
+deactivate OUI
+deactivate U
+
+@enduml

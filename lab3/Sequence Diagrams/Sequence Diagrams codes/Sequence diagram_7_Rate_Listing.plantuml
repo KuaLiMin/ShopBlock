@@ -1,0 +1,28 @@
+@startuml
+
+' Define participants (classes remain unchanged)
+actor User as U
+boundary ReviewUI as RUI
+control ReviewManager as RM
+entity ReviewEn as R
+
+' Step 7: Rate a Listing
+== Rate a Listing ==
+U -> RUI : 7.1 ClickRateListingButton(): void
+activate U
+activate RUI
+RUI --> U : 7.2 DisplayListingForRating(Listingid: String): void
+U -> RUI : 7.3 RatingandReview(rating, review): void
+RUI -> RM : 7.4 CreateReview(reviewDetails: ReviewDetails): boolean
+activate RM
+RM -> R : 7.5 SaveReviewToDatabase(reviewDetails: ReviewDetails): boolean
+activate R
+R --> RM : 7.6 ConfirmReviewCreation(): boolean
+deactivate R
+RM --> RUI : 7.7 notifyUIReviewSubmitted(): void
+deactivate RM
+RUI --> U : 7.8 showReviewSubmissionSuccessMessage(): void
+deactivate RUI
+deactivate U
+
+@enduml
