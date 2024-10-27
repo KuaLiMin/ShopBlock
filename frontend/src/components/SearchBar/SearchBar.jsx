@@ -39,6 +39,12 @@ export const SearchBar = ({ setResults }) => {
       clearTimeout(timer);
     }
 
+    // If input is empty, clear results
+    if (value.trim() === "") {
+      setResults(null);
+      return;
+    }
+
     // Set a new timeout to delay the API call by 5 seconds
     const newTimer = setTimeout(() => {
       fetchData(value);
