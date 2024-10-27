@@ -1,0 +1,28 @@
+@startuml
+
+' Define participants (classes remain unchanged)
+actor User as U
+boundary AccountManagementUI as AUI
+control AccountManager as AM
+entity UserEn as UA
+
+' Step 2: Log In
+== Log In ==
+U -> AUI : 2.1 ClickLoginButton(): void
+activate U
+activate AUI
+AUI --> U : 2.2 RequestCredentials(): void
+U -> AUI : 2.3 SubmitCredentials(email: String, password: String): void
+AUI -> UA : 2.4 VerifyCredentials(email: String, password: String): LoginStatus: boolean
+activate UA
+alt Credentials are correct
+    UA --> AUI : 2.5.1 DisplayLoginSuccessMessage(): void
+    AUI --> U : 2.5.2 ShowLoginSuccessMessage(): void
+else Credentials are incorrect
+    UA --> AUI : 2.6.1 DisplayLoginFailedMessage(errorMessage: String): void
+    AUI --> U : 2.6.2 ShowLoginFailedMessage(): errorMessage: String
+deactivate UA
+deactivate U
+end
+
+@enduml

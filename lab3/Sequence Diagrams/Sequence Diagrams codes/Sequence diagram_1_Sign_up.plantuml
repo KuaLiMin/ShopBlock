@@ -1,0 +1,35 @@
+@startuml
+
+' Define participants (classes remain unchanged)
+actor User as U
+boundary AccountManagementUI as AUI
+control AccountManager as AM
+entity UserEn as UA
+
+' Step 1: Sign Up
+== Sign Up ==
+U -> AUI : 1.1 ClickSignUpButton(): void
+Activate U
+activate AUI
+AUI --> U : 1.2 RequestCredentials(): void
+U -> AUI : 1.3 SubmitCredentials(email: String, password: String): void
+AUI --> U : 1.4 ConfirmCredentials(): void
+U -> AUI : 1.5 confirmSubmission(email: String, password: String): void
+AUI -> AUI : 1.6 CheckEmailInUse(email: String): boolean
+alt Email is already in use
+    AUI --> U : 1.7.1 PromptNewEmail(): void
+else Email is not in use
+    AUI -> AM : 1.8.1 initiateAccountCreation(userDetails: UserDetails): void
+    activate AM
+    AM -> UA : 1.8.2 CreateAccountInDatabase(userDetails: UserDetails): void
+    activate UA
+    UA --> AM : 1.8.3 ConfirmAccountCreation(): void
+    deactivate UA
+    AM --> AUI : 1.8.4 NotifyUIAccountCreated(): void
+    AUI --> U : 1.8.5 ShowAccountCreationSuccessMessage(): void
+    deactivate AM
+    deactivate AUI
+    deactivate U
+end
+
+@enduml

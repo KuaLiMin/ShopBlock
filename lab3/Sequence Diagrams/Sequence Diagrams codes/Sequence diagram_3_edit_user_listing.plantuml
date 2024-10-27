@@ -1,0 +1,28 @@
+@startuml
+
+' Define participants (classes remain unchanged)
+actor User as U
+boundary BrowseUI as BUI
+control BrowseManager as BM
+entity ListingEn as L
+
+' Step 3: Edit a user listing detail
+== Edit a User Listing Detail ==
+U -> BUI : 3.1 ClickEditListingButton(): void
+activate U
+activate BUI
+BUI --> U : 3.2 RequestListingDetails(): void
+U -> BUI : 3.3 SubmitUpdatedListing(listingDetails: ListingDetails): void
+BUI -> BM : 3.4 UpdateListingInManager(listingDetails: ListingDetails): boolean
+activate BM
+BM -> L : 3.5 UpdateListingInDatabase(listingDetails: ListingDetails): boolean
+activate L
+L --> BM : 3.6 ConfirmListingUpdate(): UpdateStatus: boolean
+deactivate L
+BM --> BUI : 3.7 NotifyUIListingUpdated(): void
+deactivate BM
+BUI --> U : 3.8 ShowUpdateSuccessMessage(): void
+deactivate BUI
+deactivate U
+
+@enduml

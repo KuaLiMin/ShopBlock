@@ -1,0 +1,29 @@
+@startuml
+
+' Define participants (classes remain unchanged)
+actor User as U
+boundary BrowseUI as BUI
+control BrowseManager as BM
+entity ListingEn as L
+
+' Step 6: Create a new listing
+== Create a New Listing ==
+U -> BUI : 6.1 ClickCreateListingButton(): void
+activate U
+activate BUI
+BUI -> U : 6.2 InitializeListingInstance (listingType: String, details: ListingDetails)
+U -> BUI : 6.3 EnterListingDetails(): void
+BUI -> BM : 6.4 CreateNewListing(listing: Listing): void
+
+activate BM
+BM -> L : 6.5 CreateListingInDatabase(listing: Listing): void
+activate L
+L --> BM : 6.6 ConfirmListingCreation(): boolean
+deactivate L
+BM --> BUI : 6.7 NotifyUICreationSuccess(): void
+deactivate BM
+BUI --> U : 6.8 ShowCreationSuccessMessage(): void
+deactivate BUI
+deactivate U
+
+@enduml
