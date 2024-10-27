@@ -12,7 +12,7 @@ export const SignUp = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
-  const [count, setCount] = useState(0); // Tracks failed login attempts
+  const [count, setCount] = useState(1); // Tracks failed login attempts
   const [lock, setLock] = useState(false); // Tracks whether the account is locked
   const [lockMessage, setLockMessage] = useState(''); // Stores lock message
   const [unlockTime, setUnlockTime] = useState(null); // Tracks the unlock time

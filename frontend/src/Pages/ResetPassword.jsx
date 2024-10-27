@@ -100,7 +100,7 @@ export const ResetPassword = () => {
       setLoading(false);
     } catch (error) {
       if (error.response.data.non_field_errors == 'Both email and phone number not found') {
-        setErrorMessage('Both email and phone number not found');
+        setErrorMessage('Both email and phone number not found!');
       } else setErrorMessage('')
 
       if (error.response.data.non_field_errors == 'Email not found') {
@@ -111,7 +111,6 @@ export const ResetPassword = () => {
         setPhoneErrorMessage('Phone number not found!');
       } else setPhoneErrorMessage('')
 
-      setErrorMessage('An error occurred while resetting the password.');
       setLoading(false);
     }
   };

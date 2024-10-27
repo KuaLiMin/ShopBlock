@@ -29,6 +29,7 @@ const UserProfile = () => {
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // "success" or "error"
 
   const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar visibility
   const [snackbarMessage, setSnackbarMessage] = useState(''); // State for Snackbar message
@@ -148,11 +149,12 @@ const UserProfile = () => {
       });
 
       setProfile({ ...profile, biography: response.data.biography });
-      // If the request is successful, clear any loading or error messages
+      setSnackbarSeverity('success');
       setSnackbarMessage('Biography saved!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
     } catch (error) {
       console.error(error);
+      setSnackbarSeverity('error');
       setSnackbarMessage('An error occured!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
     }
@@ -198,10 +200,13 @@ const UserProfile = () => {
 
       console.log("profile here ===", profile);
       // If the request is successful, clear any loading or error messages
+      setSnackbarSeverity('success');
       setSnackbarMessage('Username and Phone Number saved!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
     } catch (error) {
       console.error(error);
+      setPhoneNumber(profile.phone_number);
+      setSnackbarSeverity('error');
       setSnackbarMessage('An error occured!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
     }
@@ -249,10 +254,12 @@ const UserProfile = () => {
       console.log(response.data); // Handle the response
   
       // If the request is successful, clear any loading or error messages
+      setSnackbarSeverity('success');
       setSnackbarMessage('Avatar updated successfully!');
       setSnackbarOpen(true); // Show Snackbar
     } catch (error) {
       console.error(error);
+      setSnackbarSeverity('error');
       setSnackbarMessage('An error occurred!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
     }
@@ -491,7 +498,7 @@ const UserProfile = () => {
           elevation={6}
           variant="filled"
           onClose={handleCloseSnackbar}
-          severity="success"
+          severity={snackbarSeverity}
         >
           {snackbarMessage}
         </MuiAlert>
