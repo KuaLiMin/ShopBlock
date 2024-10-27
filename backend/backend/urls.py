@@ -37,8 +37,8 @@ urlpatterns = [
     # default django admin portal
     path("admin/", admin.site.urls),
     # debugging purposes
-    path("debug/user/", views.DebugUserController.as_view()),
-    path("debug/listing/", views.DebugListingController.as_view()),
+    # path("debug/user/", views.DebugUserController.as_view()),
+    # path("debug/listing/", views.DebugListingController.as_view()),
     # listings [GET, POST, DELETE]
     path("listing/", views.ListingController.as_view(), name="listing"),
     # user routes, [GET, POST, PUT]
