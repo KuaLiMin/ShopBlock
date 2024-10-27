@@ -18,7 +18,12 @@ export const SearchBar = ({ setResults }) => {
             user.title.toLowerCase().includes(value.toLowerCase())
           );
         });
-        setResults(results); // Set the filtered results to the state passed down
+
+        if (results.length === 0) {
+          setResults(null); // Set the result to null if there are no matches
+        } else {
+          setResults(results); // Set the filtered results to the state passed down
+        }
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
