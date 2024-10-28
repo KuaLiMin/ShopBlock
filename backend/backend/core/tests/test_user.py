@@ -192,10 +192,14 @@ class UserTestCase(TestCase):
 
         # Bad case - wrong current password
         self.client.force_authenticate(user=user)
-        response = self.client.put("/user/",{
-            "password": "wrongpass",
-            "new_password": "newpass123",
-        }, format="multipart")
+        response = self.client.put(
+            "/user/",
+            {
+                "password": "wrongpass",
+                "new_password": "newpass123",
+            },
+            format="multipart",
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content)["error"], "Old password is not in the database"
@@ -242,3 +246,21 @@ class UserTestCase(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content)["biography"], "New bio")
+
+    def test_delete_user(self):
+        """Test delete user"""
+        user = User.objects.create_user(
+            username="deleteusertest",
+            email="deleteusertest@example.com",
+            password="deleteuserpartial123",
+            phone_number="12341234",
+        )
+        self.client.force_authenticate(user=user)
+
+        # Delete user
+        response = self.client.delete("/user/", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(
+            User.objects.filter(email="deleteusertest@example.com").count(), 0
+        )
