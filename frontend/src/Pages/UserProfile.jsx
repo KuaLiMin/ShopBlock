@@ -207,7 +207,7 @@ const UserProfile = () => {
       console.error(error);
       setPhoneNumber(profile.phone_number);
       setSnackbarSeverity('error');
-      setSnackbarMessage('An error occured!'); // Set the Snackbar message
+      setSnackbarMessage('Phone number has been taken!'); // Set the Snackbar message
       setSnackbarOpen(true); // Show Snackbar
     }
   };
