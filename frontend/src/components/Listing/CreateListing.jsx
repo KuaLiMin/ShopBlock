@@ -75,6 +75,17 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
   const [mapUrl, setMapUrl] = useState('');
   const [fileNames, setFileNames] = useState([]);
   // const [locations, setLocations] = useState([]);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+  const handleCancel = () => {
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    resetForm();
+    toggleModal();
+    setIsConfirmOpen(false);
+  };
 
   // Handle file input for the photo
   const handleFileChange = (e) => {
@@ -624,7 +635,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
 
       {/* Actions */}
       <DialogActions>
-        <Button onClick={() => {resetForm();toggleModal();}} color="secondary" sx={{
+        <Button onClick={handleCancel} color="secondary" sx={{
           backgroundColor: '#e0e0e0',  
           color: '#333',                
           '&:hover': {
@@ -644,8 +655,28 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
         </Button>
       </DialogActions>
 
+      {/* Confirmation Dialog */}
+      <Dialog open={isConfirmOpen} onClose={() => setIsConfirmOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this listing?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsConfirmOpen(false)} color="primary">
+            No
+          </Button>
+          <Button onClick={handleConfirmDelete} color="secondary">
+            Yes, Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Dialog>
+
+    
   );
+
+
 
 };
 
