@@ -201,6 +201,12 @@ class UserController(GenericAPIView):
         # Return the updated user data
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
+    @authentication_classes([JWTAuthentication])
+    @permission_classes([IsAuthenticated])
+    def delete(self, request: Request):
+        user = request.user
+        user.delete()
+        return Response(status=status.HTTP_200_OK)
 
 class ListingController(GenericAPIView):
     """
