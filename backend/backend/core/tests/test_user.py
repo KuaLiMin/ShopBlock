@@ -192,8 +192,10 @@ class UserTestCase(TestCase):
 
         # Bad case - wrong current password
         self.client.force_authenticate(user=user)
-        update_data["password"] = "wrongpass"
-        response = self.client.put("/user/", update_data, format="multipart")
+        response = self.client.put("/user/",{
+            "password": "wrongpass",
+            "new_password": "newpass123",
+        }, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content)["error"], "Old password is not in the database"
