@@ -206,15 +206,22 @@ const UserProfile = () => {
     } catch (error) {
       console.error(error);
       setPhoneNumber(profile.phone_number);
-      setSnackbarSeverity('error');
-      setSnackbarMessage('Phone number has been taken!'); // Set the Snackbar message
-      setSnackbarOpen(true); // Show Snackbar
+      if (error.response.data.error == 'Phone number already exists') {
+        setSnackbarSeverity('error');
+        setSnackbarMessage('Phone number has been taken!'); // Set the Snackbar message
+        setSnackbarOpen(true); // Show Snackbar
+      } else {
+        // Display snackbar message if unexpected error occured
+        setSnackbarSeverity('error');
+        setSnackbarMessage('An error occured!'); // Set the Snackbar message
+        setSnackbarOpen(true); // Show Snackbar
+      }
     }
   };
 
   const handleAvatarClick = () => {
     // Trigger the hidden file input when the avatar is clicked
-    if(!isViewOnly) {
+    if (!isViewOnly) {
       document.getElementById('avatarInput').click();
     }
     //document.getElementById('avatarInput').click();
@@ -250,9 +257,9 @@ const UserProfile = () => {
           'Content-Type': 'multipart/form-data',    // Set the content type to multipart/form-data
         },
       });
-  
+
       console.log(response.data); // Handle the response
-  
+
       // If the request is successful, clear any loading or error messages
       setSnackbarSeverity('success');
       setSnackbarMessage('Avatar updated successfully!');
@@ -285,6 +292,30 @@ const UserProfile = () => {
 
   const handleChangePasswordClick = () => {
     navigate('/changepassword');
+  };
+
+  const handleDeleteAccountClick = async () => {
+    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      try {
+        // Send DELETE request to the /user/ endpoint
+        await axios.delete('/user/', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`, // Pass the authorization token if required
+          },
+        });
+
+        // Clear the authentication cookies
+        document.cookie = 'access=; Max-Age=0; path=/;';
+        document.cookie = 'refresh=; Max-Age=0; path=/;';
+
+        // Redirect or navigate user to a safe page after deletion
+        alert("Account successfully deleted.");
+        window.location.href = '/'; // Redirect to the homepage or another page
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        alert("An error occurred while deleting your account.");
+      }
+    }
   };
 
   // If profile data is not yet loaded, show a loading or sign-in message
@@ -417,11 +448,16 @@ const UserProfile = () => {
               <strong>Email:</strong> {profile.email}
             </p>
             {/* Change Password Button */}
-            {!isViewOnly && (<div className="change-password-container">
-              <button className="change-password-btn" onClick={handleChangePasswordClick}>
-                Change Password
-              </button>
-            </div>)}
+            {!isViewOnly && (
+              <div className="button-row-container" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                <button className="change-password-btn" onClick={handleChangePasswordClick}>
+                  Change Password
+                </button>
+                <button className="delete-account-btn" onClick={handleDeleteAccountClick}>
+                  Delete Account
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

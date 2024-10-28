@@ -198,6 +198,27 @@ h1 {
   background-color: #d32f2f; /* Darker red on hover */
 }
 
+/* Delete Account Button */
+.delete-account-container {
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  margin-top: 20px;
+}
+
+.delete-account-btn {
+  background-color: #931209; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.delete-account-btn:hover {
+  background-color: #770808; /* Darker red on hover */
+}
+
 /* Right Section - Biography and Reviews */
 .right-section {
   flex: 2;
