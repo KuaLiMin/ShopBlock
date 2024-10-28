@@ -264,3 +264,8 @@ class UserTestCase(TestCase):
         self.assertEqual(
             User.objects.filter(email="deleteusertest@example.com").count(), 0
         )
+
+        # Delete user without authentication
+        self.client.force_authenticate(None)
+        response = self.client.delete("/user/", format="json")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

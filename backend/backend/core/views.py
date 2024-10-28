@@ -204,6 +204,12 @@ class UserController(GenericAPIView):
     @authentication_classes([JWTAuthentication])
     @permission_classes([IsAuthenticated])
     def delete(self, request: Request):
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "You must be authenticated to update your profile"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         user = request.user
         user.delete()
         return Response(status=status.HTTP_200_OK)
