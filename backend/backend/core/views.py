@@ -170,6 +170,11 @@ class UserController(GenericAPIView):
         if "username" in request.data:
             user.username = request.data["username"]
         if "phone_number" in request.data:
+            if User.objects.filter(phone_number=request.data["phone_number"]).exists():
+                return Response(
+                    {"error": "Phone number already exists"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             user.phone_number = request.data["phone_number"]
         if "avatar" in request.data:
             user.avatar = request.data["avatar"]
