@@ -1,0 +1,107 @@
+/* Parent container with flexbox layout */
+.shop-cat-container {
+    display: flex;
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Space between SideNav and content */
+    max-width: 1280px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* SideNav wrapper to control its width */
+.side-nav-wrapper {
+    flex: 1;
+    max-width: 250px; /* Set a maximum width for the SideNav */
+}
+
+/* Content beside SideNav */
+.shop-cat-content {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Styles for the shop banner */
+.shopcat-banner {
+    display: block;
+    margin: 30px auto;
+    width: 80%;
+}
+
+.category-indexSort {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.category-indexSort p {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ShopCat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.ShopCat-item {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px; /* Optional: adds rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: adds a shadow for styling */
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.ShopCat-info {
+    padding: 10px;
+    background-color: #f8f8f8;
+    text-align: center;
+}
+
+.ShopCat-info h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #171717;
+    margin: 10px 0;
+}
+
+.ShopCat-info p {
+    font-size: 16px;
+    color: #777;
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+    .shopcat-banner {
+        width: 95%;
+    }
+
+    .category-indexSort {
+        width: 90%;
+    }
+
+    .ShopCat-grid {
+        gap: 15px;
+    }
+
+    .ShopCat-info h4 {
+        font-size: 16px;
+    }
+
+    .ShopCat-info p {
+        font-size: 14px;
+    }
+
+    .shop-cat-container {
+        flex-direction: column; /* Stack SideNav on top of content on smaller screens */
+    }
+}

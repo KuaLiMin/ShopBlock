@@ -1,0 +1,38 @@
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 2fr); /* 7 columns for the week */
+    gap: 5px; /* No gaps between the grid items */
+    margin: 0; /* No margin around the calendar */
+}
+
+.calendar-day {
+    width: 40px; /* Adjust as necessary */
+    height: 40px; /* Adjust as necessary */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc; /* Optional for visibility */
+    cursor: pointer;
+    margin: 2px; /* Small margin to avoid spacing issues */
+}
+
+.highlight-grey {
+    background-color: #d3d3d3;
+    cursor: default;
+    pointer-events: none;
+}
+  
+.highlight-black {
+    background-color: black;
+    color: white;
+}
+
+.highlight-orange {
+    background-color: orange;
+    color: white;
+}
+
+.highlight-green {
+    background-color: green;
+    color: white;
+}
