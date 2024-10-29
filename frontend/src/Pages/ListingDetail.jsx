@@ -455,12 +455,12 @@ const token = getCookie('access'); // Get the 'access' cookie value
       <div className="image-list-container">
         {listingData.images && listingData.images.length > 0 ? (
           <Carousel
-            indicators={false}               // Hide indicators
+            indicators={true}               // Hide indicators
             navButtonsAlwaysVisible={true}   // Always show navigation buttons
-            swipe={false}                    // Disable swipe functionality
+            swipe = {true}
           >
             {listingData.images.map((image, index) => (
-              <Paper key={index}>
+              <Paper key={index} className="no-shadow">
                 <img 
                   src={image} 
                   alt={`Listing ${listingData.title} Image ${index + 1}`} 

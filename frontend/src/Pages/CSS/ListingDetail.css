@@ -253,3 +253,10 @@ hr {
     margin-bottom: 50px;
   }
   
+  .no-shadow {
+    box-shadow: none !important; /* Remove shadow from Paper */
+  }
+  
+  .carousel-indicator {
+    box-shadow: none !important; /* Remove shadow from indicators if needed */
+  }
