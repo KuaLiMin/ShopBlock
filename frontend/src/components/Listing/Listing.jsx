@@ -6,6 +6,14 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import CustomSlider from "./Slider";
 import "./Slider.css";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+} from '@mui/material';
 
 
 const formatRate = (rates) => {
@@ -50,6 +58,7 @@ const getCookie = (name) => {
 const ListingCard = ({id, time, title, rates = [], image = [], onDelete}) => {
   const formattedTime = encodeURIComponent(time.replace(/-/g, '_')); {/* CREATED BY HAYES */}
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   
   const handleEditClick = (e) => {
     e.preventDefault(); // Prevent default link behavior
@@ -60,17 +69,42 @@ const ListingCard = ({id, time, title, rates = [], image = [], onDelete}) => {
     setModalOpen(!isModalOpen); // Function to toggle modal visibility
   };
 
-  const handleDeleteClick = async (e) => {
-    const token = getCookie('access'); 
-    e.preventDefault();
-    // call an API to delete the listing
-    const confirmed = window.confirm(`Are you sure you want to delete the listing "${title}"?`);
+  // const handleDeleteClick = async (e) => {
+  //   const token = getCookie('access'); 
+  //   e.preventDefault();
+  //   // call an API to delete the listing
+  //   const confirmed = window.confirm(`Are you sure you want to delete the listing "${title}"?`);
     
-    if (!confirmed) {
-      return; 
-    }
+  //   if (!confirmed) {
+  //     return; 
+  //   }
+  //   try {
+  //     // Call the delete API
+  //     await axios.delete(`/listing/?id=${id}`, {
+  //       headers: {
+  //         'Authorization': `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     console.log(`Listing with ID ${id} deleted.`);
+  //     // window.location.reload();
+  //     onDelete(id);
+
+  //   } catch (error) {
+  //     console.error('Error deleting listing:', error);
+  //   }
+    
+  // };
+
+  const handleDeleteClick = (e) => {
+    e.preventDefault();
+    setIsConfirmOpen(true); // Open the dialog
+  };
+
+  const handleConfirmDelete = async () => {
+    const token = getCookie('access');
+
     try {
-      // Call the delete API
       await axios.delete(`/listing/?id=${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,13 +112,12 @@ const ListingCard = ({id, time, title, rates = [], image = [], onDelete}) => {
       });
 
       console.log(`Listing with ID ${id} deleted.`);
-      // window.location.reload();
-      onDelete(id);
+      onDelete(id); // Call the onDelete function passed as a prop
+      setIsConfirmOpen(false); // Close the dialog after deletion
 
     } catch (error) {
       console.error('Error deleting listing:', error);
     }
-    
   };
 
   return (
@@ -120,6 +153,23 @@ const ListingCard = ({id, time, title, rates = [], image = [], onDelete}) => {
 
       {/* Render the EditListing modal */}
       <EditListing isModalOpen={isModalOpen} toggleModal={toggleModal} listingId={id} />
+      
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isConfirmOpen} onClose={() => setIsConfirmOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete the listing "{title}"?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsConfirmOpen(false)} color="primary">
+            No
+          </Button>
+          <Button onClick={handleConfirmDelete} color="secondary">
+            Yes, Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </div>
   );
 }
@@ -279,11 +329,6 @@ const ListingsGrid = ({ updateCount, filters }) => {
   if (error) return <p>Error loading data: {error.message}</p>;
 
   return (
-    // <div className="listings-grid">
-    //   {listingsData.map((listing, index) => (
-    //     <ListingCard key={index} {...listing} onDelete={handleDelete}/>
-    //   ))}
-    // </div>
     <div className="listings-grid">
       {listingsData.map((listing, index) => (
         <ListingCard key={index} {...listing} onDelete={handleDelete}/>

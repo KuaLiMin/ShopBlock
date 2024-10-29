@@ -16,6 +16,8 @@ import {
   MenuItem,
   FormControl,
   Typography,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 
 const getCookie = (name) => {
@@ -76,6 +78,7 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
   const [fileNames, setFileNames] = useState([]);
   // const [locations, setLocations] = useState([]);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleCancel = () => {
     setIsConfirmOpen(true);
@@ -312,6 +315,10 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
       .then((response) => response.json())
       .then((data) => {
         setSearchResults(data.results);
+        if (data.results.length === 0) {
+          // If no results, open the Snackbar
+          setOpenSnackbar(true);
+        }
       })
       .catch((error) => console.error('Error fetching location:', error));
   };
@@ -554,15 +561,17 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
             </Grid>
 
             {/* Display search results */}
-            {searchResults.map((result, index) => (
-              <Button
-                key={index}
-                style={{ display: 'block', marginTop: '8px' }}
-                onClick={() => handleLocationSelect(result)}
-              >
-                {result.ADDRESS}
-              </Button>
-            ))}
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              {searchResults.map((result, index) => (
+                <Button
+                  key={index}
+                  style={{ display: 'block', marginTop: '8px' }}
+                  onClick={() => handleLocationSelect(result)}
+                >
+                  {result.ADDRESS}
+                </Button>
+              ))}
+            </div>
 
             {/* Button to add location */}
             <Button onClick={addLocation} disabled={formData.locations?.length >= 3}>
@@ -670,6 +679,18 @@ const CreateListing = ({ isModalOpen, toggleModal }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Snackbar for "No Results Found" message */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="warning">
+          No results found for the given location.
+        </Alert>
+      </Snackbar>
 
     </Dialog>
 
