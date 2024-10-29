@@ -1,0 +1,373 @@
+
+
+
+.sidenav {
+  width: 250px; /* Adjust width of the side nav */
+  background-color: white; 
+  padding: 20px;
+  box-sizing: border-box;
+  flex: 0 0 250px;
+  height: 100vh;
+}
+
+
+.sidenav h3 {
+  /* margin-top: 0px; */
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #333; /* Dark grey text */
+  border-bottom: 2px solid #ccc;  
+  padding-bottom: 5px;  
+  padding-top: 20px
+}
+
+.sidenav ul {
+  list-style: none; /* Remove bullet points */
+  padding: 0;
+}
+
+.sidenav li {
+  padding: 8px 0; /* Vertical padding for each item */
+  cursor: pointer;
+  color: #333; /* Dark grey text */
+}
+
+.sidenav li:hover {
+  color: #000; /* Change text color on hover */
+  background-color: #e0e0e0; /* Light grey background on hover */
+}
+
+
+/*--------------------------*/
+
+.price-range {
+  display: flex;
+  flex-direction: column;  
+  align-items: flex-start; 
+  margin-top: 10px;
+  width: 100%;   
+}
+
+.price-range input[type="range"] {
+  flex-grow: 1; /* Let the range input grow to fill available space */
+  margin: 15px, 0px;
+}
+
+.price-range button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #63abbf; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  
+}
+
+.price-range button:hover {
+  background-color: #1a426c; /* Darker blue on hover */
+}
+
+/*--------------------------*/
+
+.checkbox-container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #e6e6e6;
+  border-radius: 4px;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #007bff;
+}
+
+.checkbox-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 7px;
+  height: 15px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+/*--------------------------*/
+/* LISTING PAGE */
+/*--------------------------*/
+
+.listing-app {
+  display: flex;  
+  flex-direction: row;
+}
+
+.listing-content {
+  flex: 1;  
+  padding: 20px;
+}
+
+.listing-content h1 {
+  color: #333;  
+  font-size: 30px;  
+  font-weight: bold;  
+  margin-bottom: 10px; 
+  padding-top: 10px;  
+}
+
+.listing-card a {
+  text-decoration: none; 
+  color: #333333; /* Set color to match the original style (dark gray) */
+  font-weight: bold; /* Make the title bold like in your image */
+}
+
+/*Hover effect */
+.listing-card a:hover {
+  color: #1a426c; /* Change color slightly on hover */
+  text-decoration: none; 
+}
+
+/* Style for the title in the listing-info */
+.listing-info h4 {
+  margin: 5px 0;
+  color: #333333; /* Dark gray for consistency */
+  font-weight: bold; /* Match the original bold text */
+}
+
+/* Style for the rate in the listing-info */
+.listing-info p {
+  color: #666666; /* Light gray for rate */
+  font-size: 16px;
+}
+
+.listing-card {
+  display: flex;
+  flex-direction: column;  /* Stack items vertically */
+  justify-content: space-between;  /* Ensure content stays between top and bottom */
+  /* display: inline-block; */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+  min-height: 350px;
+
+}
+
+.listing-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.listing-info {
+  padding: 10px;
+  text-align: center;
+  flex-grow: 1;  
+}
+
+
+.listings-grid {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Creates a responsive grid */
+  gap: 20px; /* Space between cards */
+  padding: 20px;
+}
+
+.listings-header {
+  display: flex;
+  justify-content: space-between;  /* Ensures heading and button are on opposite sides */
+  align-items: center;  /* Vertically centers the button with the heading */
+  margin-bottom: 10px;
+}
+
+/* Styling for the Add Listing button */
+.add-listing-btn {
+  background-color: #63acc0;  
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.add-listing-btn:hover {
+  background-color: #3a6470;  /* Darker blue on hover */
+}
+
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.edit-button, .delete-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #007bff;
+}
+
+.delete-button {
+  background-color: #ec6b78;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button:hover {
+  background-color: #c64854;
+}
+
+/*-------- ADD LISTING --------- */
+
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  width: 900px; 
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.listing-form {
+  display: flex;
+  flex-wrap: wrap; 
+}
+
+.form-left {
+  width: 45%; 
+  display: flex;
+  flex-direction: column;
+}
+
+.form-right {
+  width: 45%; 
+  margin-left: 5%; 
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+textarea {
+  resize: none;
+  height: 150px; 
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px; /* Add gap between Price and Unit */
+}
+
+.half-width {
+  width: 48%;
+}
+
+.add-photo-btn, .submit-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.add-photo-btn:hover, .submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.submit-btn {
+  width: 100%; 
+  margin-top: 20px; 
+} 

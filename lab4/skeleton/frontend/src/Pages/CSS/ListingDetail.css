@@ -1,0 +1,255 @@
+.listing-detail-container {
+    display: flex;               /* Use Flexbox to arrange children */
+    align-items: flex-start; 
+    justify-content: flex-start;
+    flex-direction: column;      /* Arrange items in a column */
+    padding: 20px 10%;          /* 10% padding on left and right */
+    height: 100%;
+}
+
+.listing-detail-container h3 {
+    margin-bottom: 3px;
+}
+
+.image-list-container {
+    width: 100%;                /* Take full width */
+    align-self: flex-start;     /* Align to the left */
+    margin: 0;                  /* Remove default margins */
+}
+
+.listing-detail-container img{
+    height: 350px;           /* Image won't exceed 350px */
+    width: 100%;
+    margin: 30px 0;             /* Add top and bottom margins for spacing */
+}
+
+.listing-image {
+    width: 100%;              
+    height: 100%;              
+    object-fit: contain;        
+}
+
+hr {
+    border: none;               /* Remove the default border */
+    border-top: 1px solid #ccc; /* Set a visible line */
+    margin: 20px 50px 10px 0;     /* Margin for spacing */
+    height: 1px;                /* Ensure it has a height */
+    width: calc(100%-50px)
+}
+
+.description {
+    max-width: 100%;            /* Set maximum width for description */
+    gap: 10px;                  /* Add gap between child elements */
+}
+
+.description p {
+    margin: 3px 0 5px 0;       /* Margin for paragraph elements */
+}
+
+.linkcolor {
+    color: blue;                /* Change this to your desired color */
+    text-decoration: none;      /* Optional: remove underline */
+}
+
+.linkcolor:visited {
+    color: blue;                /* Ensure this matches the unvisited color */
+}
+
+.title-rate-description-container {
+    display: flex; /* Use flexbox to arrange title, rate, description, and user rating */
+    width: 100%; /* Full width of the parent */
+    margin-top: 16px; /* Adds space above */
+}
+
+.title-rate-description {
+    flex: 80%; /* This takes 2 parts of the available space (70%) */
+    padding-right: 10px; /* Optional: space between title and user rating */
+}
+
+.user-detail-container {
+    flex: 25%; /* Takes 1 part of the available space (30%) */
+    display: flex;
+    flex-direction: column; /* Ensure elements are stacked vertically */
+    align-items: flex-start; /* Center aligns user rating items */
+    padding: 20px 0 10px 0; /* Padding inside the box */
+    background-color: #f9f9f9; /* Light background color for the box */
+    border: 1px solid #ddd; /* Light border around the box */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    min-width: 300px;
+}
+
+.profile-rating-stars{
+    display: flex; /* Flexbox for user rating items */
+    flex-direction: row; /* Stack items vertically */
+    align-items: center; /* Align items to the start (top) of the column */
+}
+
+.name-rating-container{
+    display: flex; /* Flexbox for user rating items */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start (top) of the column */
+}
+
+.user-rating-container {
+    display: flex; /* Flexbox for user rating items */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start (top) of the column */
+}
+
+.user-name-container {
+    margin-bottom: 4px; /* Add space between username and rating */
+}
+
+.user-stars-container {
+    display: flex; /* Flexbox for stars and rating */
+    align-items: center; /* Align items in the center vertically */
+}
+
+.user-profile {
+    display: flex; /* Flexbox for user profile items */
+    margin: 5px 0 0 10px;
+}
+
+.availability{
+    display: flex;
+    flex-direction: column; /* Stack the buttons vertically */
+    width: 90%; /* Full width for the buttons */
+    gap: 10px; /* Add space between the buttons */
+    margin-top: 10px; /* Add space at the top */
+    margin-bottom: 10px;
+}
+
+.offer-section {
+    display: flex;
+    flex-direction: column; /* Stack the buttons vertically */
+    justify-content: flex-end;
+    align-items: flex-end; /* Push buttons to the right */
+    width: 90%; /* Ensure it fills the entire width of the container */
+    box-sizing: border-box; /* Include padding in the width calculation */
+  }
+
+.offer-price {
+    display: flex;
+    flex-direction: row; /* Stack the buttons vertically */
+    width:90%;
+    margin-top: 20px;
+    margin-bottom:10px;
+}
+
+.offer-input-container {
+    display: flex;
+    align-items: flex-start; /* Align the input box and button vertically */
+    justify-content: flex-start;
+    margin-right:5px;
+    height: 30px;
+}
+
+.offer-button{
+    display: flex;
+    align-items: flex-end; /* Align the input box and button vertically */
+    justify-content: flex-end;
+    height: 40px;
+}
+.offer-button p{
+    display: flex;
+    align-items: flex-end; /* Align the input box and button vertically */
+    justify-content: flex-end;
+}
+
+.button-column {
+    display: flex;
+    flex-direction: column; /* Stack the buttons vertically */
+    width: 90%; /* Full width for the buttons */
+    gap: 10px; /* Add space between the buttons */
+    margin-top: 10px; /* Add space at the top */
+    margin-bottom: 20px;
+}
+
+.view-button {
+    width: 100%; /* Make buttons take full width */
+}
+
+.rating{
+    margin-right:10px;
+}
+
+.star-icon {
+    font-size: 16px; /* Size of the star icon */
+    color: gold; /* Color of the highlighted star icon */
+}
+
+.star-icon-empty {
+    font-size: 16px; /* Size of the empty star icon */
+    color: lightgray; /* Color of the non-highlighted star icon */
+}
+
+.avatar {
+    margin-left: 10px; 
+    margin-right: 20px;        
+}
+
+.map-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the title and map horizontally */
+    margin: 50px 0; /* 50px margin above and below */
+    width: 100%; /* Ensure full width */
+    max-width: 800px; /* Set a max width to match the container's width */
+    margin-left: auto; /* Center the section */
+    margin-right: auto; /* Center the section */
+    margin-top: 100px;
+}
+  
+.map-container {
+    margin-top: 10px;
+    width: 100%;
+    height: 400px;
+  }
+
+.error-message {
+    text-align: center; /* Center the error message */
+    color: #ff0000; /* Red color for errors */
+    margin-top: 20px; /* Space above the error message */
+    font-size: 1.2em; /* Adjust the font size as needed */
+}
+
+
+.map-section .view-location-title {
+    display: flex;               /* Use flexbox for the title */
+    align-items: center;        /* Center align items vertically */
+    font-size: 25px;            /* Set font size */
+    font-weight: bold;          /* Make text bold */
+    width: 100%;                /* Ensure the title takes full width for alignment */
+}
+
+.map-section .location-icon {
+    margin-right: 10px;         /* Space between icon and text */
+    COLOR: #FF0000;
+}
+
+
+
+.custom-textfield-date {
+    display:flex;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .custom-textfield input {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .custom-textfield label {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .calender-container{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+  

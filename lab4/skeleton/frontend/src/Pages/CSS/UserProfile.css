@@ -1,0 +1,319 @@
+/* General Profile Container */
+.profile-container {
+  max-width: 100%;
+  /* Adjust the width to fit the screen */
+  margin: 0 auto;
+  /* Center the container */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  min-height: 70vh;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.short-description {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.profile-content {
+  display: flex;
+  justify-content: space-between;
+  /* Ensure left and right sections are spaced out */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Left Section - User Info */
+.left-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-height: 150px;
+}
+
+.user-image {
+  width: 100px; /* Fixed size */
+  height: 100px; /* Fixed size */
+  object-fit: cover;
+  border-radius: 50%;
+  transition: opacity 0.3s ease;
+}
+
+.avatar-container {
+  position: relative;
+  width: 100px; /* Fixed size */
+  height: 100px; /* Fixed size */
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.change-avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px; /* Fixed size */
+  height: 100px; /* Fixed size */
+  background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.camera-icon {
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+}
+
+.avatar-container:hover .change-avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-container:hover .user-image {
+  opacity: 0.5;
+}
+
+.user-details {
+  margin-left: 30px; /* Add more space between the avatar and the user details */
+  flex-grow: 1; /* Ensure the user details take up the remaining space */
+}
+
+.user-details h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  /* Adjusted font size */
+}
+
+.user-rating {
+  color: #555;
+  margin-top: 5px;
+}
+
+.stars {
+  color: gold;
+  display: inline-block;
+  font-size: 24px;
+  margin-right: 5px;
+}
+
+.review-count {
+  color: #888;
+}
+
+
+/* About Me Section */
+.about-me {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  min-height: 400px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-btn {
+  background-color: #009eb6;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: -10px;
+}
+
+.edit-btn:hover {
+  background-color: #007c8a;
+}
+
+.save-btn {
+  background-color: #009eb6;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: -10px;
+}
+
+.save-btn {
+  background-color: #28a745;
+}
+
+.save-btn:hover {
+  background-color: #218838;
+}
+
+.about-me-details {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.info-block {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Change Password Button */
+.change-password-container {
+  display: flex;
+  justify-content: flex-start; /* Align to the right */
+  margin-top: 20px;
+}
+
+.change-password-btn {
+  background-color: #f44336; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.change-password-btn:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Delete Account Button */
+.delete-account-container {
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  margin-top: 20px;
+}
+
+.delete-account-btn {
+  background-color: #931209; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.delete-account-btn:hover {
+  background-color: #770808; /* Darker red on hover */
+}
+
+/* Right Section - Biography and Reviews */
+.right-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 70%;
+}
+
+.biography {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  min-height: 150px;
+}
+
+.bio-text {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  min-height: 105px;
+  height: 105px;
+  width: 100%; /* Set the width to 100% */
+  box-sizing: border-box; /* Include padding and border in the element's width and height */
+}
+
+.bio-text-editable {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  min-height: 105px;
+  height: 105px;
+  width: 100%; /* Ensure the textarea takes the same width */
+  resize: none; /* Disable resizing */
+  box-sizing: border-box; /* Include padding and border in the element's width and height */
+}
+
+/* Reviews Section */
+
+.reviews {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  min-height: 400px;
+}
+
+.reviews-scrollable {
+  max-height: 400px; /* Set a fixed height for the scrollable container */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 10px; /* Add some padding for better UX */
+}
+
+.review {
+  margin-top: 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+}
+
+.reviewer-image {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+}
+
+.review-text {
+  margin-top: 10px;
+  color: #555;
+}
+
+.review-rating {
+  color: gold;
+}
+
+/* Input fields */
+
+.input-field {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between the label and the input */
+}
+
+.input-field input {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}

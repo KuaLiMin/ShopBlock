@@ -1,0 +1,16 @@
+.results-list {
+    width: calc(100% - 400px); /* This ensures 200px padding on both sides */
+    max-width: 600px;          /* Optional: Set a maximum width */
+    height: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 0 15px;
+    box-shadow: 0px 0px 8px #ddd;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    max-height: 200px;
+    margin: 0 auto;  /* Centers the element horizontally */
+    overflow-y: scroll;
+  }

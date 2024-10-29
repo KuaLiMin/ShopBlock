@@ -1,0 +1,117 @@
+/* Main container styling */
+.support-container {
+    text-align: center;
+    padding: 50px;
+    background-color: #f5f8fa;
+    /* Light background */
+}
+
+.support-title {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.support-description {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+/* Support cards container */
+.support-card-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+.support-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.support-card:hover {
+    transform: translateY(-10px);
+}
+
+.support-card .icon {
+    margin-bottom: 20px;
+}
+
+.support-card h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.support-card p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+    min-height: 60px;
+    /* Ensure consistent height across cards */
+}
+
+.support-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #009eb6;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    margin-top: auto;
+}
+
+.support-btn:hover {
+    background-color: #007a8a;
+}
+
+/* Extra info section */
+/* Container for the extra info section */
+.extra-info {
+    display: flex;
+    justify-content: center;
+    /* Centers both text blocks horizontally */
+    gap: 60px;
+    /* Add spacing between the blocks */
+    margin-top: 30px;
+    text-align: center;
+    /* Ensures the text inside the blocks is centered */
+}
+
+.info-block {
+    flex: none;
+    /* Prevents the blocks from stretching unevenly */
+}
+
+.info-block h4 {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.info-block p {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+}
+
+.extra-info a {
+    color: #009eb6;
+    text-decoration: none;
+}
+
+.extra-info a:hover {
+    text-decoration: underline;
+}
