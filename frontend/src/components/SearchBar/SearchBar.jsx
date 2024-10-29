@@ -48,7 +48,7 @@ export const SearchBar = ({ setResults }) => {
     // Set a new timeout to delay the API call by 5 seconds
     const newTimer = setTimeout(() => {
       fetchData(value);
-    }, 5000);
+    }, 100);
 
     // Update the timer state
     setTimer(newTimer);
