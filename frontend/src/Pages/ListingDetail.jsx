@@ -23,6 +23,7 @@ import { DesktopDatePicker, DesktopTimePicker } from '@mui/x-date-pickers'; // I
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import DialogTitle from '@mui/material/DialogTitle';
 import Carousel from 'react-material-ui-carousel';
+import { Paper } from '@mui/material'
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import './CSS/ListingDetail.css'
@@ -453,9 +454,19 @@ const token = getCookie('access'); // Get the 'access' cookie value
       {/* New section to display a list of images */}
       <div className="image-list-container">
         {listingData.images && listingData.images.length > 0 ? (
-          <Carousel>
+          <Carousel
+            indicators={false}               // Hide indicators
+            navButtonsAlwaysVisible={true}   // Always show navigation buttons
+            swipe={false}                    // Disable swipe functionality
+          >
             {listingData.images.map((image, index) => (
-              <img key={index} src={image} alt={`Listing ${listingData.title} Image ${index + 1}`} className="listing-image" />
+              <Paper key={index}>
+                <img 
+                  src={image} 
+                  alt={`Listing ${listingData.title} Image ${index + 1}`} 
+                  className="listing-image" 
+                />
+              </Paper>
             ))}
           </Carousel>
         ) : (

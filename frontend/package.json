@@ -20,6 +20,7 @@
     "react-leaflet": "^4.2.1",
     "react-material-ui-carousel": "^3.4.2",
     "react-phone-input-2": "^2.15.1",
+    "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.26.1",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
