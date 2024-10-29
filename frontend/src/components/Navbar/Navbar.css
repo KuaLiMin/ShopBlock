@@ -262,7 +262,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 10px;
+    padding: 10px 0px;
     gap: 10px; /* Add spacing between the search bar and results */
   }
   

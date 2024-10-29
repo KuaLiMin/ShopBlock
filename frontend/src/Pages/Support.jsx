@@ -111,12 +111,6 @@ const Support = () => {
                         <p>Have ideas or questions? Join our community and share your thoughts with others.</p>
                     </div>
                 </div>
-                <div className="info-block">
-                    <div className="info-text">
-                        <h4>General Inquiries</h4>
-                        <p>For any general queries, feel free to reach us at <a href="mailto:info@rentalplatform.com">shopblock@rentalplatform.com</a>.</p>
-                    </div>
-                </div>
             </div>
 
             {/* Modal (Dialog) */}
