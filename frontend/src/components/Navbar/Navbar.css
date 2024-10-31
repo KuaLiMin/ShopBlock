@@ -266,3 +266,46 @@
     gap: 10px; /* Add spacing between the search bar and results */
   }
   
+.input-wrapper {
+    width: calc(100% - 400px); /* This ensures 200px padding on both sides */
+    max-width: 600px;          /* Optional: Set a maximum width */
+    height: 2.5rem;
+    border: none;
+    border-radius: 10px;
+    padding: 0 15px;
+    box-shadow: 0px 0px 8px #ddd;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    margin: 0 auto;  /* Centers the element horizontally */
+    position: relative; /* Ensure child elements can be positioned absolutely */
+}
+
+.custom-search-results {
+    position: absolute;  /* Position the dropdown absolutely within the input wrapper */
+    top: 100%;           /* Align it right below the input */
+    left: 0;
+    width: 100%;         /* Same width as the input wrapper */
+    max-height: 300px;   /* Optional: Limit height and allow scrolling if necessary */
+    overflow-y: auto;    /* Enable scrolling for long result lists */
+    border-radius: 10px;
+    z-index: 9999;       /* Ensure it stays on top of other elements */
+    visibility: hidden;  /* Prevent interaction when hidden */
+    transition: opacity 0.3s ease-in-out; /* Smooth transition */
+}
+
+.custom-search-results.show {
+    opacity: 1;          /* Make visible */
+    visibility: visible; /* Enable interaction */
+}
+
+.search-result {
+    width: 100%;         /* Full width for each result */
+    padding: 10px 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+.search-result:last-child {
+    border-bottom: none; /* Remove border from the last result */
+}
