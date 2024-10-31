@@ -150,12 +150,13 @@ const Navbar = () => {
         </div>
 
       </div>
-      <div className="search-bar-container">
-          <SearchBar setResults={setResults} />
-          <SearchResultsList results={results} />
-        </div>
+      <div className="search-bar-container" style={{ position: 'relative' }}>
+  <SearchBar setResults={setResults} />
+  <div className={`custom-search-results ${results && results.length > 0 ? 'show' : ''}`}>
+    <SearchResultsList results={results} />
+  </div>
+</div>
       </div>
-
       <nav className={sidebar ? 'side-menu active' : 'side-menu'}>
         <ul className="side-menu-items" onClick={showSidebar}>
           <li className="navbar-toggle">
