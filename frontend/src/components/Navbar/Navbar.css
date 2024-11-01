@@ -1,8 +1,8 @@
 .navbar-bg{
     background-image: linear-gradient(to bottom, #a3d5e8,#e0f4f9); 
-    box-shadow: 0 1px 3px -2px black;
-
+    /* box-shadow: 0 1px 3px -2px black; */
 }
+
 .navbar {
     display: flex;
     justify-content: space-around;
