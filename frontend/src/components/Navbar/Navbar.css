@@ -119,10 +119,12 @@
 
 .nav-promo {
     flex-grow: 1;
+    margin-right: -1200px; /* Adjust spacing as needed */
     text-align: center;
     color: #ff6600;
     font-weight: bold;
     font-size: 14px;
+    white-space: nowrap; /* Prevents text from wrapping */
 }
 
 .nav-actions {
