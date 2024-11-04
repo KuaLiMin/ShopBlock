@@ -1,0 +1,33 @@
+@startuml
+
+' Define participants (classes remain unchanged)
+actor User as U
+boundary AccountManagementUI as AUI
+control AccountManager as AM
+entity UserEn as UA
+
+' Step 8: Delete Account
+== Delete Account ==
+Activate U
+U -> AUI : 8.1 HandleDeleteAccountClick(): void
+activate AUI
+AUI --> U : 8.2 PromptUserConfirmation(): void
+U -> AUI : 8.3 ConfirmDeletionResponse(isConfirmed: boolean): void
+alt User confirms deletion
+    AUI -> AM : 8.4.1 processAccountDeletion(userId: String): void
+    activate AM
+    AM -> UA : 8.4.2 DeleteAccountInDatabaseandRelevantInfo(userId: String): void
+    activate UA
+    UA --> AM : 8.4.3 ConfirmDeletion(): void
+    deactivate UA
+    AM --> AUI : 8.4.4 NotifyUIDeletionComplete(): void
+    AUI --> U : 8.4.5 LogUserOutAndRedirectToHomePage(): void
+    deactivate AM
+    deactivate AUI
+else User cancels deletion
+    AUI --> U : 8.5.1 ShowCancellationMessage(): void
+    deactivate AUI
+end
+
+
+@enduml
