@@ -101,30 +101,30 @@ const Navbar = () => {
           <li onClick={() => setMenu('Categories')}>
             <Link style={{ textDecoration: 'none' }} to="/">
               <img src={categories_icon} alt="Categories" className="nav-icon" />
-              Categories
+              <span>Categories</span>
             </Link>
-            {menu === 'Categories' ? <hr /> : null}
+            {menu === 'Categories' ? <hr className="menu-underline" /> : null}
           </li>
           <li onClick={() => setMenu('Electronics')}>
             <Link style={{ textDecoration: 'none' }} to="/Electronics">
               <img src={thunderbolt_icon} alt="Electronics" className="nav-icon" />
-              Electronics
+              <span>Electronics</span>
             </Link>
-            {menu === 'Electronics' ? <hr /> : null}
+            {menu === 'Electronics' ? <hr className="menu-underline" /> : null}
           </li>
           <li onClick={() => setMenu('Services')}>
             <Link style={{ textDecoration: 'none' }} to="/Services">
               <img src={services_icon} alt="Services" className="nav-icon" />
-              Services
+              <span>Services</span>
             </Link>
-            {menu === 'Services' ? <hr /> : null}
+            {menu === 'Services' ? <hr className="menu-underline" /> : null}
           </li>
           <li onClick={() => setMenu('Supplies')}>
             <Link style={{ textDecoration: 'none' }} to="/Supplies">
               <img src={supplies_icon} alt="Supplies" className="nav-icon" />
-              Supplies
+              <span>Supplies</span>
             </Link>
-            {menu === 'Supplies' ? <hr /> : null}
+            {menu === 'Supplies' ? <hr className="menu-underline" /> : null}
           </li>
         </ul>
         <div className="nav-promo">
