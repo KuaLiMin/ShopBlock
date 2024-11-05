@@ -4,7 +4,7 @@
 
 If you already have one, then use it
 
-```
+```bash
 python3 -m venv ./swe-env
 source ./swe-env/bin/activate
 pip3 install -r requirements.txt
@@ -14,7 +14,7 @@ pip3 install -r requirements.txt
 
 Especially if it's the first time
 
-```
+```bash
 python3 manage.py migrate
 ```
 
@@ -22,29 +22,25 @@ python3 manage.py migrate
 
 Please be careful when you make changes here.
 
-```
+```bash
 python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 
 ## Run the server
 
-```
+```bash
 python3 manage.py runserver
 ```
 
 ## Testing the website
 
-Use the swagger-ui to test. Ensure that your model and views reflect here properly.
-
-```
-go to http://localhost:8000/api/schema/swagger-ui/
-```
+Visit the Swagger UI for API testing at [http://localhost:8000/api/schema/swagger-ui/](http://localhost:8000/api/schema/swagger-ui/).
 
 ## Unit tests
 
-```
-python -m pytest .
+```bash
+python manage.py test
 ```
 
 ### Developer Notes

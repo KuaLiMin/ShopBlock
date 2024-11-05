@@ -1,8 +1,6 @@
 # SHOPBLOCK 🛍
 
-<p align="center">
-  <img width="329" alt="image" src="https://github.com/user-attachments/assets/cc215ed8-5b4f-4dd1-8311-e6f16a63eba2">
-</p>
+![alt text](./static/header.png)
 
 [Frontend](https://github.com/KuaLiMin/ShopBlock/tree/main/frontend) | [Backend](https://github.com/KuaLiMin/ShopBlock/tree/main/backend) | [Demo Video](https://www.youtube.com/watch?v=3N9Mm8eZ2Po)
 
@@ -20,7 +18,7 @@
    - 2.5 [Final Report](#final-report)
    - 2.6 [Diagrams](#diagrams)
 
-------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 ## 1. What is ShopBlock?
 
@@ -31,7 +29,7 @@ ShopBlock is a platform designed not just for buying and selling, but with a foc
 Click on the link below to watch a quick 5-minute demo of the ShopBlock website!  
 [Demo Video](https://www.youtube.com/watch?v=3N9Mm8eZ2Po)
 
-------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 ## 2. Getting Started
 
@@ -43,7 +41,6 @@ Ensure you have the following installed:
 
 - Node.js and npm (for frontend)
 - Python 3 and pip (for backend)
-- Virtual environment setup for Python
 - Git for version control
 
 ### 2.2 Setup Instructions
@@ -51,6 +48,8 @@ Ensure you have the following installed:
 This setup guide is divided into frontend and backend sections.
 
 #### Backend Setup
+
+Run these in the `backend` folder.
 
 1. **Create a Virtual Environment**  
    If you don't have a virtual environment already set up, create one and activate it:
@@ -86,19 +85,20 @@ This setup guide is divided into frontend and backend sections.
 5. **Testing the Backend**  
    Visit the Swagger UI for API testing at [http://localhost:8000/api/schema/swagger-ui/](http://localhost:8000/api/schema/swagger-ui/).
 
-6. **Run Unit Tests**  
+6. **Run Unit Tests**
 
    ```bash
-   python -m pytest .
+   python manage.py test
    ```
 
-**Developer Notes**  
+**Developer Notes**
+
 - **models.py**: Contains ORM models corresponding to the database.
 - **serializers.py**: Handles input/output formatting for the models.
 - **urls.py**: Lists endpoints and maps them to views.
 - **views.py**: Contains the main functionality mapped in `urls.py`.
 
-------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 #### Frontend Setup
 
@@ -109,7 +109,7 @@ This setup guide is divided into frontend and backend sections.
    npm install
    ```
 
-2. **Start the Frontend Application**  
+2. **Start the Frontend Application**
 
    ```bash
    npm start
@@ -117,25 +117,55 @@ This setup guide is divided into frontend and backend sections.
 
    The frontend application will run on [http://localhost:3000](http://localhost:3000/).
 
-------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 ### 2.3 File Structure
 
-*(Provide a placeholder for an overview of the project's file structure. Example: A visual representation or detailed explanation of the directory layout, e.g., components, pages, and utilities for frontend, and models, views, and serializers for backend.)*
+Directory structure of ShopBlock. The backend and frontend are to be ran separately.
+
+```
+.
+├── README.md
+├── backend
+│   ├── README.md
+│   ├── backend
+│   ├── db.sqlite3
+│   ├── manage.py
+│   ├── media
+│   ├── mypy.ini
+│   ├── requirements.txt
+│   └── staticfiles
+├── frontend
+│   ├── README.md
+│   ├── build
+│   ├── node_modules
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   └── src
+├── lab1
+├── lab2
+├── lab3
+├── lab4
+├── mypy.ini
+├── package.json
+└── static
+    └── header.png
+```
 
 ### 2.4 Tech Stack
 
-- **Frontend**: React, Material UI, CSS
+- **Frontend**: React, Material UI
 - **Backend**: Django, Django REST Framework
-- **Database**: PostgreSQL 
-- **APIs**: PayPal for payments, Singapore's OneMap for location services
+- **Database**: SQLite3
+- **APIs**: PayPal for payments, OneMap for location services
 
 ### 2.5 Final Report
 
-*Insert SRS link*
+_Insert SRS link_
 
 ### 2.6 Diagrams
 
-*Insert the Diagram*
+_Insert the Diagram_
 
-------------------------------------------------------------------------------------------------------------------------------------------------
+---
