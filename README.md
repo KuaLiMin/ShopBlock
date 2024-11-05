@@ -5,6 +5,8 @@
 </p>
 
 
+[Frontend](https://github.com/KuaLiMin/ShopBlock/tree/main/frontend) | [Backend](https://github.com/KuaLiMin/ShopBlock/tree/main/backend) | [Demo Video](https://www.youtube.com/watch?v=3N9Mm8eZ2Po)
+
 ShopBlock is a platform designed not just for buying and selling, but with a focus on supporting sustainable and affordable access to goods and services through rentals. By enabling users to create, post, browse, and manage listings, ShopBlock aims to provide a solution for low-income families who may struggle with the high cost of one-time purchases. The platform also addresses the issue of clutter in the home by offering a space for users to rent out items that are rarely used, like camping gear or specialty tools, allowing others to borrow rather than buy. With features like filtering listings by categories and price, making offers, and completing transactions, ShopBlock provides a flexible, community-oriented marketplace. The inclusion of reviews and ratings also fosters a trustworthy environment where users can confidently connect with one another.
 
 
