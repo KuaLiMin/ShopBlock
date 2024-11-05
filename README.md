@@ -149,7 +149,7 @@ The application will be accessible at [http://localhost:3000](http://localhost:3
  
 - **Backend** : Django, Django REST Framework
  
-- **Database** : PostgreSQL
+- **Database** : SQLite3
  
 - **APIs** : 
   - **PayPal**  for payment processing
