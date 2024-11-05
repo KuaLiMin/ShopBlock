@@ -6,17 +6,17 @@
 
 ## Table of Contents
 
-1. [What is ShopBlock?](#what-is-shopblock)
-   - 1.1 [Demo Video](#demo-video)
+1. [What is ShopBlock?](#1-what-is-shopblock)
+   - 1.1 [Demo Video](#11-demo-video)
 2. [Getting Started](#getting-started)
    - 2.1 [Prerequisites](#prerequisites)
    - 2.2 [Setup Instructions](#setup-instructions)
      - [Backend Setup](#backend-setup)
      - [Frontend Setup](#frontend-setup)
-   - 2.3 [File Structure](#file-structure)
-   - 2.4 [Tech Stack](#tech-stack)
-   - 2.5 [Final Report](#final-report)
-   - 2.6 [Diagrams](#diagrams)
+   - 2.3 [File Structure](#23-file-structure)
+   - 2.4 [Tech Stack](#24-tech-stack)
+   - 2.5 [Final Report](#25-final-report)
+   - 2.6 [Diagrams](#26-diagrams)
 
 ---
 
