@@ -42,10 +42,13 @@ Before setting up, ensure the following tools are installed:
 - **Node.js**  and **npm**  (for the frontend)
  
 - **Python 3**  and **pip**  (for the backend)
+
  
 - **Virtual Environment**  setup for Python
  
 - **Git**  for version control
+- 
+- **@paypal/paypal-js** (for integrating PayPal payments)
 
 ### Setup Instructions 
 
