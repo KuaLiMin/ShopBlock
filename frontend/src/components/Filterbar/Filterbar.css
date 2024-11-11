@@ -107,8 +107,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: 22px;
-  width: 22px;
+  height: 23px;
+  width: 23px;
   background-color: #e6e6e6;
   border-radius: 4px;
   transition: background-color 0.2s ease;
@@ -134,10 +134,9 @@
 }
 
 .filterbar .checkmark:after {
-  left: 7px;
-  top: 4px;
-  width: 7px;
-  height: 14px;
+  position: absolute;
+  width: 5px;
+  height: 5px;
   border: solid white;
   border-width: 0 3px 3px 0;
   transform: rotate(45deg); /* Checkmark styling */
