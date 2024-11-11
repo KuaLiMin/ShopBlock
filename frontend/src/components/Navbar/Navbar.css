@@ -119,13 +119,16 @@
 
 .nav-promo {
     flex-grow: 1;
-    margin-right: -600px; /* Adjust spacing as needed */
-    text-align: center;
+    display: flex;
+    justify-content: flex-end; /* Aligns the text to the right */
+    align-items: center; /* Vertically centers the text */
+    padding-right: 20px; /* Adjust the padding as needed */
     color: #ff6600;
     font-weight: bold;
     font-size: 14px;
     white-space: nowrap; /* Prevents text from wrapping */
 }
+
 
 .nav-actions {
     display: flex;
