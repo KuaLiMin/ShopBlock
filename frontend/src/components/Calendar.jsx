@@ -10,27 +10,33 @@ const Calendar = ({ offers }) => {
         const dateMap = {};
     
         offers.forEach(offer => {
+            // Create dates and strip the time component
             const startDate = new Date(offer.scheduled_start);
+            startDate.setHours(0, 0, 0, 0);
+            
             const endDate = new Date(offer.scheduled_end);
+            endDate.setHours(0, 0, 0, 0);  // This is key - set to start of day
+            
+            // Debug logs
+            console.log('Processing dates:', {
+                start: startDate.toISOString(),
+                end: endDate.toISOString()
+            });
     
-            // Extract date components only for accurate day-based comparisons
-            const startDateString = startDate.toISOString().split('T')[0];
-            const endDateString = endDate.toISOString().split('T')[0];
+            let currentDate = new Date(startDate);
     
-            let currentDate = new Date(startDateString);
-    
-            while (currentDate.toISOString().split('T')[0] <= endDateString) {
+            while (currentDate < endDate) {
                 const dateString = currentDate.toISOString().split('T')[0];
+                
                 if (!dateMap[dateString]) {
                     dateMap[dateString] = [];
                 }
     
-                // Include only offers with status "C", "A", or "P"
-                if (["C", "A", "P"].includes(offer.status)) {
+                if (["C", "A", "P", "D"].includes(offer.status)) {
                     dateMap[dateString].push(offer);
                 }
     
-                // Increment to the next day, ensuring it's midnight
+                currentDate = new Date(currentDate);
                 currentDate.setDate(currentDate.getDate() + 1);
                 currentDate.setHours(0, 0, 0, 0);
             }
@@ -68,7 +74,7 @@ const Calendar = ({ offers }) => {
         if (day <= today.setHours(0, 0, 0, 0)) return 'highlight-grey';
         if (!offersForDate) return 'highlight-green';
         if (offersForDate.some(offer => offer.status === 'P')) return 'highlight-orange';
-        if (offersForDate.some(offer => offer.status === 'C' || offer.status === 'A')) return 'highlight-black';
+        if (offersForDate.some(offer => offer.status === 'D' || offer.status === 'A')) return 'highlight-black';
         return 'highlight-green';
     };
 
@@ -77,7 +83,7 @@ const Calendar = ({ offers }) => {
         if (day < today.setHours(0, 0, 0, 0)) return '';
         if (!offersForDate) return "Dates are available";
         if (offersForDate.some(offer => offer.status === 'P')) return "Date may be available as user has not accepted offer";
-        if (offersForDate.some(offer => offer.status === 'C' || offer.status === 'A')) return "Dates are unavailable";
+        if (offersForDate.some(offer => offer.status === 'D' || offer.status === 'A')) return "Dates are unavailable";
         return "Dates are available";
     };
 
