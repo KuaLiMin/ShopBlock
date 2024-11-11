@@ -47,7 +47,7 @@ Before setting up, ensure the following tools are installed:
 - **Virtual Environment**  setup for Python
  
 - **Git**  for version control
-- 
+  
 - **@paypal/paypal-js** (for integrating PayPal payments)
 
 ### Setup Instructions 
