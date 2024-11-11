@@ -7,7 +7,14 @@ const SideNav = ({ onFilterChange }) => {
   // const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
 
+  // Handle price slider change
+  // const handleSliderChange = (event) => {
+  //   setPrice(event.target.value);
+  // };
 
+  // const handleInputChange = (event) => {
+  //   setPrice(event.target.value);
+  // };
 
   // Toggle category selection
   // const toggleCategory = (category) => {
@@ -97,10 +104,9 @@ const SideNav = ({ onFilterChange }) => {
           <span className="checkmark"></span>
         </label>
       </div>
-{/*       
-      <h3>Price Range</h3>
+     
       <div className="price-range">
-        <input 
+        {/* <input 
           type="range" 
           min="0" 
           max="5000" 
@@ -115,9 +121,9 @@ const SideNav = ({ onFilterChange }) => {
           max="5000"
           className="price-input"
         />
-        <span className="price-value">Selected price: ${price}</span>
+        <span className="price-value">Selected price: ${price}</span> */}
         <button onClick={applyFilters}>Enter</button>
-      </div>  */}
+      </div>  
     </div>
   );
 };
