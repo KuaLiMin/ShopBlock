@@ -135,6 +135,7 @@
 
 .filterbar .checkmark:after {
   position: absolute;
+  left: 3px;
   width: 5px;
   height: 5px;
   border: solid white;
