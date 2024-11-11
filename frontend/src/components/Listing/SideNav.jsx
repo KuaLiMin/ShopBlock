@@ -2,19 +2,12 @@ import React, { useState } from 'react';
 import './Listing.css';  
 
 const SideNav = ({ onFilterChange }) => {
-  const [price, setPrice] = useState(0); 
+  // const [price, setPrice] = useState(0); 
   const [selectedRates, setSelectedRates] = useState([]);
   // const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
 
-  // Handle price slider change
-  const handleSliderChange = (event) => {
-    setPrice(event.target.value);
-  };
-
-  const handleInputChange = (event) => {
-    setPrice(event.target.value);
-  };
+  
 
   // Toggle category selection
   // const toggleCategory = (category) => {
@@ -104,26 +97,8 @@ const SideNav = ({ onFilterChange }) => {
           <span className="checkmark"></span>
         </label>
       </div>
-      <h3>Price Range</h3>
-      <div className="price-range">
-        <input 
-          type="range" 
-          min="0" 
-          max="5000" 
-          value={price} 
-          onChange={handleSliderChange}
-        />
-        <input 
-          type="number" 
-          value={price} 
-          onChange={handleInputChange}
-          min="0"
-          max="5000"
-          className="price-input"
-        />
-        <span className="price-value">Selected price: ${price}</span>
-        <button onClick={applyFilters}>Enter</button>
-      </div>
+      
+      
     </div>
   );
 };

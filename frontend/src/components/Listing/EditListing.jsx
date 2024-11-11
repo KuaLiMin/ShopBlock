@@ -189,7 +189,7 @@ const EditListing = ({ isModalOpen, toggleModal, listingId }) => {
       .then((data) => {
         console.log('Success:', data);
         toggleModal();
-        // window.location.reload();
+        window.location.reload();
         // onUpdate();
       })
       .catch((error) => {
