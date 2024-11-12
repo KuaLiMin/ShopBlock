@@ -61,7 +61,7 @@ const TrendingGrid = ({ updateCount }) => {
         
         setListingsData(formattedData);
         setLoading(false);
-        updateCount(Math.min(formattedData.length, 10)); // Limit the count to no more than 10
+        updateCount(Math.min(formattedData.length, 15)); // Limit the count to no more than 10
       })
       .catch((error) => {
         console.error('Error fetching listings:', error);
