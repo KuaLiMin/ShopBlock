@@ -9,7 +9,7 @@ const TrendingCounter = () => {
 
   // Function to update number of trending items
   const updateTrendingCount = (count) => {
-    setTrendingCount(Math.min(count, 10)); // Limit the count to no more than 10
+    setTrendingCount(Math.min(count, 15)); // Limit the count to no more than 10
   };
 
   return (
