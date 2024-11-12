@@ -135,8 +135,9 @@ The application will be accessible at [http://localhost:3000](http://localhost:3
 ### 2.3 File Structure 
 ```
 └───ShopBlock
+    ├─── FINAL SUBMISSION (final deliverables)
     ├───backend
-    │   ├───backend (backend files, urls.py and settings)
+    ├───backend (backend files, urls.py and settings)
     │   ├───media
     │   └───(files for migrating and connection to API db)
     └───frontend 
