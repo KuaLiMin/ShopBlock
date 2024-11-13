@@ -136,7 +136,6 @@ The application will be accessible at [http://localhost:3000](http://localhost:3
 ```
 └───ShopBlock
     ├─── FINAL SUBMISSION (final deliverables)
-    ├───backend
     ├───backend (backend files, urls.py and settings)
     │   ├───media
     │   └───(files for migrating and connection to API db)
