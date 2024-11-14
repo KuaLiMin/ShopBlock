@@ -15,8 +15,7 @@
      - [Frontend Setup](#frontend-setup)
    - 2.3 [File Structure](#23-file-structure)
    - 2.4 [Tech Stack](#24-tech-stack)
-   - 2.5 [Final Report](#25-final-report)
-   - 2.6 [Diagrams](#26-diagrams)
+   - 2.5 [Final Report](./lab5/SRS_Group45.pdf)
 
 ---
 
@@ -31,133 +30,128 @@ Click on the link below to watch a quick 5-minute demo of the ShopBlock website!
 
 ---
 
-## 2. Getting Started 
+## 2. Getting Started
 
 This section provides details on prerequisites, setup instructions for both frontend and backend, and other technical requirements to get ShopBlock running smoothly.
 
-### Prerequisites 
+### Prerequisites
 
 Before setting up, ensure the following tools are installed:
- 
-- **Node.js**  and **npm**  (for the frontend)
- 
-- **Python 3**  and **pip**  (for the backend)
 
- 
-- **Virtual Environment**  setup for Python
- 
-- **Git**  for version control
-  
+- **Node.js** and **npm** (for the frontend)
+
+- **Python 3** and **pip** (for the backend)
+
+- **Virtual Environment** setup for Python
+
+- **Git** for version control
 - **@paypal/paypal-js** (for integrating PayPal payments)
 
-### Setup Instructions 
+### Setup Instructions
 
 The setup process is divided into backend and frontend sections.
 
-
 ---
 
+#### Backend Setup
 
-#### Backend Setup 
- 
-1. **Create a Virtual Environment** 
-If not already set up, create and activate a virtual environment:
+1. **Create a Virtual Environment**
+   If not already set up, create and activate a virtual environment:
 
 ```bash
 python3 -m venv ./swe-env
 source ./swe-env/bin/activate
 pip3 install -r requirements.txt
 ```
- 
-2. **Install the Database** 
-Run migrations to initialize the database:
+
+2. **Install the Database**
+   Run migrations to initialize the database:
 
 ```bash
 python3 manage.py migrate
 ```
- 
-3. **Apply Database Changes** 
-If you modify models, apply migrations with:
+
+3. **Apply Database Changes**
+   If you modify models, apply migrations with:
 
 ```bash
 python3 manage.py makemigrations
 python3 manage.py migrate
 ```
- 
-4. **Run the Backend Server** 
-Start the backend server:
+
+4. **Run the Backend Server**
+   Start the backend server:
 
 ```bash
 python3 manage.py runserver
 ```
- 
-5. **API Testing with Swagger** 
-Access the Swagger UI for testing APIs at [http://localhost:8000/api/schema/swagger-ui/](http://localhost:8000/api/schema/swagger-ui/) .
- 
-6. **Run Unit Tests** 
+
+5. **API Testing with Swagger**
+   Access the Swagger UI for testing APIs at [http://localhost:8000/api/schema/swagger-ui/](http://localhost:8000/api/schema/swagger-ui/) .
+
+6. **Run Unit Tests**
 
 ```bash
 python -m pytest .
 ```
-**Developer Notes**  
-- **models.py** : Defines ORM models for the database.
- 
-- **serializers.py** : Handles data formatting for models.
- 
-- **urls.py** : Maps URLs to views.
- 
-- **views.py** : Implements core application logic.
 
+**Developer Notes**
+
+- **models.py** : Defines ORM models for the database.
+
+- **serializers.py** : Handles data formatting for models.
+
+- **urls.py** : Maps URLs to views.
+
+- **views.py** : Implements core application logic.
 
 ---
 
+#### Frontend Setup
 
-#### Frontend Setup 
- 
-1. **Install Node Modules** 
-In the `/frontend` directory, install dependencies:
+1. **Install Node Modules**
+   In the `/frontend` directory, install dependencies:
 
 ```bash
 npm install
 ```
- 
-2. **Start the Frontend Application** 
+
+2. **Start the Frontend Application**
 
 ```bash
 npm start
 ```
-The application will be accessible at [http://localhost:3000](http://localhost:3000/) .
 
+The application will be accessible at [http://localhost:3000](http://localhost:3000/) .
 
 ---
 
+### 2.3 File Structure
 
-### 2.3 File Structure 
 ```
 └───ShopBlock
     ├─── FINAL SUBMISSION (final deliverables)
     ├───backend (backend files, urls.py and settings)
     │   ├───media
     │   └───(files for migrating and connection to API db)
-    └───frontend 
+    └───frontend
         └───src
             ├───(favicons, index files)
             └───Pages (frontend components)
 ```
 
+### 2.4 Tech Stack
 
-### 2.4 Tech Stack 
- 
 - **Frontend** : React, Material UI, CSS
- 
+
 - **Backend** : Django, Django REST Framework
- 
+
 - **Database** : SQLite3
- 
-- **APIs** : 
-  - **PayPal**  for payment processing
- 
-  - **OneMap**  (Singapore) for location services
+
+- **APIs** :
+
+  - **PayPal** for payment processing
+
+  - **OneMap** (Singapore) for location services
 
 ---
-
